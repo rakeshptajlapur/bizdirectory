@@ -8,9 +8,15 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Business)
 class BusinessAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'city', 'pincode', 'is_active')
-    list_filter = ('category', 'city', 'is_active')
+    list_display = ('name', 'category', 'is_active', 'gst_verified', 'kyc_status')
+    list_filter = ('is_active', 'gst_verified', 'kyc_status', 'category')
     search_fields = ('name', 'description', 'address')
+    
+    fieldsets = (
+        ('Trust & Verification', {
+            'fields': ('gst_number', 'gst_verified', 'kyc_status')
+        }),
+    )
 
 @admin.register(BusinessImage)
 class BusinessImageAdmin(admin.ModelAdmin):

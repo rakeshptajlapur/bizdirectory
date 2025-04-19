@@ -47,7 +47,17 @@ class Business(models.Model):
     
     # Business Details (Non-public)
     registration_number = models.CharField(max_length=50)
-    gst_number = models.CharField(max_length=15)
+    gst_number = models.CharField(max_length=15, blank=True)
+    gst_verified = models.BooleanField(default=False)
+    kyc_status = models.CharField(
+        max_length=20,
+        choices=[
+            ('completed', 'Completed'),
+            ('pending', 'Pending'),
+            ('not_submitted', 'Not Submitted')
+        ],
+        default='not_submitted'
+    )
     registration_document = models.FileField(upload_to='documents/')
     
     # Meta Info
@@ -66,7 +76,7 @@ class Business(models.Model):
 
     def get_primary_image_url(self):
         primary_image = self.get_primary_image()
-        if primary_image and hasattr(primary_image.image, 'url'):
+        if (primary_image and hasattr(primary_image.image, 'url')):
             return primary_image.image.url
         else:
             # Fallback images based on business category

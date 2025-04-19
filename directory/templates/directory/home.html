@@ -1,5 +1,6 @@
 {% extends 'directory/base.html' %}
 {% load static %}
+{% load directory_filters %}
 
 {% block title %}Find Local Businesses | BizDirectory{% endblock %}
 
@@ -95,75 +96,128 @@
     </div>
 </div>
 
-<!-- Featured Businesses Section (existing code) -->
-<div class="row mb-4">
-    <div class="col">
-        <h2>Featured Businesses</h2>
+<!-- Featured Categories with Business Carousels -->
+{% for category in categories|slice:":5" %}
+<section class="business-category-section mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">{{ category.name }}</h2>
+        <a href="/?category={{ category.id }}" class="btn btn-sm btn-outline-primary">See all</a>
     </div>
-</div>
-
-<!-- Grid View -->
-<div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for business in businesses %}
-    <div class="col">
-        <div class="card h-100 shadow-sm">
-            <img src="{{ business.get_primary_image_url }}" class="card-img-top" alt="{{ business.name }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ business.name }}</h5>
-                
-                <!-- Star rating section -->
-                <div class="mb-2">
-                    <div class="stars me-2">
-                        {% for i in "12345" %}
-                            {% if forloop.counter <= business.avg_rating|default:0 %}
-                                <i class="bi bi-star-fill text-warning"></i>
-                            {% else %}
-                                <i class="bi bi-star text-warning"></i>
+    
+    <!-- Business Carousel -->
+    <div class="position-relative">
+        <div class="business-carousel">
+            {% with category_businesses=businesses|filter_by_category:category.id %}
+            {% for business in category_businesses %}
+            <div class="carousel-item">
+                <div class="card h-100 shadow-sm business-card">
+                    <!-- Card image -->
+                    <img src="{{ business.get_primary_image_url }}" class="card-img-top" alt="{{ business.name }}" height="150" style="object-fit: cover;">
+                    
+                    <div class="card-body py-2">
+                        <!-- Business name and rating -->
+                        <h5 class="card-title fs-6 mb-1">{{ business.name }}</h5>
+                        
+                        <!-- Trust & Safety Tags - add after business name -->
+                        <div class="d-flex flex-wrap gap-1 mb-2">
+                            {% if business.gst_number and business.gst_verified %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.7rem;">
+                                <i class="bi bi-check-circle-fill me-1"></i>GST Verified
+                            </span>
                             {% endif %}
-                        {% endfor %}
-                    </div>
-                    <small class="text-muted">({{ business.reviews.count }} reviews)</small>
-                </div>
-                
-                <p class="card-text">{{ business.description|truncatewords:20 }}</p>
-                
-                <!-- Category badge -->
-                <p class="card-text">
-                    <span class="badge bg-secondary">{{ business.category.name }}</span>
-                </p>
-            </div>
+                            
+                            {% if business.kyc_status == 'completed' %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.7rem;">
+                                <i class="bi bi-shield-check me-1"></i>KYC Completed
+                            </span>
+                            {% elif business.kyc_status == 'pending' %}
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 0.7rem;">
+                                <i class="bi bi-clock-history me-1"></i>KYC Pending
+                            </span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Star rating -->
+                        <div class="d-flex align-items-center small mb-2">
+                            <div class="stars me-2">
+                                {% for i in "12345" %}
+                                    <i class="bi bi-star{% if forloop.counter <= business.avg_rating|default:0 %}-fill{% endif %} text-warning" style="font-size: 0.8rem;"></i>
+                                {% endfor %}
+                            </div>
+                            <span class="text-muted">({{ business.reviews.count }})</span>
+                        </div>
 
-            <!-- Replace the card footer with this improved version -->
-            <div class="card-footer bg-light border-top py-2">
-                <div class="row g-0">
-                    <div class="col-12">
-                        <p class="small text-muted mb-1">
-                            <i class="bi bi-person-circle me-1"></i> {{ business.owner.get_full_name|default:business.owner.username }}
-                        </p>
+                        
                     </div>
-                    <div class="col-12">
+
+                    <!-- Service Tags - update your service tags section -->
+                    <div class="card-body py-2 border-top">
+                        <div class="d-flex flex-nowrap overflow-hidden gap-1">
+                            {% for service in business.services.all|slice:":2" %}
+                                <span class="badge rounded-pill border border-secondary text-secondary bg-white">{{ service.name }}</span>
+                            {% empty %}
+                                <span class="text-muted small">No services listed</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Location info in footer - replace your current footer section -->
+                    <div class="card-footer bg-light py-2">
                         <p class="small text-muted mb-0">
-                            <i class="bi bi-geo-alt me-1"></i> {{ business.city }} - {{ business.pincode }}
+                             Owner: <span class="text-capitalize">{{ business.owner.get_full_name|default:business.owner.username|title }}</span> 
+                            <span class="mx-1">|</span>
+                            <i class="bi bi-geo-alt me-1"></i> Pincode: {{ business.pincode }}
                         </p>
                     </div>
+
+                    <a href="{% url 'directory:business_detail' business.pk %}" class="stretched-link" aria-label="View {{ business.name }}"></a>
                 </div>
             </div>
-
-            <div class="card-footer bg-transparent border-top-0">
-                <a href="{% url 'directory:business_detail' business.pk %}" 
-                   class="btn btn-outline-primary w-100">View Details</a>
+            {% empty %}
+            <div class="text-center py-4 w-100">
+                <p class="text-muted">No businesses in this category yet.</p>
             </div>
+            {% endfor %}
+            {% endwith %}
         </div>
+        
+        <!-- Carousel Controls -->
+        <button class="carousel-control carousel-control-prev" type="button">
+            <i class="bi bi-chevron-left fs-4"></i>
+        </button>
+        <button class="carousel-control carousel-control-next" type="button">
+            <i class="bi bi-chevron-right fs-4"></i>
+        </button>
     </div>
-    {% empty %}
-    <div class="col-12">
-        <div class="alert alert-info">
-            <i class="bi bi-info-circle me-2"></i>
-            No businesses found matching your criteria.
-        </div>
-    </div>
-    {% endfor %}
-</div>
+</section>
+{% endfor %}
+
+<script>
+    $(document).ready(function() {
+        // Setup each carousel
+        $('.business-category-section').each(function() {
+            const $carousel = $(this).find('.business-carousel');
+            const $prevBtn = $(this).find('.carousel-control-prev');
+            const $nextBtn = $(this).find('.carousel-control-next');
+            
+            const scrollAmount = 500; // Fixed scroll amount
+            
+            // Next button click
+            $nextBtn.on('click', function() {
+                $carousel.animate({
+                    scrollLeft: '+=' + scrollAmount
+                }, 300);
+            });
+            
+            // Previous button click
+            $prevBtn.on('click', function() {
+                $carousel.animate({
+                    scrollLeft: '-=' + scrollAmount
+                }, 300);
+            });
+        });
+    });
+</script>
 {% endblock %}
 
 {% block extra_js %}

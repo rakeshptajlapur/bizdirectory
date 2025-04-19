@@ -135,7 +135,270 @@
         .category-card:hover .category-overlay {
             opacity: 1;
         }
+
+        /* Add these styles to make business cards more compact */
+        .business-card {
+            max-height: 380px; /* Approximately 50vh on most screens */
+            transition: transform 0.2s;
+        }
+
+        .business-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .business-card .card-body {
+            padding: 1rem;
+        }
+
+        .business-card .card-footer {
+            padding: 0.5rem 1rem;
+        }
+
+        .business-card .stars i {
+            font-size: 0.9rem;
+        }
+
+        .business-card h5.card-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .business-card .badge {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.5rem;
+        }
+
+        .business-card .small {
+            font-size: 0.75rem;
+        }
+
+        .business-card img.card-img-top {
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .business-carousel {
+            display: flex !important;
+            overflow-x: auto !important;
+            scroll-behavior: smooth;
+            gap: 1rem;
+            padding: 0.5rem 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .business-carousel .carousel-item {
+            flex: 0 0 auto;
+            width: 240px !important; /* Fixed width for each card */
+            min-width: 240px !important;
+            display: block !important;
+            margin-right: 1rem;
+        }
+
+        /* Add these to fix carousel display */
+        .business-carousel {
+            display: flex !important;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 10px 0;
+        }
+        
+        .business-carousel .carousel-item {
+            flex: 0 0 auto;
+            width: 280px !important;
+            margin-right: 15px;
+            display: block !important;
+        }
+        
+        .business-carousel::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .business-carousel::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+        
+        .business-card {
+            height: 100%;
+            transition: transform .2s;
+        }
+        
+        .business-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .business-card .badge {
+            font-weight: normal;
+            white-space: nowrap;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.75rem;
+        }
+
+        .business-card .badge:hover {
+            max-width: none;
+        }
+
+        .business-card .d-flex.flex-nowrap {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .business-card .badge {
+            font-weight: normal;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.75rem;
+            max-width: 120px; /* Adjust based on your card width */
+        }
+
+        /* Updated footer styles - add to your <style> section */
+        .footer-glass {
+            background-color: #f8f9fa; /* Light grey background */
+            position: relative;
+            padding-top: calc(6rem + 100px); /* Increased by 100px as requested */
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.03);
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        /* Alternative cream color option */
+        .footer-cream {
+            background-color: #FAF9F6; /* Cream color */
+            position: relative;
+            padding-top: calc(6rem + 100px); /* Increased by 100px as requested */
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.03);
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .footer-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05; /* Very subtle background */
+            z-index: 0;
+        }
     </style>
+    {% block extra_css %}
+    <style>
+        /* Compact business cards */
+        .business-card {
+            max-height: 330px;
+            transition: transform 0.2s;
+        }
+        
+        .business-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Carousel styles */
+        .business-carousel {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            gap: 1rem;
+            padding: 0.5rem 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .business-carousel::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .business-carousel .carousel-item {
+            flex: 0 0 auto;
+            width: calc(25% - 0.75rem);
+            min-width: 250px;
+            display: block !important;
+        }
+        
+        .business-card {
+            height: 100%;
+        }
+        
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .carousel-control-prev {
+            left: -15px;
+        }
+        
+        .carousel-control-next {
+            right: -15px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .business-carousel .carousel-item {
+                width: calc(33.333% - 0.67rem);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .business-carousel .carousel-item {
+                width: calc(50% - 0.5rem);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .business-carousel .carousel-item {
+                width: 100%;
+            }
+        }
+        
+        /* Carousel controls */
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0.8;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .carousel-control:hover {
+            opacity: 1;
+        }
+        
+        .carousel-control-prev {
+            left: -15px;
+        }
+        
+        .carousel-control-next {
+            right: -15px;
+        }
+    </style>
+    {% endblock %}
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light navbar-glass sticky-top py-3">
@@ -174,36 +437,94 @@
         {% block content %}{% endblock %}
     </div>
 
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>BizDirectory</h5>
-                    <p>Find the best local businesses in your area.</p>
+    <footer class="footer-glass pt-5 pb-3 position-relative">
+    <!-- Background image with overlay -->
+    <div class="footer-bg"></div>
+    
+    <div class="container position-relative">
+        <!-- Main footer content -->
+        <div class="row gy-4">
+            <!-- BizDirectory info with expanded description -->
+            <div class="col-lg-3 col-md-6">
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3 text-dark">
+                        <i class="bi bi-building me-2"></i>BizDirectory
+                    </h5>
+                    <p class="small text-dark">
+                        Connecting local businesses with customers in your neighborhood. 
+                        Our platform helps you discover trusted services, read verified reviews, 
+                        and make informed decisions about where to spend your money locally.
+                        Support small businesses and find exactly what you need.
+                    </p>
                 </div>
-                <div class="col-md-4">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-white">About Us</a></li>
-                        <li><a href="#" class="text-white">Contact</a></li>
-                        <li><a href="#" class="text-white">Privacy Policy</a></li>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-lg-3 col-md-6">
+                <div class="ps-lg-4">
+                    <h5 class="fw-bold mb-3 text-dark">Quick Links</h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>About Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Contact</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Terms & Conditions</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Refund Policy</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4">
-                    <h5>Follow Us</h5>
-                    <div class="d-flex">
-                        <a href="#" class="text-white me-2"><i class="bi bi-facebook fs-4"></i></a>
-                        <a href="#" class="text-white me-2"><i class="bi bi-twitter-x fs-4"></i></a>
-                        <a href="#" class="text-white me-2"><i class="bi bi-instagram fs-4"></i></a>
-                        <a href="#" class="text-white me-2"><i class="bi bi-linkedin fs-4"></i></a>
+            </div>
+
+            <!-- Business Links -->
+            <div class="col-lg-3 col-md-6">
+                <div class="ps-lg-4">
+                    <h5 class="fw-bold mb-3 text-dark">For Businesses</h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-plus-circle me-1"></i>Add Listing</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-currency-dollar me-1"></i>Pricing</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-tag me-1"></i>Latest Deals</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-speedometer2 me-1"></i>Business Dashboard</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Newsletter signup section -->
+            <div class="col-lg-3 col-md-6">
+                <div class="ps-md-4">
+                    <h5 class="fw-bold mb-3 text-dark">Stay Updated</h5>
+                    <p class="small text-dark mb-3">Subscribe for exclusive updates, deals and discounts.</p>
+                    <form class="mb-3">
+                        <div class="input-group">
+                            <input type="email" class="form-control form-control-sm border" placeholder="Your email" required>
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-send-fill"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#" class="text-decoration-none link-dark"><i class="bi bi-facebook fs-5"></i></a>
+                        <a href="#" class="text-decoration-none link-dark"><i class="bi bi-twitter-x fs-5"></i></a>
+                        <a href="#" class="text-decoration-none link-dark"><i class="bi bi-instagram fs-5"></i></a>
+                        <a href="#" class="text-decoration-none link-dark"><i class="bi bi-linkedin fs-5"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="mt-3 text-center">
-                <small>&copy; 2025 BizDirectory. All rights reserved.</small>
+        </div>
+
+        <!-- Separator -->
+        <hr class="mt-4 mb-3 opacity-25">
+        
+        <!-- Copyright section -->
+        <div class="row">
+            <div class="col-md-6 small">
+                <p class="mb-md-0 text-dark">&copy; 2025 BizDirectory. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-md-end small">
+                <a href="#" class="text-decoration-none link-dark me-3">Privacy</a>
+                <a href="#" class="text-decoration-none link-dark me-3">Terms</a>
+                <a href="#" class="text-decoration-none link-dark">Support</a>
             </div>
         </div>
-    </footer>
+    </div>
+</footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -215,6 +536,34 @@
             // Custom code will go here
         });
     </script>
-    {% block extra_js %}{% endblock %}
+    {% block extra_js %}
+    <script>
+        $(document).ready(function() {
+            // Setup each carousel
+            $('.business-category-section').each(function() {
+                const $carousel = $(this).find('.business-carousel');
+                const $prevBtn = $(this).find('.carousel-control-prev');
+                const $nextBtn = $(this).find('.carousel-control-next');
+                
+                const itemWidth = $carousel.find('.carousel-item:first').outerWidth(true);
+                const visibleItems = Math.floor($carousel.width() / itemWidth);
+                
+                // Next button click
+                $nextBtn.on('click', function() {
+                    $carousel.animate({
+                        scrollLeft: '+=' + (itemWidth * visibleItems)
+                    }, 300);
+                });
+                
+                // Previous button click
+                $prevBtn.on('click', function() {
+                    $carousel.animate({
+                        scrollLeft: '-=' + (itemWidth * visibleItems)
+                    }, 300);
+                });
+            });
+        });
+    </script>
+    {% endblock %}
 </body>
 </html>

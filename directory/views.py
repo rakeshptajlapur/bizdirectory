@@ -8,7 +8,7 @@ def home(request):
     selected_category = request.GET.get('category', '')
     selected_pincode = request.GET.get('pincode', '')
     
-    businesses = Business.objects.filter(is_active=True)
+    businesses = Business.objects.filter(is_active=True).prefetch_related('services')
     
     # Add this annotation for the average rating
     businesses = businesses.annotate(avg_rating=Avg('reviews__rating'))

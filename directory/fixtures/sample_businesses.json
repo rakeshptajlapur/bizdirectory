@@ -3,7 +3,7 @@
         "model": "auth.user",
         "pk": 1,
         "fields": {
-            "username": "bizowner1",
+            "username": "Ksadascharya",
             "password": "pbkdf2_sha256$600000$xyz123...",
             "email": "owner1@example.com",
             "is_active": true
@@ -46,6 +46,8 @@
             "registration_number": "PL123456",
             "gst_number": "GST123456789",
             "is_active": true,
+            "gst_verified": true,
+            "kyc_status": "completed",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -67,6 +69,8 @@
             "registration_number": "PL123457",
             "gst_number": "GST123456790",
             "is_active": true,
+            "gst_verified": true,
+            "kyc_status": "pending",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -88,6 +92,8 @@
             "registration_number": "PL123458",
             "gst_number": "GST123456791",
             "is_active": true,
+            "gst_verified": false,
+            "kyc_status": "completed",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -109,6 +115,8 @@
             "registration_number": "TR123459",
             "gst_number": "GST123456792",
             "is_active": true,
+            "gst_verified": false,
+            "kyc_status": "not_submitted",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -130,6 +138,8 @@
             "registration_number": "TR123460",
             "gst_number": "GST123456793",
             "is_active": true,
+            "gst_verified": true,
+            "kyc_status": "completed",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -151,6 +161,8 @@
             "registration_number": "TR123461",
             "gst_number": "GST123456794",
             "is_active": true,
+            "gst_verified": false,
+            "kyc_status": "pending",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -172,6 +184,8 @@
             "registration_number": "HP123462",
             "gst_number": "GST123456795",
             "is_active": true,
+            "gst_verified": true, 
+            "kyc_status": "completed",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -193,6 +207,8 @@
             "registration_number": "HP123463",
             "gst_number": "GST123456796",
             "is_active": true,
+            "gst_verified": false,
+            "kyc_status": "not_submitted",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -214,6 +230,8 @@
             "registration_number": "HP123464",
             "gst_number": "GST123456797",
             "is_active": true,
+            "gst_verified": true,
+            "kyc_status": "pending",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -235,6 +253,8 @@
             "registration_number": "SC123465",
             "gst_number": "GST123456798",
             "is_active": true,
+            "gst_verified": false,
+            "kyc_status": "pending",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -256,6 +276,8 @@
             "registration_number": "SC123466",
             "gst_number": "GST123456799",
             "is_active": true,
+            "gst_verified": true,
+            "kyc_status": "completed",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -277,6 +299,8 @@
             "registration_number": "SC123467",
             "gst_number": "GST123456800",
             "is_active": true,
+            "gst_verified": false,
+            "kyc_status": "not_submitted",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -298,6 +322,8 @@
             "registration_number": "EL123468",
             "gst_number": "GST123456801",
             "is_active": true,
+            "gst_verified": true,
+            "kyc_status": "completed",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -319,6 +345,8 @@
             "registration_number": "EL123469",
             "gst_number": "GST123456802",
             "is_active": true,
+            "gst_verified": true,
+            "kyc_status": "pending",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
@@ -340,6 +368,123 @@
             "registration_number": "EL123470",
             "gst_number": "GST123456803",
             "is_active": true,
+            "gst_verified": false,
+            "kyc_status": "completed",
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 16,
+        "fields": {
+            "owner": 1,
+            "name": "Drip Fix Masters",
+            "category": 1,
+            "description": "Specializing in leak detection and repair",
+            "address": "45 Plumbing Lane",
+            "pincode": "400066",
+            "city": "Mumbai",
+            "phone": "9876543225",
+            "email": "info@dripfixmasters.com",
+            "website": "https://dripfixmasters.com",
+            "registration_number": "PL123471",
+            "gst_number": "GST123456804",
+            "is_active": true,
+            "gst_verified": false,
+            "kyc_status": "not_submitted",
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 17,
+        "fields": {
+            "owner": 1,
+            "name": "Mumbai Plumbing Experts",
+            "category": 1,
+            "description": "Full-service plumbing solutions with 15 years experience",
+            "address": "88 Pipe Road",
+            "pincode": "400067",
+            "city": "Mumbai",
+            "phone": "9876543226",
+            "email": "service@mumbaiplumbing.com",
+            "website": "https://mumbaiplumbing.com",
+            "registration_number": "PL123472",
+            "gst_number": "GST123456805",
+            "is_active": true,
+            "gst_verified": true,
+            "kyc_status": "completed",
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 18,
+        "fields": {
+            "owner": 1,
+            "name": "Aqua Solutions",
+            "category": 1,
+            "description": "Water system specialists and bathroom renovations",
+            "address": "120 Waterworks Street",
+            "pincode": "400068",
+            "city": "Mumbai",
+            "phone": "9876543227",
+            "email": "hello@aquasolutions.com",
+            "website": "https://aquasolutions.com",
+            "registration_number": "PL123473",
+            "gst_number": "GST123456806",
+            "is_active": true,
+            "gst_verified": false,
+            "kyc_status": "pending",
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 19,
+        "fields": {
+            "owner": 1,
+            "name": "Professional Learning Institute",
+            "category": 2,
+            "description": "Corporate training and professional development courses",
+            "address": "55 Education Boulevard",
+            "pincode": "400069",
+            "city": "Mumbai",
+            "phone": "9876543228",
+            "email": "courses@professionallearning.com",
+            "website": "https://professionallearning.com",
+            "registration_number": "TR123474",
+            "gst_number": "GST123456807",
+            "is_active": true,
+            "gst_verified": true,
+            "kyc_status": "completed",
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 20,
+        "fields": {
+            "owner": 1,
+            "name": "Skill Up Academy",
+            "category": 2,
+            "description": "Hands-on skill development for young professionals",
+            "address": "77 Learning Street",
+            "pincode": "400070",
+            "city": "Mumbai",
+            "phone": "9876543229",
+            "email": "learn@skillupacademy.com",
+            "website": "https://skillupacademy.com",
+            "registration_number": "TR123475",
+            "gst_number": "GST123456808",
+            "is_active": true,
+            "gst_verified": true,
+            "kyc_status": "not_submitted",
             "created_at": "2024-04-19T10:00:00Z",
             "updated_at": "2024-04-19T10:00:00Z"
         }
