@@ -3,6 +3,27 @@
 
 {% block title %}All Business Listings | BizDirectory{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Reduce hero section height by 50% for listings page only */
+    .listings-hero {
+        min-height: 150px !important;
+        padding: 2rem 0 !important;
+    }
+    
+    /* Adjust spacing for smaller hero */
+    .listings-hero h1 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem !important;
+    }
+    
+    .listings-hero .input-group {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}
+
 {% block hero %}
 <div class="hero-section listings-hero">
     <div class="hero-overlay"></div>

@@ -19,7 +19,7 @@
             <div class="col-lg-10">
                 <div class="search-card">
                     <h1 class="text-center mb-4">Find The Best Local Businesses</h1>
-                    <form method="get" class="row g-3">
+                    <form method="get" action="{% url 'directory:listings' %}" class="row g-3">
                         <div class="col-md-4">
                             <label for="searchQuery" class="form-label">What are you looking for?</label>
                             <input type="text" class="form-control" id="searchQuery" name="query" 
