@@ -16,7 +16,7 @@
     <div class="container position-relative py-5 text-center">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h1 class="display-4 text-white fw-bold mb-3">Get Your Business Listed & Verified</h1>
+                <h1 class="display-4 text-white fw-bold mb-3">Get Your Business Listed! & Get Verified Today.</h1>
                 <p class="lead text-white mb-4">Grow your business 10X by getting verified and listed on BizDirectory</p>
                 <a href="#pricing" class="btn btn-primary btn-lg px-5 py-3">View Pricing</a>
                 <a href="#how-it-works" class="btn btn-outline-light btn-lg px-5 py-3 ms-2">Learn More</a>
@@ -26,35 +26,47 @@
 </div>
 {% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Add subtle box shadow to all sections below hero */
+    section {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Why List With Us Section -->
 <section class="py-5">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6 mb-4 mb-lg-0">
-                <img src="{% static 'directory/images/business-growth.jpg' %}" alt="Business Growth" class="img-fluid rounded-4 shadow">
-            </div>
-            <div class="col-lg-6">
+            
+            <div class="col-lg-12">
                 <h2 class="display-6 fw-bold mb-4">Why List Your Business With Us?</h2>
                 <p class="lead mb-4">Join thousands of successful businesses that have boosted their visibility and customer base through BizDirectory. Our platform connects you directly with customers actively searching for your products and services.</p>
                 <p class="mb-4">With our verified business listings, you gain instant credibility in a crowded marketplace. Our KYC verification process ensures that customers trust your business from the first interaction, leading to higher conversion rates and more loyal customers.</p>
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-primary rounded-circle p-2 me-3">
+                    <div class="bg-primary d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 40px; height: 40px;">
                         <i class="bi bi-graph-up-arrow text-white"></i>
                     </div>
-                    <span class="fw-bold">92% of verified businesses report increased inquiries</span>
+                    <span class="fw-bold ms-3">92% of verified businesses report increased inquiries</span>
                 </div>
+                
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-primary rounded-circle p-2 me-3">
+                    <div class="bg-primary d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 40px; height: 40px;">
                         <i class="bi bi-star text-white"></i>
                     </div>
-                    <span class="fw-bold">Boost local search visibility by up to 70%</span>
+                    <span class="fw-bold ms-3">Boost local search visibility by up to 70%</span>
                 </div>
+                
                 <div class="d-flex align-items-center">
-                    <div class="bg-primary rounded-circle p-2 me-3">
+                    <div class="bg-primary d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 40px; height: 40px;">
                         <i class="bi bi-people text-white"></i>
                     </div>
-                    <span class="fw-bold">Connect with 10,000+ daily active users</span>
+                    <span class="fw-bold ms-3">Connect with 10,000+ daily active users</span>
                 </div>
             </div>
         </div>
@@ -73,10 +85,11 @@
             <div class="col-md-4">
                 <div class="card border-0 h-100 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-4" style="width: 80px; height: 80px; justify-content: center; align-items: center;">
                             <i class="bi bi-person-plus fs-1 text-primary"></i>
                         </div>
-                        <h3 class="h4 mb-3">Step 1: Register</h3>
+                        <p class="text-muted fst-italic mb-1">Step 1</p>
+                        <h5 class="h4 mb-3">Login or Sign Up </br> It's Free</h5>
                         <p class="text-muted">Create your account in less than 2 minutes. All you need is basic contact information to get started.</p>
                     </div>
                 </div>
@@ -85,10 +98,11 @@
             <div class="col-md-4">
                 <div class="card border-0 h-100 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-4" style="width: 80px; height: 80px; justify-content: center; align-items: center;">
                             <i class="bi bi-building-add fs-1 text-primary"></i>
                         </div>
-                        <h3 class="h4 mb-3">Step 2: Add Listing & Submit KYC</h3>
+                        <p class="text-muted fst-italic mb-1">Step 2</p>
+                        <h3 class="h4 mb-3">Add Listing &</br> Submit KYC</h3>
                         <p class="text-muted">Enter your business details, add photos, services, and submit your KYC documents for verification.</p>
                     </div>
                 </div>
@@ -97,10 +111,11 @@
             <div class="col-md-4">
                 <div class="card border-0 h-100 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-4" style="width: 80px; height: 80px; justify-content: center; align-items: center;">
                             <i class="bi bi-check-circle fs-1 text-primary"></i>
                         </div>
-                        <h3 class="h4 mb-3">Step 3: Get Approved & Go Online</h3>
+                        <p class="text-muted fst-italic mb-1">Step 3</p>
+                        <h3 class="h4 mb-3">Get Approved & </br>Go Online</h3>
                         <p class="text-muted">Our team verifies your information, and your listing goes live. Start receiving inquiries immediately!</p>
                     </div>
                 </div>
@@ -173,8 +188,8 @@
                         <div class="badge bg-primary mb-3">RECOMMENDED</div>
                         <h3 class="fw-bold mb-0">Verified Business</h3>
                         <p class="text-muted mb-4">For businesses serious about growth</p>
-                        <h4 class="display-5 fw-bold mb-1">₹4,999 <span class="text-muted fs-6 fw-normal">/year</span></h4>
-                        <p class="text-muted mb-4">Just ₹417/month, billed annually</p>
+                        <h4 class="display-5 fw-bold mb-1">₹417 <span class="text-muted fs-6 fw-normal">/month</span></h4>
+                        <p class="text-muted mb-4">Just ₹4999/year, billed annually</p>
                         
                         <ul class="list-unstyled mb-5">
                             <li class="mb-3 d-flex align-items-center">
@@ -203,7 +218,7 @@
                             </li>
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                <span><strong class="text-success">Priority ranking in search results</strong></span>
+                                <span><strong class="text-success">Priority ranking in search results</span></i>
                             </li>
                         </ul>
                         
@@ -217,32 +232,18 @@
     </div>
 </section>
 
-<!-- Call to Action Section -->
-<section class="py-5 bg-primary text-white">
+<!-- Combined CTA and Contact Form Section -->
+<section class="py-5 bg-light">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <h2 class="display-6 fw-bold mb-3">What Are You Waiting For?</h2>
-                <p class="lead mb-0">Join thousands of businesses already benefiting from BizDirectory</p>
-            </div>
-            <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-                <a href="#" class="btn btn-light btn-lg px-4">Get Started Now</a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Contact Form Section -->
-<section class="py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card border-0 shadow">
-                    <div class="card-body p-5">
-                        <div class="text-center mb-4">
-                            <h2 class="fw-bold">Have Questions?</h2>
-                            <p class="text-muted">Fill out the form below and we'll call you back</p>
-                        </div>
+        <div class="row g-4">
+            
+            
+            <!-- Right side: Contact Form -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow h-100">
+                    <div class="card-body p-4 p-lg-5">
+                        <h3 class="fw-bold mb-3">Have Questions?</h3>
+                        <p class="text-muted mb-4">Fill out the form below and we'll call you back</p>
                         
                         <form>
                             <div class="row g-3">
@@ -263,13 +264,26 @@
                                     <textarea class="form-control" id="message" rows="3" placeholder="What would you like to know?"></textarea>
                                 </div>
                                 <div class="col-12 mt-4">
-                                    <button type="submit" class="btn btn-primary w-100 py-3">Request Callback</button>
+                                    <button type="submit" class="btn btn-primary w-100 py-2">Request Callback</button>
                                 </div>
                                 <div class="col-12">
                                     <p class="small text-center text-muted mt-3">By submitting this form, you agree to our Privacy Policy and Terms of Service</p>
                                 </div>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Left side: CTA -->
+            <div class="col-lg-5">
+                <div class="h-100 d-flex flex-column justify-content-center p-4 p-lg-5">
+                    <h2 class="display-6 fw-bold mb-4">What Are You Waiting For?</h2>
+                    <p class="lead mb-4">Join thousands of businesses already benefiting from BizDirectory and start growing your customer base today.</p>
+                    <p class="mb-4">Our platform has helped over 5,000 businesses increase their visibility and connect with new customers.</p>
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-primary btn-lg px-4 py-3">Get Started Now</a>
+                        <p class="text-muted mt-3 small">No credit card required to get started</p>
                     </div>
                 </div>
             </div>
