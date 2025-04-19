@@ -1,4 +1,4 @@
-### BizDirectory
+# BizDirectory
 A modern Django application that connects users with local businesses in their area.
 
 ## Overview
@@ -15,15 +15,15 @@ SQLite/PostgreSQL
 jQuery
 
 ## Quick Start
-# Clone repository
+### Clone repository
 git clone https://github.com/rakeshptajlapur/bizdirectory.git
 cd bizdirectory
 
-# Setup virtual environment
+### Setup virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install and run
+### Install and run
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
