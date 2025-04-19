@@ -1,0 +1,366 @@
+{% extends 'directory/base.html' %}
+{% load static %}
+
+{% block title %}All Business Listings | BizDirectory{% endblock %}
+
+{% block hero %}
+<div class="hero-section listings-hero">
+    <div class="hero-overlay"></div>
+    
+    <div class="container position-relative py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="text-center text-white mb-4">Find Local Businesses</h1>
+                
+                <!-- Search Form -->
+                <form id="search-form" action="{% url 'directory:listings' %}" method="get" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" id="search-input" name="query" class="form-control form-control-lg" 
+                               placeholder="Search businesses, services..." value="{{ request.GET.query|default:'' }}">
+                        <button class="btn btn-primary btn-lg" type="submit">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Filters Sidebar -->
+    <div class="col-lg-3">
+        <div class="card mb-4 sticky-top" style="top: 90px; z-index: 1;">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Filters</h5>
+            </div>
+            <div class="card-body">
+                <form id="filter-form" action="{% url 'directory:listings' %}" method="get">
+                    <!-- Search query (hidden) -->
+                    {% if current_filters.query %}
+                    <input type="hidden" name="query" value="{{ current_filters.query }}">
+                    {% endif %}
+                    
+                    <!-- Category filter -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Categories</label>
+                        <div class="overflow-auto" style="max-height: 200px;">
+                            {% for category in categories %}
+                            <div class="form-check">
+                                <input class="form-check-input filter-change" type="radio" name="category" 
+                                       id="category-{{ category.id }}" value="{{ category.id }}"
+                                       {% if current_filters.category|add:"0" == category.id %}checked{% endif %}>
+                                <label class="form-check-label" for="category-{{ category.id }}">
+                                    {{ category.name }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Rating filter -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Rating</label>
+                        {% for i in '54321'|make_list %}
+                        <div class="form-check">
+                            <input class="form-check-input filter-change" type="radio" name="rating" 
+                                   id="rating-{{ i }}" value="{{ i }}"
+                                   {% if current_filters.rating == i %}checked{% endif %}>
+                            <label class="form-check-label" for="rating-{{ i }}">
+                                {% with rating_int=i|add:"0" %}
+                                {% for j in '12345'|make_list %}
+                                <i class="bi bi-star{% if forloop.counter <= rating_int %}-fill{% endif %} text-warning"></i>
+                                {% endfor %}
+                                {% endwith %}
+                                & Up
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Trust & Safety filter -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Trust & Safety</label>
+                        <div class="form-check">
+                            <input class="form-check-input filter-change" type="radio" name="trust" 
+                                   id="trust-gst" value="gst"
+                                   {% if current_filters.trust == 'gst' %}checked{% endif %}>
+                            <label class="form-check-label" for="trust-gst">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                    <i class="bi bi-check-circle-fill"></i> GST Verified
+                                </span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input filter-change" type="radio" name="trust" 
+                                   id="trust-kyc" value="kyc"
+                                   {% if current_filters.trust == 'kyc' %}checked{% endif %}>
+                            <label class="form-check-label" for="trust-kyc">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                    <i class="bi bi-shield-check"></i> KYC Completed
+                                </span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input filter-change" type="radio" name="trust" 
+                                   id="trust-both" value="both"
+                                   {% if current_filters.trust == 'both' %}checked{% endif %}>
+                            <label class="form-check-label" for="trust-both">
+                                Both GST & KYC
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Pincode filter -->
+                    <div class="mb-4">
+                        <label for="pincode-filter" class="form-label fw-bold">Pincode</label>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="pincode-filter" name="pincode"
+                                   placeholder="Enter pincode" value="{{ current_filters.pincode|default:'' }}"
+                                   maxlength="6" pattern="\d*">
+                            <button class="btn btn-outline-primary" type="submit">
+                                <i class="bi bi-funnel"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Reset filters button -->
+                    <div class="d-grid">
+                        <a href="{% url 'directory:listings' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Clear All Filters
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Listings content -->
+    <div class="col-lg-9">
+        <!-- Active filters display -->
+        {% if current_filters %}
+        <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+            <span class="text-muted">Active filters:</span>
+            {% for key, value in current_filters.items %}
+                {% if key == 'category' %}
+                    {% for cat in categories %}
+                        {% if cat.id|stringformat:"s" == value %}
+                        <span class="badge bg-primary rounded-pill">
+                            Category: {{ cat.name }}
+                            <a href="javascript:void(0)" class="text-white remove-filter" data-filter="category" aria-label="Remove filter">×</a>
+                        </span>
+                        {% endif %}
+                    {% endfor %}
+                {% elif key == 'rating' %}
+                    <span class="badge bg-primary rounded-pill">
+                        Rating: {{ value }}+ stars
+                        <a href="javascript:void(0)" class="text-white remove-filter" data-filter="rating" aria-label="Remove filter">×</a>
+                    </span>
+                {% elif key == 'pincode' %}
+                    <span class="badge bg-primary rounded-pill">
+                        Pincode: {{ value }}
+                        <a href="javascript:void(0)" class="text-white remove-filter" data-filter="pincode" aria-label="Remove filter">×</a>
+                    </span>
+                {% elif key == 'trust' %}
+                    <span class="badge bg-primary rounded-pill">
+                        Trust: {% if value == 'gst' %}GST Verified{% elif value == 'kyc' %}KYC Completed{% else %}Both{% endif %}
+                        <a href="javascript:void(0)" class="text-white remove-filter" data-filter="trust" aria-label="Remove filter">×</a>
+                    </span>
+                {% elif key == 'query' %}
+                    <span class="badge bg-primary rounded-pill">
+                        Search: "{{ value }}"
+                        <a href="javascript:void(0)" class="text-white remove-filter" data-filter="query" aria-label="Remove filter">×</a>
+                    </span>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <!-- Results count -->
+        <p class="text-muted mb-4">Showing {{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ paginator.count }} businesses</p>
+        
+        <!-- Business listings with single column layout -->
+        <div class="row">
+            {% for business in page_obj %}
+            <div class="col-12 mb-4">
+                <div class="card h-100 shadow-sm business-card">
+                    <div class="row g-0 h-100">
+                        <!-- Left side - Image with fixed aspect ratio and category overlay -->
+                        <div class="col-4 col-md-3 position-relative">
+                            <img src="{{ business.get_primary_image_url }}" class="img-fluid h-100 w-100" alt="{{ business.name }}" style="object-fit: cover;">
+                            <span class="position-absolute top-0 start-0 m-2 badge category-badge">
+                                {{ business.category.name }}
+                            </span>
+                        </div>
+                        
+                        <!-- Right side - Content -->
+                        <div class="col-8 col-md-9">
+                            <div class="card-body d-flex flex-column h-100">
+                                <!-- Business name and rating -->
+                                <h5 class="card-title mb-2">{{ business.name }}</h5>
+                                
+                                <!-- Trust & Safety Tags -->
+                                <div class="d-flex flex-wrap gap-1 mb-2">
+                                    {% if business.gst_verified %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.7rem;">
+                                        <i class="bi bi-check-circle-fill me-1"></i>GST Verified
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if business.kyc_status == 'completed' %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.7rem;">
+                                        <i class="bi bi-shield-check me-1"></i>KYC Completed
+                                    </span>
+                                    {% elif business.kyc_status == 'pending' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 0.7rem;">
+                                        <i class="bi bi-clock-history me-1"></i>KYC Pending
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Description - New addition -->
+                                <p class="small text-muted mb-2 line-clamp-2">{{ business.description }}</p>
+                                
+                                <!-- Star rating -->
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="stars me-2">
+                                        {% for i in "12345" %}
+                                            <i class="bi bi-star{% if forloop.counter <= business.avg_rating|default:0 %}-fill{% endif %} text-warning"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <span class="text-muted small">({{ business.reviews.count }})</span>
+                                </div>
+                                
+                                <!-- Service Tags - Increased to 5 -->
+                                <div class="d-flex flex-wrap gap-1 mb-2">
+                                    {% for service in business.services.all|slice:":5" %}
+                                        <span class="badge rounded-pill border border-secondary text-secondary bg-white">{{ service.name }}</span>
+                                    {% empty %}
+                                        <span class="text-muted small">No services listed</span>
+                                    {% endfor %}
+                                </div>
+                                
+                                <!-- Spacer to push footer to bottom -->
+                                <div class="mt-auto"></div>
+                                
+                                <!-- Owner and location info on one line -->
+                                <div class="mt-2 border-top pt-2">
+                                    <p class="small text-muted mb-0">
+                                        <i class="bi bi-person-circle me-1"></i> Owner: <span class="text-capitalize">{{ business.owner.get_full_name|default:business.owner.username|title }}</span>
+                                        <span class="mx-2">|</span>
+                                        <i class="bi bi-geo-alt me-1"></i> {{ business.city }} - {{ business.pincode }}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <a href="{% url 'directory:business_detail' business.pk %}" class="stretched-link" aria-label="View {{ business.name }}"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="py-5">
+                    <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
+                    <h3 class="mt-3">No businesses found</h3>
+                    <p class="text-muted">Try adjusting your filters or search terms</p>
+                    <a href="{% url 'directory:listings' %}" class="btn btn-outline-primary mt-3">Clear all filters</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <nav aria-label="Page navigation" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page=1" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;&laquo;</a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;</a>
+                </li>
+                {% endif %}
+                
+                {% for i in page_obj.paginator.page_range %}
+                    {% if i == page_obj.number %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ i }}</span>
+                    </li>
+                    {% elif i > page_obj.number|add:"-3" and i < page_obj.number|add:"3" %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page={{ i }}">{{ i }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;</a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;&raquo;</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Auto-submit form when filter changes
+        $('.filter-change').on('change', function() {
+            $('#filter-form').submit();
+        });
+        
+        // Remove individual filters
+        $('.remove-filter').on('click', function() {
+            const filter = $(this).data('filter');
+            const searchParams = new URLSearchParams(window.location.search);
+            
+            searchParams.delete(filter);
+            
+            // Keep page parameter only if removing a filter
+            if (filter !== 'page') {
+                searchParams.delete('page');
+            }
+            
+            window.location.href = window.location.pathname + (searchParams.toString() ? '?' + searchParams.toString() : '');
+        });
+        
+        // Pincode input validation (numbers only)
+        $('#pincode-filter').on('input', function() {
+            $(this).val($(this).val().replace(/[^0-9]/g, ''));
+        });
+    });
+</script>
+{% endblock %}

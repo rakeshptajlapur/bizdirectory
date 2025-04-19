@@ -17,7 +17,7 @@
         .hero-section {
             position: relative;
             overflow: hidden;
-            min-height: 500px;
+            min-height: 400px; /* Increased by 20% from 250px to 300px */
             display: flex;
             align-items: center;
             margin-bottom: 2rem;
@@ -285,6 +285,152 @@
             opacity: 0.05; /* Very subtle background */
             z-index: 0;
         }
+
+        /* Add to your existing CSS */
+        .listings-hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/static/directory/images/listings-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 6rem 0 4rem;
+            position: relative;
+        }
+
+        .filter-form label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .active-filter-badge {
+            cursor: pointer;
+        }
+
+        .business-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .business-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+
+        /* Category badge overlay on business cards */
+        .category-badge {
+            background-color: rgba(13, 110, 253, 0.8); /* Semi-transparent primary blue */
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.35rem 0.65rem;
+            border-radius: 0.25rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            z-index: 2;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        /* Responsive adjustments for horizontal cards */
+        @media (max-width: 767px) {
+            .business-card .position-relative {
+                height: 180px;
+            }
+        }
+
+        /* Add this to your base.html CSS or listings.html block extra_css */
+        /* Remove these CSS rules that are causing the gap */
+        .card-img-container {
+            overflow: hidden;
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            padding-bottom: 100%; /* This is causing the fixed aspect ratio */
+            height: 0;
+        }
+
+        .card-img-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Small screen adjustments for horizontal cards */
+        @media (max-width: 767.98px) {
+            .card-img-wrapper {
+                padding-bottom: 66.67%; /* Creates a 3:2 aspect ratio for better appearance on small screens */
+            }
+        }
+
+        /* Mobile adjustments to stack the image on top */
+        @media (max-width: 575.98px) {
+            .business-card .row {
+                flex-direction: column;
+            }
+            
+            .business-card .col-md-4 {
+                width: 100%;
+            }
+            
+            .business-card .col-md-8 {
+                width: 100%;
+            }
+            
+            .card-img-wrapper {
+                padding-bottom: 56.25%; /* 16:9 aspect ratio for top images */
+            }
+        }
+
+        /* Simplified CSS for single column layout */
+        .category-badge {
+            background-color: rgba(13, 110, 253, 0.8);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.35rem 0.65rem;
+            border-radius: 0.25rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            z-index: 2;
+        }
+
+        .card-img-container {
+            overflow: hidden;
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            padding-bottom: 100%; /* Creates a 1:1 aspect ratio */
+            height: 0;
+        }
+
+        .card-img-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .business-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .business-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+        }
+
+        /* Add this to your CSS for clamping the description text to 2 lines */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        
     </style>
     {% block extra_css %}
     <style>
@@ -531,9 +677,31 @@
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script>
-        // Auto-suggestions functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Custom code will go here
+                    
+            // Setup each carousel (keep your existing carousel code)
+                $('.business-category-section').each(function() {
+                    const $carousel = $(this).find('.business-carousel');
+                    const $prevBtn = $(this).find('.carousel-control-prev');
+                    const $nextBtn = $(this).find('.carousel-control-next');
+                    
+                    const itemWidth = $carousel.find('.carousel-item:first').outerWidth(true);
+                    const visibleItems = Math.floor($carousel.width() / itemWidth);
+                    
+                    // Next button click
+                    $nextBtn.on('click', function() {
+                        $carousel.animate({
+                            scrollLeft: '+=' + (itemWidth * visibleItems)
+                        }, 300);
+                    });
+                    
+                    // Previous button click
+                    $prevBtn.on('click', function() {
+                        $carousel.animate({
+                            scrollLeft: '-=' + (itemWidth * visibleItems)
+                        }, 300);
+                    });
+                });
+            });
         });
     </script>
     {% block extra_js %}

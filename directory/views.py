@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 from .models import Business, Category, Service  # Make sure to import Service
 
 def home(request):
@@ -104,3 +105,60 @@ def categories(request):
             category.business_count = Business.objects.filter(category=category, is_active=True).count()
     
     return render(request, 'directory/categories.html', {'categorized': categorized})
+
+def listings(request):
+    """View for all business listings with filters"""
+    
+    # Base queryset with optimized queries
+    businesses = Business.objects.filter(is_active=True).select_related('category', 'owner').prefetch_related('services', 'reviews')
+    
+    # Apply filters
+    category_id = request.GET.get('category')
+    if category_id:
+        businesses = businesses.filter(category_id=category_id)
+    
+    rating = request.GET.get('rating')
+    if rating:
+        businesses = businesses.filter(reviews__rating__gte=int(rating)).distinct()
+    
+    pincode = request.GET.get('pincode')
+    if pincode:
+        businesses = businesses.filter(pincode__startswith=pincode)
+    
+    trust_filter = request.GET.get('trust')
+    if trust_filter == 'gst':
+        businesses = businesses.filter(gst_verified=True)
+    elif trust_filter == 'kyc':
+        businesses = businesses.filter(kyc_status='completed')
+    elif trust_filter == 'both':
+        businesses = businesses.filter(gst_verified=True, kyc_status='completed')
+    
+    search_query = request.GET.get('query')
+    if search_query:
+        businesses = businesses.filter(
+            Q(name__icontains=search_query) | 
+            Q(description__icontains=search_query) |
+            Q(services__name__icontains=search_query)
+        ).distinct()
+    
+    # Get all categories for the filter sidebar
+    categories = Category.objects.all()
+    
+    # Pagination
+    paginator = Paginator(businesses, 12)  # 12 businesses per page
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    
+    # Prepare current filters for maintaining state
+    current_filters = {}
+    for param in ['category', 'rating', 'pincode', 'trust', 'query']:
+        if request.GET.get(param):
+            current_filters[param] = request.GET.get(param)
+    
+    context = {
+        'page_obj': page_obj,
+        'categories': categories,
+        'current_filters': current_filters,
+    }
+    
+    return render(request, 'directory/listings.html', context)
