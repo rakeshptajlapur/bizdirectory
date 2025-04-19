@@ -163,3 +163,8 @@ def listings(request):
     }
     
     return render(request, 'directory/listings.html', context)
+
+# In your directory/views.py
+def add_listing(request):
+    """View for the add listing page"""
+    return render(request, 'directory/add_listing.html')

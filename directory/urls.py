@@ -12,4 +12,6 @@ urlpatterns = [
     path('api/pincode-suggestions/', views.pincode_suggestions, name='pincode_suggestions'),
     path('listings/', views.listings, name='listings'),
     path('search-suggestions/', views.search_suggestions, name='search_suggestions'),
+    path('add-listing/', views.add_listing, name='add_listing'),
+
 ]

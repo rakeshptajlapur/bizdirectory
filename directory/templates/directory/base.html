@@ -100,6 +100,13 @@
             padding-right: 1rem;
         }
 
+        /* Fix login button hover text color */
+        .navbar .nav-item .nav-link.btn.btn-outline-primary:hover {
+            background-color: #0d6efd !important;
+            color: white !important;
+            border-color: #0d6efd;
+        }
+
         /* Category card styles */
         .category-img-wrapper {
             position: relative;
@@ -558,13 +565,14 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-plus-circle"></i> Add Listing</a>
+                        <a class="nav-link" href="{% url 'directory:home' %}"><i class="bi bi-house"></i> Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-tag"></i> Deals</a>
+                        <a class="nav-link" href="{% url 'directory:listings' %}"><i class="bi bi-grid"></i> All Listings</a>
                     </li>
+                    
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-currency-dollar"></i> Pricing</a>
+                        <a class="nav-link" href="{% url 'directory:add_listing' %}"><i class="bi bi-plus-circle"></i> Add Listing</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link btn btn-outline-primary ms-2" href="#">Login</a>
