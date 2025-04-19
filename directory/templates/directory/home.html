@@ -180,14 +180,9 @@
             {% endfor %}
             {% endwith %}
         </div>
-        
-        <!-- Carousel Controls -->
-        <button class="carousel-control carousel-control-prev" type="button">
-            <i class="bi bi-chevron-left fs-4"></i>
-        </button>
-        <button class="carousel-control carousel-control-next" type="button">
-            <i class="bi bi-chevron-right fs-4"></i>
-        </button>
+        <div class="scroll-indicator-container">
+            <div class="scroll-indicator"></div>
+        </div>
     </div>
 </section>
 {% endfor %}
@@ -197,24 +192,29 @@
         // Setup each carousel
         $('.business-category-section').each(function() {
             const $carousel = $(this).find('.business-carousel');
-            const $prevBtn = $(this).find('.carousel-control-prev');
-            const $nextBtn = $(this).find('.carousel-control-next');
+            const $indicator = $(this).find('.scroll-indicator');
             
-            const scrollAmount = 500; // Fixed scroll amount
-            
-            // Next button click
-            $nextBtn.on('click', function() {
-                $carousel.animate({
-                    scrollLeft: '+=' + scrollAmount
-                }, 300);
+            // Update indicator position on scroll
+            $carousel.on('scroll', function() {
+                const maxScroll = $carousel[0].scrollWidth - $carousel[0].clientWidth;
+                const scrollPosition = $carousel[0].scrollLeft;
+                
+                if (maxScroll > 0) {
+                    const scrollPercentage = (scrollPosition / maxScroll) * 100;
+                    const translateX = (100 - $indicator.width() / $carousel.width() * 100) * (scrollPercentage / 100);
+                    $indicator.css('transform', `translateX(${translateX}%)`);
+                    
+                    // Hide right arrow indicator when at the end
+                    if (scrollPosition + 5 >= maxScroll) {
+                        $carousel.addClass('at-end');
+                    } else {
+                        $carousel.removeClass('at-end');
+                    }
+                }
             });
             
-            // Previous button click
-            $prevBtn.on('click', function() {
-                $carousel.animate({
-                    scrollLeft: '-=' + scrollAmount
-                }, 300);
-            });
+            // Trigger once to initialize
+            $carousel.trigger('scroll');
         });
     });
 </script>
@@ -301,6 +301,58 @@ $(document).ready(function() {
 /* Make sure the text stays visible */
 .ui-autocomplete .ui-menu-item:hover .ui-menu-item-wrapper {
     color: #0d6efd !important; /* Blue text on hover */
+}
+
+/* Scroll indicator styles */
+.scroll-indicator-container {
+    height: 3px;
+    background-color: #f0f0f0;
+    margin-top: 10px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.scroll-indicator {
+    height: 100%;
+    background-color: #0d6efd;
+    width: 30%;
+    border-radius: 3px;
+    transition: transform 0.3s ease-out;
+}
+
+/* Show horizontal scrollability */
+.business-carousel {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    position: relative;
+}
+
+.business-carousel::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+/* Add subtle indicators on sides when there's more content */
+.business-carousel::after {
+    content: '→';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.8);
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 50%;
+    color: #0d6efd;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    opacity: 0.8;
+}
+
+/* Hide the right arrow when at the end */
+.business-carousel.at-end::after {
+    display: none;
 }
 </style>
 {% endblock %}
