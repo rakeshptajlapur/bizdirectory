@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
 from django.core.paginator import Paginator
-from .models import Business, Category, Service  # Make sure to import Service
+from datetime import datetime
+from .models import Business, Category, Service
 
 def home(request):
     search_query = request.GET.get('query', '')
@@ -45,10 +46,30 @@ def home(request):
     return render(request, 'directory/home.html', context)
 
 def business_detail(request, pk):
+    """View for displaying a single business listing"""
     business = get_object_or_404(Business, pk=pk)
+    
+    # Calculate average rating for this business
+    business.avg_rating = business.reviews.aggregate(avg=Avg('rating'))['avg']
+    
+    # Get today's weekday (0=Monday, 6=Sunday)
+    today_weekday = datetime.now().weekday()
+    
+    # Get related businesses in same category (excluding current business)
+    related_businesses = Business.objects.filter(
+        category=business.category
+    ).exclude(
+        pk=business.pk
+    ).annotate(
+        avg_rating=Avg('reviews__rating')  # Add this annotation
+    ).order_by('-avg_rating')[:3]  # Top 3 rated related businesses
+    
     context = {
-        'business': business
+        'business': business,
+        'today_weekday': today_weekday,
+        'related_businesses': related_businesses,
     }
+    
     return render(request, 'directory/business_detail.html', context)
 
 def search_suggestions(request):
@@ -124,7 +145,7 @@ def listings(request):
     
     pincode = request.GET.get('pincode')
     if pincode:
-        businesses = businesses.filter(pincode__startswith=pincode)
+        businesses = businesses.filter(pincode__startswith(pincode))
     
     trust_filter = request.GET.get('trust')
     if trust_filter == 'gst':
