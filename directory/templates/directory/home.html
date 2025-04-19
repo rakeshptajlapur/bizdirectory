@@ -286,9 +286,21 @@ $(document).ready(function() {
 }
 
 .ui-state-active, .ui-menu-item:hover {
-    background-color: #f8f9fa !important;
+    background-color: #e9ecef !important; /* Slightly darker grey background */
     border: none !important;
     margin: 0 !important;
+    color: #212529 !important; /* Dark text color */
+}
+
+/* Fix for text visibility on hover */
+.ui-menu .ui-menu-item-wrapper.ui-state-active {
+    color: #0d6efd !important; /* Blue text on hover */
+    font-weight: 500 !important;
+}
+
+/* Make sure the text stays visible */
+.ui-autocomplete .ui-menu-item:hover .ui-menu-item-wrapper {
+    color: #0d6efd !important; /* Blue text on hover */
 }
 </style>
 {% endblock %}

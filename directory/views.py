@@ -52,23 +52,24 @@ def business_detail(request, pk):
     return render(request, 'directory/business_detail.html', context)
 
 def search_suggestions(request):
-    query = request.GET.get('term', '')
-    if len(query) < 2:
+    term = request.GET.get('term', '')
+    if len(term) < 2:
         return JsonResponse([], safe=False)
-    
-    # Get businesses that match the query
+        
+    # Search businesses
     businesses = Business.objects.filter(
-        Q(name__icontains=query) | 
-        Q(description__icontains=query)
-    ).values_list('name', flat=True).distinct()[:10]
+        Q(name__icontains=term) | Q(description__icontains=term)
+    ).values_list('name', flat=True).distinct()[:5]
     
-    # Also get matching services
+    # Search services
     services = Service.objects.filter(
-        name__icontains=query
+        name__icontains=term
     ).values_list('name', flat=True).distinct()[:5]
     
     # Combine and deduplicate results
     suggestions = list(businesses) + list(services)
+    suggestions = list(dict.fromkeys(suggestions))[:8]  # Take up to 8 unique suggestions
+    
     return JsonResponse(suggestions, safe=False)
 
 def category_suggestions(request):

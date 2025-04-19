@@ -9,9 +9,73 @@
     .listings-hero {
         min-height: 150px !important;
         padding: 2rem 0 !important;
+        position: relative;
+        overflow: hidden;
     }
     
-    /* Adjust spacing for smaller hero */
+    /* Video background styles */
+    .video-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -2;
+    }
+    
+    .hero-video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translateX(-50%) translateY(-50%);
+    }
+    
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: -1;
+    }
+    
+    /* Auto-suggestion styling */
+    .search-autocomplete {
+        border-radius: 0 0 1rem 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 0.5rem 0;
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 1050;
+    }
+    
+    .search-suggestion-item {
+        padding: 1rem 1.25rem; /* Increased from 0.75rem 1rem */
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .search-suggestion-item:hover {
+        background-color: #e9ecef; /* Changed from #f8f9fa to a darker grey */
+    }
+    
+    .ui-state-active .search-suggestion-item {
+        background-color: #e9ecef !important;
+        border: none !important;
+        color: #212529 !important;
+    }
+    
+    /* Existing styles */
     .listings-hero h1 {
         font-size: 1.8rem;
         margin-bottom: 1rem !important;
@@ -21,11 +85,37 @@
         max-width: 600px;
         margin: 0 auto;
     }
+    
+    /* More specific selectors to override jQuery UI's default styles */
+    .ui-menu .ui-menu-item-wrapper {
+        padding: 1rem 1.25rem !important; /* Enforce larger padding */
+    }
+    
+    .ui-menu .ui-menu-item-wrapper.ui-state-active {
+        margin: 0 !important;
+        background-color: #e9ecef !important; /* Light grey on active/hover */
+        border: none !important;
+        color: #212529 !important; /* Dark text */
+    }
+    
+    .ui-menu .ui-menu-item {
+        border-bottom: 1px solid #f0f0f0; /* Add subtle separators */
+    }
+    
+    .ui-menu .ui-menu-item:last-child {
+        border-bottom: none; /* Remove border from last item */
+    }
 </style>
 {% endblock %}
 
 {% block hero %}
 <div class="hero-section listings-hero">
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay muted loop class="hero-video">
+            <source src="{% static 'directory/videos/hero-background.mp4' %}" type="video/mp4">
+        </video>
+    </div>
     <div class="hero-overlay"></div>
     
     <div class="container position-relative py-5">
@@ -33,11 +123,12 @@
             <div class="col-lg-8">
                 <h1 class="text-center text-white mb-4">Find Local Businesses</h1>
                 
-                <!-- Search Form -->
+                <!-- Search Form with Auto-suggestion -->
                 <form id="search-form" action="{% url 'directory:listings' %}" method="get" class="mb-4">
                     <div class="input-group">
                         <input type="text" id="search-input" name="query" class="form-control form-control-lg" 
-                               placeholder="Search businesses, services..." value="{{ request.GET.query|default:'' }}">
+                               placeholder="Search businesses, services..." value="{{ request.GET.query|default:'' }}"
+                               autocomplete="off">
                         <button class="btn btn-primary btn-lg" type="submit">
                             <i class="bi bi-search"></i> Search
                         </button>
@@ -358,19 +449,52 @@
 {% block extra_js %}
 <script>
     $(document).ready(function() {
-        // Auto-submit form when filter changes
+        // Auto-suggestions for search box
+        $("#search-input").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "{% url 'directory:search_suggestions' %}",
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function(data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 2,
+            classes: {
+                "ui-autocomplete": "search-autocomplete"
+            },
+            select: function(event, ui) {
+                $("#search-input").val(ui.item.value);
+                $("#search-form").submit();
+                return false;
+            }
+        }).data("ui-autocomplete")._renderItem = function(ul, item) {
+            // Highlight the matching text
+            const searchTerm = this.term.trim();
+            const regex = new RegExp("(" + searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + ")", "gi");
+            const highlightedText = item.label.replace(regex, '<strong class="text-primary">$1</strong>');
+            
+            return $("<li></li>")
+                .data("ui-autocomplete-item", item)
+                .append(`<div class='search-suggestion-item'>${highlightedText}</div>`)
+                .appendTo(ul);
+        };
+
+        // Existing filters code
         $('.filter-change').on('change', function() {
             $('#filter-form').submit();
         });
         
-        // Remove individual filters
         $('.remove-filter').on('click', function() {
             const filter = $(this).data('filter');
             const searchParams = new URLSearchParams(window.location.search);
             
             searchParams.delete(filter);
             
-            // Keep page parameter only if removing a filter
             if (filter !== 'page') {
                 searchParams.delete('page');
             }
@@ -378,7 +502,6 @@
             window.location.href = window.location.pathname + (searchParams.toString() ? '?' + searchParams.toString() : '');
         });
         
-        // Pincode input validation (numbers only)
         $('#pincode-filter').on('input', function() {
             $(this).val($(this).val().replace(/[^0-9]/g, ''));
         });
