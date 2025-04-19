@@ -1,0 +1,75 @@
+{% extends 'directory/base.html' %}
+
+{% block title %}Browse All Categories | BizDirectory{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">All Categories</h1>
+    
+    <!-- Search and Filter -->
+    <div class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" id="categorySearch" 
+                   placeholder="Search categories...">
+            <button class="btn btn-outline-secondary" type="button">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Alphabetical Index -->
+    <div class="mb-4 category-index">
+        <div class="d-flex flex-wrap justify-content-center">
+            {% for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+                {% if letter in categorized %}
+                <a href="#letter-{{ letter }}" class="category-letter mx-1 px-2 py-1 border rounded">{{ letter }}</a>
+                {% else %}
+                <span class="category-letter mx-1 px-2 py-1 border rounded text-muted">{{ letter }}</span>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Categories Organized Alphabetically -->
+    <div class="category-groups">
+        {% for letter, categories in categorized.items %}
+        <div id="letter-{{ letter }}" class="category-letter-group mb-4">
+            <h2 class="border-bottom pb-2">{{ letter }}</h2>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+                {% for category in categories %}
+                <div class="col">
+                    <a href="/?category={{ category.id }}" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ category.name }}</h5>
+                                <span class="badge bg-secondary">{{ category.business_count }} business{{ category.business_count|pluralize:"es" }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // Live search functionality
+    document.getElementById('categorySearch').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const categories = document.querySelectorAll('.card');
+        
+        categories.forEach(function(category) {
+            const title = category.querySelector('h5').textContent.toLowerCase();
+            const parent = category.closest('.col');
+            
+            if (title.includes(searchTerm)) {
+                parent.style.display = '';
+            } else {
+                parent.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

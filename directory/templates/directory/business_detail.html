@@ -1,0 +1,21 @@
+{% extends 'directory/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ business.name }}</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Business Information</h5>
+            <p>{{ business.description }}</p>
+            <hr>
+            <p><strong>Category:</strong> {{ business.category.name }}</p>
+            <p><strong>Location:</strong> {{ business.city }} - {{ business.pincode }}</p>
+            <p><strong>Contact:</strong> {{ business.phone }}</p>
+            <p><strong>Email:</strong> {{ business.email }}</p>
+            {% if business.website %}
+            <p><strong>Website:</strong> <a href="{{ business.website }}">{{ business.website }}</a></p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

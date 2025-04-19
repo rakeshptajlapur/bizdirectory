@@ -1,0 +1,47 @@
+[
+    {
+        "model": "directory.category",
+        "pk": 1,
+        "fields": {
+            "name": "Plumbing Services",
+            "slug": "plumbing-services",
+            "description": "Professional plumbing services for residential and commercial needs"
+        }
+    },
+    {
+        "model": "directory.category",
+        "pk": 2,
+        "fields": {
+            "name": "Training Centers",
+            "slug": "training-centers",
+            "description": "Educational and vocational training centers"
+        }
+    },
+    {
+        "model": "directory.category",
+        "pk": 3,
+        "fields": {
+            "name": "Hospitals",
+            "slug": "hospitals",
+            "description": "Medical facilities and healthcare services"
+        }
+    },
+    {
+        "model": "directory.category",
+        "pk": 4,
+        "fields": {
+            "name": "Schools",
+            "slug": "schools",
+            "description": "Educational institutions"
+        }
+    },
+    {
+        "model": "directory.category",
+        "pk": 5,
+        "fields": {
+            "name": "Electricians",
+            "slug": "electricians",
+            "description": "Professional electrical services"
+        }
+    }
+]

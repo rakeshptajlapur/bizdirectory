@@ -1,0 +1,886 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "username": "bizowner1",
+            "password": "pbkdf2_sha256$600000$xyz123...",
+            "email": "owner1@example.com",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 2,
+        "fields": {
+            "username": "reviewer1",
+            "password": "pbkdf2_sha256$600000$xyz123...",
+            "email": "reviewer1@example.com",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 3,
+        "fields": {
+            "username": "reviewer2",
+            "password": "pbkdf2_sha256$600000$xyz123...",
+            "email": "reviewer2@example.com",
+            "is_active": true
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 1,
+        "fields": {
+            "owner": 1,
+            "name": "City Plumbing Solutions",
+            "category": 1,
+            "description": "Professional plumbing services with 24/7 emergency support",
+            "address": "123 Main Street",
+            "pincode": "400001",
+            "city": "Mumbai",
+            "phone": "9876543210",
+            "email": "contact@cityplumbing.com",
+            "website": "https://cityplumbing.com",
+            "registration_number": "PL123456",
+            "gst_number": "GST123456789",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 2,
+        "fields": {
+            "owner": 1,
+            "name": "QuickFix Plumbing",
+            "category": 1,
+            "description": "Fast and reliable plumbing repairs at affordable rates",
+            "address": "456 Link Road",
+            "pincode": "400053",
+            "city": "Mumbai",
+            "phone": "9876543211",
+            "email": "info@quickfixplumbing.com",
+            "website": "https://quickfixplumbing.com",
+            "registration_number": "PL123457",
+            "gst_number": "GST123456790",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 3,
+        "fields": {
+            "owner": 1,
+            "name": "Pro Plumbers",
+            "category": 1,
+            "description": "Expert plumbing solutions for residential and commercial properties",
+            "address": "789 Park Avenue",
+            "pincode": "400054",
+            "city": "Mumbai",
+            "phone": "9876543212",
+            "email": "contact@proplumbers.com",
+            "website": "https://proplumbers.com",
+            "registration_number": "PL123458",
+            "gst_number": "GST123456791",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 4,
+        "fields": {
+            "owner": 1,
+            "name": "Tech Training Hub",
+            "category": 2,
+            "description": "Leading IT training center with placement assistance",
+            "address": "45 Tech Park",
+            "pincode": "400002",
+            "city": "Mumbai",
+            "phone": "9876543213",
+            "email": "info@techtraininghub.com",
+            "website": "https://techtraininghub.com",
+            "registration_number": "TR123459",
+            "gst_number": "GST123456792",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 5,
+        "fields": {
+            "owner": 1,
+            "name": "Career Skills Academy",
+            "category": 2,
+            "description": "Comprehensive skill development and vocational training",
+            "address": "22 Education Street",
+            "pincode": "400055",
+            "city": "Mumbai",
+            "phone": "9876543214",
+            "email": "info@careerskills.com",
+            "website": "https://careerskills.com",
+            "registration_number": "TR123460",
+            "gst_number": "GST123456793",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 6,
+        "fields": {
+            "owner": 1,
+            "name": "Digital Learning Center",
+            "category": 2,
+            "description": "Modern digital skills training for professionals",
+            "address": "33 Knowledge Park",
+            "pincode": "400056",
+            "city": "Mumbai",
+            "phone": "9876543215",
+            "email": "contact@digitallearning.com",
+            "website": "https://digitallearning.com",
+            "registration_number": "TR123461",
+            "gst_number": "GST123456794",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 7,
+        "fields": {
+            "owner": 1,
+            "name": "City General Hospital",
+            "category": 3,
+            "description": "Multi-specialty hospital with 24/7 emergency care",
+            "address": "100 Health Avenue",
+            "pincode": "400057",
+            "city": "Mumbai",
+            "phone": "9876543216",
+            "email": "info@cityhospital.com",
+            "website": "https://cityhospital.com",
+            "registration_number": "HP123462",
+            "gst_number": "GST123456795",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 8,
+        "fields": {
+            "owner": 1,
+            "name": "Metro Healthcare",
+            "category": 3,
+            "description": "Advanced diagnostic and treatment center",
+            "address": "200 Medical Campus",
+            "pincode": "400058",
+            "city": "Mumbai",
+            "phone": "9876543217",
+            "email": "contact@metrohealthcare.com",
+            "website": "https://metrohealthcare.com",
+            "registration_number": "HP123463",
+            "gst_number": "GST123456796",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 9,
+        "fields": {
+            "owner": 1,
+            "name": "Wellness Medical Center",
+            "category": 3,
+            "description": "Holistic healthcare with modern facilities",
+            "address": "300 Wellness Road",
+            "pincode": "400059",
+            "city": "Mumbai",
+            "phone": "9876543218",
+            "email": "info@wellnessmedical.com",
+            "website": "https://wellnessmedical.com",
+            "registration_number": "HP123464",
+            "gst_number": "GST123456797",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 10,
+        "fields": {
+            "owner": 1,
+            "name": "Global Academy School",
+            "category": 4,
+            "description": "International curriculum with focus on holistic development",
+            "address": "50 Education Park",
+            "pincode": "400060",
+            "city": "Mumbai",
+            "phone": "9876543219",
+            "email": "admin@globalacademy.com",
+            "website": "https://globalacademy.com",
+            "registration_number": "SC123465",
+            "gst_number": "GST123456798",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 11,
+        "fields": {
+            "owner": 1,
+            "name": "City Public School",
+            "category": 4,
+            "description": "Quality education with state-of-the-art facilities",
+            "address": "75 Knowledge Street",
+            "pincode": "400061",
+            "city": "Mumbai",
+            "phone": "9876543220",
+            "email": "info@citypublicschool.com",
+            "website": "https://citypublicschool.com",
+            "registration_number": "SC123466",
+            "gst_number": "GST123456799",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 12,
+        "fields": {
+            "owner": 1,
+            "name": "Modern Montessori School",
+            "category": 4,
+            "description": "Child-centered education with Montessori methodology",
+            "address": "90 Learning Lane",
+            "pincode": "400062",
+            "city": "Mumbai",
+            "phone": "9876543221",
+            "email": "contact@modernmontessori.com",
+            "website": "https://modernmontessori.com",
+            "registration_number": "SC123467",
+            "gst_number": "GST123456800",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 13,
+        "fields": {
+            "owner": 1,
+            "name": "PowerFix Electricians",
+            "category": 5,
+            "description": "Professional electrical services for homes and businesses",
+            "address": "10 Electric Avenue",
+            "pincode": "400063",
+            "city": "Mumbai",
+            "phone": "9876543222",
+            "email": "service@powerfix.com",
+            "website": "https://powerfix.com",
+            "registration_number": "EL123468",
+            "gst_number": "GST123456801",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 14,
+        "fields": {
+            "owner": 1,
+            "name": "Volt Electric Solutions",
+            "category": 5,
+            "description": "Commercial and residential electrical services",
+            "address": "20 Power Street",
+            "pincode": "400064",
+            "city": "Mumbai",
+            "phone": "9876543223",
+            "email": "info@voltelectric.com",
+            "website": "https://voltelectric.com",
+            "registration_number": "EL123469",
+            "gst_number": "GST123456802",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.business",
+        "pk": 15,
+        "fields": {
+            "owner": 1,
+            "name": "Metro Electrical Services",
+            "category": 5,
+            "description": "Expert electrical installation and repairs",
+            "address": "30 Circuit Road",
+            "pincode": "400065",
+            "city": "Mumbai",
+            "phone": "9876543224",
+            "email": "contact@metroelectrical.com",
+            "website": "https://metroelectrical.com",
+            "registration_number": "EL123470",
+            "gst_number": "GST123456803",
+            "is_active": true,
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 1,
+        "fields": {
+            "business": 1,
+            "day": 1,
+            "open_time": "09:00:00",
+            "close_time": "18:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 2,
+        "fields": {
+            "business": 1,
+            "day": 2,
+            "open_time": "09:00:00",
+            "close_time": "18:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 3,
+        "fields": {
+            "business": 1,
+            "day": 3,
+            "open_time": "09:00:00",
+            "close_time": "18:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 4,
+        "fields": {
+            "business": 1,
+            "day": 4,
+            "open_time": "09:00:00",
+            "close_time": "18:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 5,
+        "fields": {
+            "business": 1,
+            "day": 5,
+            "open_time": "09:00:00",
+            "close_time": "18:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 6,
+        "fields": {
+            "business": 1,
+            "day": 6,
+            "open_time": "10:00:00",
+            "close_time": "15:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 7,
+        "fields": {
+            "business": 1,
+            "day": 7,
+            "open_time": "00:00:00",
+            "close_time": "00:00:00",
+            "is_closed": true
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 8,
+        "fields": {
+            "business": 2,
+            "day": 1,
+            "open_time": "08:30:00",
+            "close_time": "17:30:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 9,
+        "fields": {
+            "business": 2,
+            "day": 2,
+            "open_time": "08:30:00",
+            "close_time": "17:30:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 10,
+        "fields": {
+            "business": 2,
+            "day": 3,
+            "open_time": "08:30:00",
+            "close_time": "17:30:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 11,
+        "fields": {
+            "business": 2,
+            "day": 4,
+            "open_time": "08:30:00",
+            "close_time": "17:30:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 12,
+        "fields": {
+            "business": 2,
+            "day": 5,
+            "open_time": "08:30:00",
+            "close_time": "17:30:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 13,
+        "fields": {
+            "business": 2,
+            "day": 6,
+            "open_time": "09:00:00",
+            "close_time": "14:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 14,
+        "fields": {
+            "business": 2,
+            "day": 7,
+            "open_time": "00:00:00",
+            "close_time": "00:00:00",
+            "is_closed": true
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 15,
+        "fields": {
+            "business": 3,
+            "day": 1,
+            "open_time": "09:00:00",
+            "close_time": "18:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 16,
+        "fields": {
+            "business": 3,
+            "day": 2,
+            "open_time": "09:00:00",
+            "close_time": "18:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 17,
+        "fields": {
+            "business": 3,
+            "day": 3,
+            "open_time": "09:00:00",
+            "close_time": "18:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 18,
+        "fields": {
+            "business": 3,
+            "day": 4,
+            "open_time": "09:00:00",
+            "close_time": "18:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 19,
+        "fields": {
+            "business": 3,
+            "day": 5,
+            "open_time": "09:00:00",
+            "close_time": "18:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 20,
+        "fields": {
+            "business": 3,
+            "day": 6,
+            "open_time": "10:00:00",
+            "close_time": "15:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 21,
+        "fields": {
+            "business": 3,
+            "day": 7,
+            "open_time": "00:00:00",
+            "close_time": "00:00:00",
+            "is_closed": true
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 22,
+        "fields": {
+            "business": 4,
+            "day": 1,
+            "open_time": "09:00:00",
+            "close_time": "20:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 23,
+        "fields": {
+            "business": 4,
+            "day": 2,
+            "open_time": "09:00:00",
+            "close_time": "20:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 24,
+        "fields": {
+            "business": 4,
+            "day": 3,
+            "open_time": "09:00:00",
+            "close_time": "20:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 25,
+        "fields": {
+            "business": 4,
+            "day": 4,
+            "open_time": "09:00:00",
+            "close_time": "20:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 26,
+        "fields": {
+            "business": 4,
+            "day": 5,
+            "open_time": "09:00:00",
+            "close_time": "20:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 27,
+        "fields": {
+            "business": 4,
+            "day": 6,
+            "open_time": "09:00:00",
+            "close_time": "17:00:00",
+            "is_closed": false
+        }
+    },
+    {
+        "model": "directory.businesshours",
+        "pk": 28,
+        "fields": {
+            "business": 4,
+            "day": 7,
+            "open_time": "00:00:00",
+            "close_time": "00:00:00",
+            "is_closed": true
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 1,
+        "fields": {
+            "business": 1,
+            "name": "Pipe Repair",
+            "description": "Expert pipe repair and replacement services"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 2,
+        "fields": {
+            "business": 1,
+            "name": "Emergency Plumbing",
+            "description": "24/7 emergency plumbing services"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 3,
+        "fields": {
+            "business": 1,
+            "name": "Bathroom Installation",
+            "description": "Complete bathroom fitting and renovation"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 4,
+        "fields": {
+            "business": 2,
+            "name": "Leak Detection",
+            "description": "Advanced leak detection and repair"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 5,
+        "fields": {
+            "business": 2,
+            "name": "Drain Cleaning",
+            "description": "Professional drain unblocking and cleaning services"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 6,
+        "fields": {
+            "business": 2,
+            "name": "Water Heater Installation",
+            "description": "Installation and maintenance of water heaters"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 7,
+        "fields": {
+            "business": 3,
+            "name": "Commercial Plumbing",
+            "description": "Complete plumbing solutions for commercial buildings"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 8,
+        "fields": {
+            "business": 3,
+            "name": "Gas Fitting",
+            "description": "Safe and reliable gas fitting services"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 9,
+        "fields": {
+            "business": 3,
+            "name": "Water Tank Installation",
+            "description": "Installation and maintenance of water tanks"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 10,
+        "fields": {
+            "business": 4,
+            "name": "Web Development Course",
+            "description": "Comprehensive full-stack web development training"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 11,
+        "fields": {
+            "business": 4,
+            "name": "Data Science Program",
+            "description": "Advanced data analytics and machine learning training"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 12,
+        "fields": {
+            "business": 4,
+            "name": "UI/UX Design Course",
+            "description": "User interface and experience design training"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 13,
+        "fields": {
+            "business": 5,
+            "name": "Digital Marketing Course",
+            "description": "Comprehensive digital marketing strategy and implementation"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 14,
+        "fields": {
+            "business": 5,
+            "name": "Soft Skills Training",
+            "description": "Communication and professional skills development"
+        }
+    },
+    {
+        "model": "directory.service",
+        "pk": 15,
+        "fields": {
+            "business": 5,
+            "name": "Project Management",
+            "description": "PMP certification and project management training"
+        }
+    },
+    {
+        "model": "directory.review",
+        "pk": 1,
+        "fields": {
+            "business": 1,
+            "user": 2,
+            "rating": 5,
+            "comment": "Excellent service, arrived on time and fixed the issue quickly",
+            "created_at": "2024-04-19T10:00:00Z",
+            "updated_at": "2024-04-19T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.review",
+        "pk": 2,
+        "fields": {
+            "business": 1,
+            "user": 3,
+            "rating": 4,
+            "comment": "Good service, fair pricing",
+            "created_at": "2024-04-18T14:00:00Z",
+            "updated_at": "2024-04-18T14:00:00Z"
+        }
+    },
+    {
+        "model": "directory.review",
+        "pk": 3,
+        "fields": {
+            "business": 2,
+            "user": 2,
+            "rating": 5,
+            "comment": "Very professional and quick response",
+            "created_at": "2024-04-17T09:00:00Z",
+            "updated_at": "2024-04-17T09:00:00Z"
+        }
+    },
+    {
+        "model": "directory.review",
+        "pk": 4,
+        "fields": {
+            "business": 2,
+            "user": 3,
+            "rating": 4,
+            "comment": "Resolved our plumbing issue efficiently",
+            "created_at": "2024-04-16T11:00:00Z",
+            "updated_at": "2024-04-16T11:00:00Z"
+        }
+    },
+    {
+        "model": "directory.review",
+        "pk": 5,
+        "fields": {
+            "business": 3,
+            "user": 2,
+            "rating": 5,
+            "comment": "Great service and reasonable rates",
+            "created_at": "2024-04-15T16:00:00Z",
+            "updated_at": "2024-04-15T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.review",
+        "pk": 6,
+        "fields": {
+            "business": 3,
+            "user": 3,
+            "rating": 5,
+            "comment": "Very knowledgeable and professional staff",
+            "created_at": "2024-04-14T13:00:00Z",
+            "updated_at": "2024-04-14T13:00:00Z"
+        }
+    },
+    {
+        "model": "directory.review",
+        "pk": 7,
+        "fields": {
+            "business": 4,
+            "user": 2,
+            "rating": 5,
+            "comment": "Excellent training program, helped me get a job",
+            "created_at": "2024-04-13T10:00:00Z",
+            "updated_at": "2024-04-13T10:00:00Z"
+        }
+    },
+    {
+        "model": "directory.review",
+        "pk": 8,
+        "fields": {
+            "business": 4,
+            "user": 3,
+            "rating": 4,
+            "comment": "Great curriculum and good instructors",
+            "created_at": "2024-04-12T14:00:00Z",
+            "updated_at": "2024-04-12T14:00:00Z"
+        }
+    }
+]
