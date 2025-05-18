@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Avg
 from .models import Category, Business, BusinessImage, BusinessHours, Service, Review, Enquiry
 
 @admin.register(Category)
@@ -33,12 +34,33 @@ class ServiceAdmin(admin.ModelAdmin):
     list_display = ('business', 'name')
     search_fields = ('name', 'description')
 
+@admin.action(description="Approve selected reviews")
+def approve_reviews(modeladmin, request, queryset):
+    queryset.update(is_approved=True)
+    
+    # Update average ratings for affected businesses
+    business_ids = queryset.values_list('business_id', flat=True).distinct()
+    for business_id in business_ids:
+        business = Business.objects.get(id=business_id)
+        # Update business average rating if you store this as a field
+
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('business', 'user', 'rating', 'created_at')
-    list_filter = ('rating', 'created_at')
+    # Update list_display to include name and email
+    list_display = ('business', 'name', 'email', 'rating', 'is_approved', 'created_at')
+    list_filter = ('is_approved', 'rating', 'created_at')
+    # Add name and email to search fields
+    search_fields = ('business__name', 'name', 'email', 'comment')
+    actions = [approve_reviews]
+
+@admin.action(description="Mark selected enquiries as responded")
+def mark_as_responded(modeladmin, request, queryset):
+    queryset.update(is_responded=True)
+    modeladmin.message_user(request, f"{queryset.count()} enquiries marked as responded.")
 
 @admin.register(Enquiry)
 class EnquiryAdmin(admin.ModelAdmin):
     list_display = ('business', 'name', 'created_at', 'is_responded')
     list_filter = ('is_responded', 'created_at')
+    search_fields = ('business__name', 'name', 'email', 'message')
+    actions = [mark_as_responded]

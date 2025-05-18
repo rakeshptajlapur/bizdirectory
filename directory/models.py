@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -120,12 +121,25 @@ class Service(models.Model):
     description = models.TextField(blank=True)
 
 class Review(models.Model):
-    business = models.ForeignKey(Business, related_name='reviews', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='reviews')
+    # Keep the user field for future auth, but make it nullable
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='reviews', 
+                            null=True, blank=True)
+    # Add fields for non-authenticated users
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    
+    # Existing fields
+    rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     comment = models.TextField()
+    is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        return f"Review by {self.name} for {self.business.name}"
 
 class Enquiry(models.Model):
     business = models.ForeignKey(Business, related_name='enquiries', on_delete=models.CASCADE)

@@ -203,40 +203,76 @@
                 <!-- Add Review Form (Collapsed by default) -->
                 <div class="collapse mb-4" id="addReviewForm">
                     <div class="card card-body border-primary">
-                        <form>
-                            <h4 class="mb-3">Your Review</h4>
+                        <form method="post" action="{% url 'directory:add_review' business.pk %}">
+                            {% csrf_token %}
+                            <h4 class="mb-3">Write a Review</h4>
+                            
+                            <!-- Name and Email fields -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="reviewName" class="form-label">Your Name</label>
+                                    <input type="text" class="form-control" id="reviewName" name="name" 
+                                           value="{{ user_review.name|default:'' }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="reviewEmail" class="form-label">Your Email</label>
+                                    <input type="email" class="form-control" id="reviewEmail" name="email"
+                                           value="{{ user_review.email|default:'' }}" required>
+                                    <div class="form-text">Your email won't be displayed publicly</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Rating stars -->
                             <div class="mb-3">
                                 <label class="form-label">Rating</label>
                                 <div class="rating-select">
                                     <div class="stars">
                                         {% for i in '12345'|make_list %}
-                                            <i class="bi bi-star fs-4 review-star" data-rating="{{ i }}"></i>
+                                            <i class="bi bi-star fs-4 review-star {% if user_review and user_review.rating >= forloop.counter %}active text-warning bi-star-fill{% endif %}" data-rating="{{ i }}"></i>
                                         {% endfor %}
                                     </div>
-                                    <input type="hidden" name="rating" id="ratingInput" value="0">
+                                    <input type="hidden" name="rating" id="ratingInput" value="{{ user_review.rating|default:0 }}">
                                 </div>
                             </div>
+                            
+                            <!-- Comment textarea -->
                             <div class="mb-3">
                                 <label for="reviewComment" class="form-label">Your Comment</label>
-                                <textarea class="form-control" id="reviewComment" rows="3" placeholder="Share your experience"></textarea>
+                                <textarea class="form-control" id="reviewComment" name="comment" rows="3" 
+                                          placeholder="Share your experience" required>{{ user_review.comment|default:'' }}</textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary">Submit Review</button>
+                            
+                            <button type="submit" class="btn btn-primary">{{ user_review|yesno:"Update Review,Submit Review" }}</button>
+                            
+                            {% if user_review %}
+                            <div class="mt-2 small">
+                                <span class="text-muted">Your review is {{ user_review.is_approved|yesno:"approved,pending approval" }}</span>
+                            </div>
+                            {% endif %}
                         </form>
                     </div>
                 </div>
                 
                 <!-- Reviews List -->
                 {% for review in business.reviews.all %}
-                    <div class="review-card p-3 mb-3 bg-light">
+                    <div class="review-card p-3 mb-3 bg-light {% if not review.is_approved %}border border-warning{% endif %}">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h5 class="mb-1">{{ review.user.get_full_name|default:review.user.username }}</h5>
+                                <h5 class="mb-1">
+                                    {{ review.name }}
+                                    {% if review.email == request.session.reviewer_email %}
+                                        <span class="badge bg-primary">You</span>
+                                    {% endif %}
+                                </h5>
                                 <div class="d-flex align-items-center">
                                     <div class="stars me-2">
                                         {% for i in "12345"|make_list %}
                                             <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %} text-warning"></i>
                                         {% endfor %}
                                     </div>
+                                    {% if not review.is_approved %}
+                                        <span class="badge bg-warning text-dark">Pending Approval</span>
+                                    {% endif %}
                                 </div>
                             </div>
                             <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
@@ -304,18 +340,33 @@
                 <h4 class="card-title border-bottom pb-2 mb-3">
                     <i class="bi bi-envelope me-2"></i>Send an Enquiry
                 </h4>
-                <form>
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <form method="post" action="{% url 'directory:send_enquiry' business.pk %}">
+                    {% csrf_token %}
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+                        <label for="name" class="form-label">Your Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
                     </div>
                     <div class="mb-3">
-                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
                     </div>
                     <div class="mb-3">
-                        <input type="tel" class="form-control" id="phone" placeholder="Enter your phone">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone">
                     </div>
                     <div class="mb-3">
-                        <textarea class="form-control" id="message" rows="4" placeholder="What would you like to enquire about?" required></textarea>
+                        <label for="message" class="form-label">Message</label>
+                        <textarea class="form-control" id="message" name="message" rows="4" placeholder="What would you like to enquire about?" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="bi bi-send me-1"></i>Send Message
@@ -384,12 +435,10 @@
                     const sRating = s.getAttribute('data-rating');
                     if (sRating <= rating) {
                         s.classList.remove('bi-star');
-                        s.classList.add('bi-star-fill');
-                        s.classList.add('text-warning');
+                        s.classList.add('bi-star-fill', 'text-warning');
                     } else {
                         s.classList.add('bi-star');
-                        s.classList.remove('bi-star-fill');
-                        s.classList.remove('text-warning');
+                        s.classList.remove('bi-star-fill', 'text-warning');
                     }
                 });
             });

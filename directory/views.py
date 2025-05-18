@@ -4,6 +4,10 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from datetime import datetime
 from .models import Business, Category, Service
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+from .models import Review, Enquiry
 
 def home(request):
     search_query = request.GET.get('query', '')
@@ -49,11 +53,19 @@ def business_detail(request, pk):
     """View for displaying a single business listing"""
     business = get_object_or_404(Business, pk=pk)
     
-    # Calculate average rating for this business
-    business.avg_rating = business.reviews.aggregate(avg=Avg('rating'))['avg']
-    
     # Get today's weekday (0=Monday, 6=Sunday)
     today_weekday = datetime.now().weekday()
+    
+    # Calculate average rating from approved reviews
+    business.avg_rating = business.reviews.filter(is_approved=True).aggregate(
+        avg=Avg('rating')
+    )['avg'] or 0
+    
+    # Check if visitor has already submitted a review
+    user_review = None
+    reviewer_email = request.session.get('reviewer_email')
+    if reviewer_email:
+        user_review = business.reviews.filter(email=reviewer_email).first()
     
     # Get related businesses in same category (excluding current business)
     related_businesses = Business.objects.filter(
@@ -61,13 +73,15 @@ def business_detail(request, pk):
     ).exclude(
         pk=business.pk
     ).annotate(
-        avg_rating=Avg('reviews__rating')  # Add this annotation
+        avg_rating=Avg('reviews__rating', filter=Q(reviews__is_approved=True))
     ).order_by('-avg_rating')[:3]  # Top 3 rated related businesses
     
     context = {
         'business': business,
         'today_weekday': today_weekday,
         'related_businesses': related_businesses,
+        'user_review': user_review,
+        # Add any other context variables
     }
     
     return render(request, 'directory/business_detail.html', context)
@@ -145,7 +159,7 @@ def listings(request):
     
     pincode = request.GET.get('pincode')
     if pincode:
-        businesses = businesses.filter(pincode__startswith(pincode))
+        businesses = businesses.filter(pincode__startswith=pincode)
     
     trust_filter = request.GET.get('trust')
     if trust_filter == 'gst':
@@ -189,3 +203,95 @@ def listings(request):
 def add_listing(request):
     """View for the add listing page"""
     return render(request, 'directory/add_listing.html')
+
+def add_review(request, business_id):
+    """Handle review submission without requiring authentication"""
+    business = get_object_or_404(Business, pk=business_id)
+    
+    if request.method == 'POST':
+        # Get form data
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        
+        # Validate input
+        if not name or not email:
+            messages.error(request, "Please provide your name and email")
+            return redirect('directory:business_detail', pk=business_id)
+            
+        try:
+            rating = int(rating)
+            if rating < 1 or rating > 5:
+                messages.error(request, "Rating must be between 1 and 5")
+                return redirect('directory:business_detail', pk=business_id)
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid rating value")
+            return redirect('directory:business_detail', pk=business_id)
+            
+        if not comment:
+            messages.error(request, "Please provide a review comment")
+            return redirect('directory:business_detail', pk=business_id)
+        
+        # Check if email has already reviewed this business
+        existing_review = Review.objects.filter(business=business, email=email).first()
+        if existing_review:
+            # Update existing review
+            existing_review.name = name
+            existing_review.rating = rating
+            existing_review.comment = comment
+            existing_review.is_approved = False  # Reset approval on update
+            existing_review.save()
+            messages.success(request, "Your review has been updated and is pending approval.")
+        else:
+            # Create new review
+            Review.objects.create(
+                business=business,
+                name=name,
+                email=email,
+                rating=rating,
+                comment=comment,
+                is_approved=False
+            )
+            messages.success(request, "Thank you! Your review has been submitted and is pending approval.")
+        
+        # Store email in session to identify returning reviewers
+        request.session['reviewer_email'] = email
+        
+        return redirect('directory:business_detail', pk=business_id)
+    
+    # GET requests redirect back to business detail
+    return redirect('directory:business_detail', pk=business_id)
+
+def send_enquiry(request, business_id):
+    """Handle enquiry form submissions"""
+    business = get_object_or_404(Business, pk=business_id)
+    
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone', '')
+        message = request.POST.get('message')
+        
+        # Validate input
+        if not name or not email or not message:
+            messages.error(request, "Please fill all required fields")
+            return redirect('directory:business_detail', pk=business_id)
+            
+        # Create new enquiry
+        Enquiry.objects.create(
+            business=business,
+            name=name,
+            email=email,
+            phone=phone,
+            message=message
+        )
+        
+        # Store email in session for future reference
+        request.session['enquirer_email'] = email
+        
+        messages.success(request, "Thank you! Your enquiry has been sent to the business owner.")
+        return redirect('directory:business_detail', pk=business_id)
+    
+    # GET requests redirect back to business detail
+    return redirect('directory:business_detail', pk=business_id)
