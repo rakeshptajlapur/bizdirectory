@@ -1,0 +1,130 @@
+{% extends 'directory/dashboard/base.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3 mb-0">Dashboard</h1>
+        <p class="text-muted">Welcome back, {{ user.get_full_name|default:user.username }}!</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Stats Cards -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                        <i class="bi bi-building fs-4 text-primary"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ businesses.count }}</h3>
+                        <p class="text-muted mb-0">Businesses</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                        <i class="bi bi-envelope fs-4 text-success"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ enquiries_count }}</h3>
+                        <p class="text-muted mb-0">Enquiries</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                        <i class="bi bi-star fs-4 text-warning"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ avg_rating|floatformat:1 }}</h3>
+                        <p class="text-muted mb-0">Average Rating</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Recent Enquiries -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0">Recent Enquiries</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for enquiry in recent_enquiries %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-1">{{ enquiry.name }}</h6>
+                                <small class="text-muted">{{ enquiry.created_at|date:"M d" }}</small>
+                            </div>
+                            <p class="mb-1 text-truncate">{{ enquiry.message }}</p>
+                            <small class="text-muted">For: {{ enquiry.business.name }}</small>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-center py-4">
+                            <i class="bi bi-inbox text-muted fs-2"></i>
+                            <p class="text-muted mt-2 mb-0">No enquiries yet</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="card-footer bg-transparent">
+                <a href="{% url 'directory:dashboard_enquiries' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Reviews -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0">Recent Reviews</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for review in recent_reviews %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-1">{{ review.name }}</h6>
+                                <div>
+                                    {% for i in "12345"|make_list %}
+                                        <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %} text-warning"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <p class="mb-1 text-truncate">{{ review.comment }}</p>
+                            <small class="text-muted">For: {{ review.business.name }}</small>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-center py-4">
+                            <i class="bi bi-star text-muted fs-2"></i>
+                            <p class="text-muted mt-2 mb-0">No reviews yet</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="card-footer bg-transparent">
+                <a href="{% url 'directory:dashboard_reviews' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

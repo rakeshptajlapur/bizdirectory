@@ -1,0 +1,49 @@
+{% extends 'directory/base.html' %}
+{% load static %}
+
+{% block title %}My Profile | BizDirectory{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-4">My Profile</h1>
+
+                    <div class="alert alert-info">
+                        <p>This is a placeholder profile page. If you are a business owner, please visit your <a href="{% url 'directory:dashboard_home' %}">Dashboard</a> instead.</p>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4 text-md-end fw-bold">Username:</div>
+                        <div class="col-md-8">{{ user.username }}</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4 text-md-end fw-bold">Email:</div>
+                        <div class="col-md-8">{{ user.email }}</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4 text-md-end fw-bold">Full Name:</div>
+                        <div class="col-md-8">{{ user.first_name }} {{ user.last_name }}</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4 text-md-end fw-bold">Account Type:</div>
+                        <div class="col-md-8">{{ user.profile.get_user_type_display }}</div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'directory:home' %}" class="btn btn-outline-primary">Back to Home</a>
+                        {% if user.profile.is_business_owner %}
+                        <a href="{% url 'directory:dashboard_home' %}" class="btn btn-primary ms-2">Go to Dashboard</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

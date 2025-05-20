@@ -574,13 +574,32 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'directory:add_listing' %}"><i class="bi bi-plus-circle"></i> Add Listing</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-outline-primary ms-2" href="#">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary ms-2" href="#">Sign Up</a>
-                    </li>
                 </ul>
+                <!-- Update the auth links in navbar -->
+                <div class="ms-auto d-flex align-items-center">
+                    {% if user.is_authenticated %}
+                        {% if user.profile.is_business_owner %}
+                            <a href="{% url 'directory:dashboard_home' %}" class="btn btn-outline-primary me-2">
+                                <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                            </a>
+                        {% endif %}
+                        <div class="dropdown">
+                            <button class="btn btn-link text-dark dropdown-toggle text-decoration-none" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle me-1"></i>{{ user.username }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                {% if user.profile.is_business_owner %}
+                                    <li><a class="dropdown-item" href="{% url 'directory:dashboard_home' %}">Dashboard</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Log Out</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary me-2">Log In</a>
+                        <a href="{% url 'accounts:register' %}" class="btn btn-primary">Sign Up</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </nav>

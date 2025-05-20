@@ -295,3 +295,98 @@ def send_enquiry(request, business_id):
     
     # GET requests redirect back to business detail
     return redirect('directory:business_detail', pk=business_id)
+
+@login_required
+def dashboard_home(request):
+    """Dashboard home view"""
+    # Make sure user is a business owner
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
+        messages.error(request, "You don't have permission to access this page.")
+        return redirect('directory:home')
+    
+    # Get businesses owned by the current user
+    businesses = Business.objects.filter(owner=request.user)
+    
+    # Get stats for all user's businesses
+    enquiries_count = Enquiry.objects.filter(business__owner=request.user).count()
+    reviews_count = Review.objects.filter(business__owner=request.user).count()
+    
+    # Calculate average rating across all businesses
+    avg_rating = Review.objects.filter(
+        business__owner=request.user
+    ).aggregate(Avg('rating'))['rating__avg'] or 0
+    
+    # Get unread enquiries and pending reviews counts for notifications
+    unread_enquiries = Enquiry.objects.filter(business__owner=request.user, is_responded=False).count()
+    pending_reviews = Review.objects.filter(business__owner=request.user, is_approved=False).count()
+    
+    # Get recent enquiries and reviews
+    recent_enquiries = Enquiry.objects.filter(
+        business__owner=request.user
+    ).order_by('-created_at')[:5]
+    
+    recent_reviews = Review.objects.filter(
+        business__owner=request.user
+    ).order_by('-created_at')[:5]
+    
+    context = {
+        'active_tab': 'home',
+        'businesses': businesses,
+        'enquiries_count': enquiries_count,
+        'reviews_count': reviews_count,
+        'avg_rating': avg_rating,
+        'recent_enquiries': recent_enquiries,
+        'recent_reviews': recent_reviews,
+        'unread_enquiries_count': unread_enquiries,
+        'pending_reviews_count': pending_reviews,
+    }
+    
+    return render(request, 'directory/dashboard/home.html', context)
+
+@login_required
+def dashboard_listings(request):
+    """Dashboard listings view"""
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
+        messages.error(request, "You don't have permission to access this page.")
+        return redirect('directory:home')
+    
+    businesses = Business.objects.filter(owner=request.user)
+    
+    context = {
+        'active_tab': 'listings',
+        'businesses': businesses,
+    }
+    
+    return render(request, 'directory/dashboard/listings.html', context)
+
+@login_required
+def dashboard_reviews(request):
+    """Dashboard reviews view"""
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
+        messages.error(request, "You don't have permission to access this page.")
+        return redirect('directory:home')
+    
+    reviews = Review.objects.filter(business__owner=request.user).order_by('-created_at')
+    
+    context = {
+        'active_tab': 'reviews',
+        'reviews': reviews,
+    }
+    
+    return render(request, 'directory/dashboard/reviews.html', context)
+
+@login_required
+def dashboard_enquiries(request):
+    """Dashboard enquiries view"""
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
+        messages.error(request, "You don't have permission to access this page.")
+        return redirect('directory:home')
+    
+    enquiries = Enquiry.objects.filter(business__owner=request.user).order_by('-created_at')
+    
+    context = {
+        'active_tab': 'enquiries',
+        'enquiries': enquiries,
+    }
+    
+    return render(request, 'directory/dashboard/enquiries.html', context)

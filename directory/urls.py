@@ -16,4 +16,10 @@ urlpatterns = [
     path('search-suggestions/', views.search_suggestions, name='search_suggestions'),
     path('add-listing/', views.add_listing, name='add_listing'),
     path('pincode-suggestions/', views.pincode_suggestions, name='pincode_suggestions'),
+    
+    # Dashboard URLs
+    path('dashboard/', views.dashboard_home, name='dashboard_home'),
+    path('dashboard/listings/', views.dashboard_listings, name='dashboard_listings'),
+    path('dashboard/reviews/', views.dashboard_reviews, name='dashboard_reviews'),
+    path('dashboard/enquiries/', views.dashboard_enquiries, name='dashboard_enquiries'),
 ]

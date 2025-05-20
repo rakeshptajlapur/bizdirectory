@@ -1,0 +1,56 @@
+{% extends 'directory/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard | BizDirectory{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row g-4">
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Business Dashboard</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'directory:dashboard_home' %}" class="list-group-item list-group-item-action {% if active_tab == 'home' %}active{% endif %}">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard Home
+                    </a>
+                    <a href="{% url 'directory:dashboard_listings' %}" class="list-group-item list-group-item-action {% if active_tab == 'listings' %}active{% endif %}">
+                        <i class="bi bi-building me-2"></i> My Listings
+                    </a>
+                    <a href="{% url 'directory:dashboard_reviews' %}" class="list-group-item list-group-item-action {% if active_tab == 'reviews' %}active{% endif %}">
+                        <i class="bi bi-star me-2"></i> Reviews
+                        {% if pending_reviews_count %}
+                            <span class="badge bg-danger float-end">{{ pending_reviews_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'directory:dashboard_enquiries' %}" class="list-group-item list-group-item-action {% if active_tab == 'enquiries' %}active{% endif %}">
+                        <i class="bi bi-envelope me-2"></i> Enquiries
+                        {% if unread_enquiries_count %}
+                            <span class="badge bg-danger float-end">{{ unread_enquiries_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'accounts:logout' %}" class="list-group-item list-group-item-action text-danger">
+                        <i class="bi bi-box-arrow-right me-2"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% block dashboard_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'directory/dashboard/base.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3">Enquiries</h1>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        {% if enquiries %}
+            <div class="list-group">
+                {% for enquiry in enquiries %}
+                    <div class="list-group-item {% if not enquiry.is_responded %}border-start border-4 border-primary{% endif %}">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <h5 class="mb-0">{{ enquiry.name }}</h5>
+                                    {% if not enquiry.is_responded %}
+                                        <span class="badge bg-primary ms-2">New</span>
+                                    {% endif %}
+                                </div>
+                                <p class="mb-1">{{ enquiry.message }}</p>
+                                <div class="text-muted small">
+                                    <span><i class="bi bi-envelope me-1"></i>{{ enquiry.email }}</span>
+                                    {% if enquiry.phone %}
+                                        <span class="ms-3"><i class="bi bi-telephone me-1"></i>{{ enquiry.phone }}</span>
+                                    {% endif %}
+                                </div>
+                                <small class="text-muted">For: {{ enquiry.business.name }}</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-muted small mb-2">{{ enquiry.created_at|date:"M d, Y" }}</div>
+                                <a href="mailto:{{ enquiry.email }}?subject=Re: Enquiry for {{ enquiry.business.name }}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-reply me-1"></i>Reply
+                                </a>
+                                {% if not enquiry.is_responded %}
+                                    <form method="post" action="#" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="enquiry_id" value="{{ enquiry.id }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            Mark as Responded
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-4">
+                <i class="bi bi-inbox text-muted fs-2"></i>
+                <p class="text-muted mt-2 mb-0">No enquiries yet</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

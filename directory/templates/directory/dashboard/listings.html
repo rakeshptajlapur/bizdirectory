@@ -1,0 +1,59 @@
+{% extends 'directory/dashboard/base.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3 mb-0">My Listings</h1>
+    </div>
+    <div class="col-auto">
+        <a href="#" class="btn btn-primary">Add New Listing</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        {% if businesses %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>City</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for business in businesses %}
+                            <tr>
+                                <td>{{ business.name }}</td>
+                                <td>{{ business.category.name }}</td>
+                                <td>
+                                    {% if business.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ business.city }}</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
+                                    <a href="{% url 'directory:business_detail' business.pk %}" class="btn btn-sm btn-outline-secondary">View</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-4">
+                <i class="bi bi-building text-muted fs-2"></i>
+                <p class="text-muted mt-2">You don't have any listings yet. Add your first business!</p>
+                <a href="#" class="btn btn-primary mt-2">Add Business</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

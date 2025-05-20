@@ -1,0 +1,120 @@
+{% extends 'directory/base.html' %}
+{% load static %}
+
+{% block title %}Sign Up | BizDirectory{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5">
+                    <h1 class="h3 mb-4 text-center">Create Your BizDirectory Account</h1>
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="id_first_name" class="form-label">First Name</label>
+                                <input type="text" name="first_name" class="form-control" id="id_first_name">
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.first_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="id_last_name" class="form-label">Last Name</label>
+                                <input type="text" name="last_name" class="form-control" id="id_last_name">
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.last_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-12">
+                                <label for="id_username" class="form-label">Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    <input type="text" name="username" class="form-control" id="id_username" required>
+                                </div>
+                                {% if form.username.errors %}
+                                    <div class="text-danger small mt-1">{{ form.username.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-12">
+                                <label for="id_email" class="form-label">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" name="email" class="form-control" id="id_email" required>
+                                </div>
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="id_password1" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <input type="password" name="password1" class="form-control" id="id_password1" required>
+                                </div>
+                                {% if form.password1.errors %}
+                                    <div class="text-danger small mt-1">{{ form.password1.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="id_password2" class="form-label">Confirm Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <input type="password" name="password2" class="form-control" id="id_password2" required>
+                                </div>
+                                {% if form.password2.errors %}
+                                    <div class="text-danger small mt-1">{{ form.password2.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-12">
+                                <label for="id_user_type" class="form-label">I am a:</label>
+                                <select name="user_type" id="id_user_type" class="form-select">
+                                    <option value="regular">Regular User</option>
+                                    <option value="business_owner">Business Owner</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-12 mt-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terms_agreement" required>
+                                    <label class="form-check-label small" for="terms_agreement">
+                                        I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 mt-4">
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary py-2">Create Account</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <p>Already have an account? <a href="{% url 'accounts:login' %}">Log In</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

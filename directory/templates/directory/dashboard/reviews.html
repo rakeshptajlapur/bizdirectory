@@ -1,0 +1,51 @@
+{% extends 'directory/dashboard/base.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3">Reviews</h1>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        {% if reviews %}
+            <div class="list-group">
+                {% for review in reviews %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="mb-1">{{ review.name }}</h5>
+                                <div class="d-flex align-items-center mb-2">
+                                    {% for i in "12345"|make_list %}
+                                        <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %} text-warning"></i>
+                                    {% endfor %}
+                                    <span class="text-muted ms-2">{{ review.created_at|date:"M d, Y" }}</span>
+                                </div>
+                                <p class="mb-1">{{ review.comment }}</p>
+                                <small class="text-muted">For: {{ review.business.name }}</small>
+                            </div>
+                            <div>
+                                {% if not review.is_approved %}
+                                    <span class="badge bg-warning text-dark">Pending Approval</span>
+                                    <form method="post" action="#" class="mt-2">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="review_id" value="{{ review.id }}">
+                                        <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-4">
+                <i class="bi bi-star text-muted fs-2"></i>
+                <p class="text-muted mt-2 mb-0">No reviews yet</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
