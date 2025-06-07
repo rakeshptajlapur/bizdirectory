@@ -12,51 +12,57 @@
 <div class="row g-4 mb-4">
     <!-- Stats Cards -->
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
-                        <i class="bi bi-building fs-4 text-primary"></i>
-                    </div>
-                    <div>
-                        <h3 class="mb-0">{{ businesses.count }}</h3>
-                        <p class="text-muted mb-0">Businesses</p>
+        <a href="{% url 'directory:dashboard_listings' %}" class="text-decoration-none">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-3 bg-primary bg-opacity-10 p-3 me-3" style="width: 60px; height: 60px; display: flex; justify-content: center; align-items: center;">
+                            <i class="bi bi-building fs-4 text-primary"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ businesses.count }}</h3>
+                            <p class="text-muted mb-0">Businesses</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
     
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
-                        <i class="bi bi-envelope fs-4 text-success"></i>
-                    </div>
-                    <div>
-                        <h3 class="mb-0">{{ enquiries_count }}</h3>
-                        <p class="text-muted mb-0">Enquiries</p>
+        <a href="{% url 'directory:dashboard_enquiries' %}" class="text-decoration-none">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-3 bg-success bg-opacity-10 p-3 me-3" style="width: 60px; height: 60px; display: flex; justify-content: center; align-items: center;">
+                            <i class="bi bi-envelope fs-4 text-success"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ enquiries_count }}</h3>
+                            <p class="text-muted mb-0">Enquiries</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
     
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
-                        <i class="bi bi-star fs-4 text-warning"></i>
-                    </div>
-                    <div>
-                        <h3 class="mb-0">{{ avg_rating|floatformat:1 }}</h3>
-                        <p class="text-muted mb-0">Average Rating</p>
+        <a href="{% url 'directory:dashboard_reviews' %}" class="text-decoration-none">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-3 bg-warning bg-opacity-10 p-3 me-3" style="width: 60px; height: 60px; display: flex; justify-content: center; align-items: center;">
+                            <i class="bi bi-star fs-4 text-warning"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ avg_rating|floatformat:1 }}</h3>
+                            <p class="text-muted mb-0">Average Rating</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 </div>
 
