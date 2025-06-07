@@ -87,25 +87,16 @@ def business_detail(request, pk):
     return render(request, 'directory/business_detail.html', context)
 
 def search_suggestions(request):
+    """Auto-suggestions for search box"""
     term = request.GET.get('term', '')
-    if len(term) < 2:
-        return JsonResponse([], safe=False)
-        
-    # Search businesses
-    businesses = Business.objects.filter(
-        Q(name__icontains=term) | Q(description__icontains=term)
-    ).values_list('name', flat=True).distinct()[:5]
     
-    # Search services
-    services = Service.objects.filter(
-        name__icontains=term
-    ).values_list('name', flat=True).distinct()[:5]
+    # Only include active businesses in suggestions
+    suggestions = Business.objects.filter(
+        Q(name__icontains=term) & 
+        Q(is_active=True)
+    ).values_list('name', flat=True)[:10]
     
-    # Combine and deduplicate results
-    suggestions = list(businesses) + list(services)
-    suggestions = list(dict.fromkeys(suggestions))[:8]  # Take up to 8 unique suggestions
-    
-    return JsonResponse(suggestions, safe=False)
+    return JsonResponse(list(suggestions), safe=False)
 
 def category_suggestions(request):
     categories = Category.objects.all().values('id', 'name')
