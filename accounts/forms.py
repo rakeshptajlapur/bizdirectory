@@ -28,3 +28,33 @@ class UserRegisterForm(UserCreationForm):
                 user.profile.save()
         
         return user
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['phone']
+        
+    first_name = forms.CharField(max_length=30, required=False)
+    last_name = forms.CharField(max_length=30, required=False)
+    email = forms.EmailField()
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Populate user fields
+        if self.instance and hasattr(self.instance, 'user'):
+            self.fields['first_name'].initial = self.instance.user.first_name
+            self.fields['last_name'].initial = self.instance.user.last_name
+            self.fields['email'].initial = self.instance.user.email
+    
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        # Update user fields
+        profile.user.first_name = self.cleaned_data['first_name']
+        profile.user.last_name = self.cleaned_data['last_name']
+        profile.user.email = self.cleaned_data['email']
+        
+        if commit:
+            profile.user.save()
+            profile.save()
+        
+        return profile

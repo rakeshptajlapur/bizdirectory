@@ -1,0 +1,46 @@
+{% extends 'directory/base.html' %}
+{% load static %}
+
+{% block title %}Upgrade to Business Owner | BizDirectory{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-0">
+                    <h1 class="h3 mb-0">Upgrade to Business Owner</h1>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        As a Business Owner, you'll be able to:
+                        <ul class="mb-0 mt-2">
+                            <li>Add and manage your business listings</li>
+                            <li>Respond to customer reviews</li>
+                            <li>Reply to enquiries</li>
+                            <li>Track your business performance</li>
+                            <li>Access exclusive promotional tools</li>
+                        </ul>
+                    </div>
+                    
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#" target="_blank">Terms & Conditions</a> for Business Owners
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Upgrade My Account</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegisterForm
+from .forms import UserRegisterForm, ProfileUpdateForm
 from directory.models import Business
 from django.contrib.auth.models import User
 
@@ -72,9 +72,33 @@ def logout_view(request):
     return redirect('directory:home')
 
 @login_required
-def profile(request):
-    if hasattr(request.user, 'profile') and request.user.profile.is_business_owner:
-        # For business owners, redirect to dashboard
+def profile_view(request):
+    """View and update user profile information"""
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully.')
+            return redirect('accounts:profile')
+    else:
+        form = ProfileUpdateForm(instance=request.user.profile)
+    
+    return render(request, 'accounts/profile.html', {'form': form})
+
+@login_required
+def upgrade_to_business(request):
+    """Upgrade regular user to business owner"""
+    if request.user.profile.is_business_owner:
+        messages.info(request, 'You are already a business owner.')
         return redirect('directory:dashboard_home')
-    # For regular users, show profile page
-    return render(request, 'accounts/profile.html')
+    
+    if request.method == 'POST':
+        # Update user profile to business owner
+        profile = request.user.profile
+        profile.user_type = 'business_owner'
+        profile.save()
+        
+        messages.success(request, 'Congratulations! Your account has been upgraded to business owner. You can now add business listings.')
+        return redirect('directory:dashboard_home')
+    
+    return render(request, 'accounts/upgrade_to_business.html')
