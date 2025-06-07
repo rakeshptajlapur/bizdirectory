@@ -24,7 +24,12 @@
                                 </div>
                                 <p class="mb-1">{{ enquiry.message }}</p>
                                 <div class="text-muted small">
-                                    <span><i class="bi bi-envelope me-1"></i>{{ enquiry.email }}</span>
+                                    <span>
+                                        <i class="bi bi-envelope me-1"></i>
+                                        <a href="mailto:{{ enquiry.email }}?subject=Re: Enquiry for {{ enquiry.business.name }}" class="text-decoration-underline">
+                                            {{ enquiry.email }}
+                                        </a>
+                                    </span>
                                     {% if enquiry.phone %}
                                         <span class="ms-3"><i class="bi bi-telephone me-1"></i>{{ enquiry.phone }}</span>
                                     {% endif %}
@@ -33,10 +38,9 @@
                             </div>
                             <div class="text-end">
                                 <div class="text-muted small mb-2">{{ enquiry.created_at|date:"M d, Y" }}</div>
-                                <a href="mailto:{{ enquiry.email }}?subject=Re: Enquiry for {{ enquiry.business.name }}" class="btn btn-sm btn-primary">
-                                    <i class="bi bi-reply me-1"></i>Reply
-                                </a>
-                                {% if not enquiry.is_responded %}
+                                {% if enquiry.is_responded %}
+                                    <span class="badge bg-success">Responded</span>
+                                {% else %}
                                     <form method="post" action="{% url 'directory:mark_enquiry_responded' %}" class="d-inline">
                                         {% csrf_token %}
                                         <input type="hidden" name="enquiry_id" value="{{ enquiry.id }}">
