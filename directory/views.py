@@ -390,3 +390,46 @@ def dashboard_enquiries(request):
     }
     
     return render(request, 'directory/dashboard/enquiries.html', context)
+
+@login_required
+def mark_enquiry_responded(request):
+    """Mark an enquiry as responded"""
+    if request.method == 'POST':
+        enquiry_id = request.POST.get('enquiry_id')
+        enquiry = get_object_or_404(Enquiry, id=enquiry_id, business__owner=request.user)
+        
+        enquiry.is_responded = True
+        enquiry.save()
+        
+        messages.success(request, "Enquiry marked as responded.")
+    
+    return redirect('directory:dashboard_enquiries')
+
+@login_required
+def approve_review(request):
+    """Approve a review"""
+    if request.method == 'POST':
+        review_id = request.POST.get('review_id')
+        review = get_object_or_404(Review, id=review_id, business__owner=request.user)
+        
+        review.is_approved = True
+        review.save()
+        
+        messages.success(request, "Review approved and now visible to all users.")
+    
+    return redirect('directory:dashboard_reviews')
+
+@login_required
+def toggle_business_status(request):
+    """Toggle the active status of a business"""
+    if request.method == 'POST':
+        business_id = request.POST.get('business_id')
+        business = get_object_or_404(Business, id=business_id, owner=request.user)
+        
+        business.is_active = not business.is_active
+        business.save()
+        
+        status = "activated" if business.is_active else "deactivated"
+        messages.success(request, f"Business {business.name} has been {status}.")
+    
+    return redirect('directory:dashboard_listings')

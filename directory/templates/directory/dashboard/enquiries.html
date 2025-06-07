@@ -37,7 +37,7 @@
                                     <i class="bi bi-reply me-1"></i>Reply
                                 </a>
                                 {% if not enquiry.is_responded %}
-                                    <form method="post" action="#" class="d-inline">
+                                    <form method="post" action="{% url 'directory:mark_enquiry_responded' %}" class="d-inline">
                                         {% csrf_token %}
                                         <input type="hidden" name="enquiry_id" value="{{ enquiry.id }}">
                                         <button type="submit" class="btn btn-sm btn-outline-success">

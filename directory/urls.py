@@ -22,4 +22,7 @@ urlpatterns = [
     path('dashboard/listings/', views.dashboard_listings, name='dashboard_listings'),
     path('dashboard/reviews/', views.dashboard_reviews, name='dashboard_reviews'),
     path('dashboard/enquiries/', views.dashboard_enquiries, name='dashboard_enquiries'),
+    path('dashboard/enquiries/mark-responded/', views.mark_enquiry_responded, name='mark_enquiry_responded'),
+    path('dashboard/reviews/approve/', views.approve_review, name='approve_review'),
+    path('dashboard/listings/toggle-status/', views.toggle_business_status, name='toggle_business_status'),
 ]

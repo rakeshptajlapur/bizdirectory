@@ -9,11 +9,23 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Business)
 class BusinessAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'is_active', 'gst_verified', 'kyc_status')
+    list_display = ('name', 'category', 'is_active', 'gst_verified', 'kyc_status', 'owner')
     list_filter = ('is_active', 'gst_verified', 'kyc_status', 'category')
     search_fields = ('name', 'description', 'address')
     
     fieldsets = (
+        ('Basic Information', {
+            'fields': ('owner', 'name', 'category', 'description', 'is_active')
+        }),
+        ('Location Information', {
+            'fields': ('address', 'pincode', 'city')
+        }),
+        ('Contact Information', {
+            'fields': ('phone', 'email', 'website')
+        }),
+        ('Business Details', {
+            'fields': ('registration_number', 'registration_document')
+        }),
         ('Trust & Verification', {
             'fields': ('gst_number', 'gst_verified', 'kyc_status')
         }),
