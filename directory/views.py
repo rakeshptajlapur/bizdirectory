@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
 from django.core.paginator import Paginator
-from datetime import datetime
+from django.utils import timezone  # Add this import at the top
 from .models import Business, Category, Service
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -57,15 +57,18 @@ def business_detail(request, pk):
     business = get_object_or_404(Business, pk=pk)
     
     # Get today's weekday (0=Monday, 6=Sunday)
-    today_weekday = datetime.now().weekday()
+    today_weekday = timezone.now().weekday()
+    
+    # Convert to 1-7 range to match our model's DAYS_OF_WEEK values
+    today_weekday_adjusted = today_weekday + 1
+    
+    # Get today's hours using ONLY the adjusted value
+    today_hours = business.hours.filter(day=today_weekday_adjusted).first()
     
     # Calculate average rating from approved reviews
     business.avg_rating = business.reviews.filter(is_approved=True).aggregate(
         avg=Avg('rating')
     )['avg'] or 0
-    
-    # Get today's hours directly
-    today_hours = business.hours.filter(day=today_weekday).first()
     
     # Count only approved reviews
     business.approved_reviews_count = business.reviews.filter(is_approved=True).count()
@@ -87,11 +90,10 @@ def business_detail(request, pk):
     
     context = {
         'business': business,
-        'today_weekday': today_weekday,
+        'today_weekday': today_weekday_adjusted,  # Use adjusted value in template
         'today_hours': today_hours,
         'related_businesses': related_businesses,
         'user_review': user_review,
-        # Add any other context variables
     }
     
     return render(request, 'directory/business_detail.html', context)
