@@ -64,6 +64,9 @@ def business_detail(request, pk):
         avg=Avg('rating')
     )['avg'] or 0
     
+    # Get today's hours directly
+    today_hours = business.hours.filter(day=today_weekday).first()
+    
     # Count only approved reviews
     business.approved_reviews_count = business.reviews.filter(is_approved=True).count()
     
@@ -85,6 +88,7 @@ def business_detail(request, pk):
     context = {
         'business': business,
         'today_weekday': today_weekday,
+        'today_hours': today_hours,
         'related_businesses': related_businesses,
         'user_review': user_review,
         # Add any other context variables

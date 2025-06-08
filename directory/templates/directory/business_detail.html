@@ -66,78 +66,110 @@
 {% endblock %}
 
 {% block content %}
-<!-- Image Gallery Section -->
-<div class="gallery-container mb-4 shadow rounded-3">
-    <img src="{{ business.get_primary_image_url }}" alt="{{ business.name }}" class="gallery-main" id="mainImage">
-    
-    <div class="gallery-thumbnails">
-        {% for image in business.images.all %}
-            <img src="{{ image.image.url }}" 
-                 alt="{{ image.caption|default:business.name }}" 
-                 class="gallery-thumb {% if image.is_primary %}active{% endif %}"
-                 onclick="changeMainImage(this, '{{ image.image.url }}')">
-        {% endfor %}
+<!-- Business Card Header -->
+<div class="card shadow-sm border-0 mb-4">
+  <div class="row g-0">
+    <!-- Left side - Image with fixed aspect ratio -->
+    <div class="col-md-4">
+      <div style="height: 100%; min-height: 280px; position: relative;">
+        <img src="{{ business.get_primary_image_url }}" alt="{{ business.name }}" 
+             style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+      </div>
     </div>
-</div>
-
-<!-- Business Title, Trust Badges, and Key Info -->
-<div class="mb-4">
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-2">
-        <h1 class="mb-0">{{ business.name }}</h1>
-        
-        <div class="d-flex gap-2 align-items-center">
-            <!-- Trust badges -->
+    
+    <!-- Right side - Business Details -->
+    <div class="col-md-8">
+      <div class="card-body p-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+          <h1 class="card-title mb-0 h2">{{ business.name }}</h1>
+          
+          <div class="d-flex flex-wrap gap-2 mt-2 mt-sm-0">
             {% if business.gst_verified %}
             <span class="badge bg-success-subtle text-success border border-success-subtle">
-                <i class="bi bi-check-circle-fill me-1"></i>GST Verified
+              <i class="bi bi-check-circle-fill me-1"></i>GST Verified
             </span>
             {% endif %}
             
             {% if business.kyc_status == 'completed' %}
             <span class="badge bg-success-subtle text-success border border-success-subtle">
-                <i class="bi bi-shield-check me-1"></i>KYC Completed
+              <i class="bi bi-shield-check me-1"></i>KYC Completed
             </span>
             {% elif business.kyc_status == 'pending' %}
             <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
-                <i class="bi bi-clock-history me-1"></i>KYC Pending
+              <i class="bi bi-clock-history me-1"></i>KYC Pending
             </span>
             {% endif %}
             
-            <!-- Category badge -->
             <a href="{% url 'directory:listings' %}?category={{ business.category.id }}" class="badge bg-primary">
-                <i class="bi bi-tag-fill me-1"></i>{{ business.category.name }}
+              <i class="bi bi-tag-fill me-1"></i>{{ business.category.name }}
             </a>
+          </div>
         </div>
-    </div>
-    
-    <!-- Rating summary -->
-    <div class="d-flex align-items-center mb-3">
-        <div class="stars me-2">
+        
+        <!-- Rating summary -->
+        <div class="d-flex align-items-center mb-3">
+          <div class="stars me-2">
             {% for i in "12345"|make_list %}
-                <i class="bi bi-star{% if forloop.counter <= business.avg_rating|default:0 %}-fill{% endif %} text-warning"></i>
+              <i class="bi bi-star{% if forloop.counter <= business.avg_rating|default:0 %}-fill{% endif %} text-warning"></i>
             {% endfor %}
+          </div>
+          <span class="ms-2 text-muted">{{ business.avg_rating|default:0|floatformat:1 }} ({{ business.approved_reviews_count }} reviews)</span>
         </div>
-        <span class="ms-2 text-muted">{{ business.avg_rating|default:0|floatformat:1 }} ({{ business.approved_reviews_count }} reviews)</span>
-    </div>
-    
-    <!-- Quick contact buttons -->
-    <div class="d-flex flex-wrap gap-2">
-        {% if business.phone %}
-        <a href="tel:{{ business.phone }}" class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-telephone-fill me-1"></i>{{ business.phone }}
-        </a>
-        {% endif %}
         
-        {% if business.website %}
-        <a href="{{ business.website }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm">
+        <p class="text-muted mb-3">{{ business.description|truncatewords:30 }}</p>
+        
+        <!-- Quick info -->
+        <div class="small mb-3">
+          <p class="mb-1"><i class="bi bi-geo-alt me-2"></i>{{ business.address|truncatechars:60 }}</p>
+          <p class="mb-1"><i class="bi bi-clock me-2"></i>
+            {% with today_hours=business.hours.all|dictsort:"day"|get_item:today_weekday %}
+              {% if today_hours %}
+                {% if today_hours.is_closed %}
+                  <span class="text-danger">Closed Today</span>
+                {% else %}
+                  Open today: {{ today_hours.open_time|time:"g:i A" }} - {{ today_hours.close_time|time:"g:i A" }}
+                {% endif %}
+              {% else %}
+                <span class="text-muted">Hours not available</span>
+              {% endif %}
+            {% endwith %}
+          </p>
+        </div>
+        
+        <!-- Quick contact buttons -->
+        <div class="d-flex flex-wrap gap-2">
+          {% if business.phone %}
+          <a href="#" class="btn btn-outline-primary btn-sm" onclick="alert('Contact owner for phone number')">
+            <i class="bi bi-telephone-fill me-1"></i>91XXXXXXXXXX
+          </a>
+          {% endif %}
+          
+          {% if business.website %}
+          <a href="{{ business.website }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm">
             <i class="bi bi-globe me-1"></i>Visit Website
-        </a>
-        {% endif %}
-        
-        <a href="#contact-form" class="btn btn-primary btn-sm">
+          </a>
+          {% endif %}
+          
+          <a href="#contact-form" class="btn btn-primary btn-sm">
             <i class="bi bi-envelope-fill me-1"></i>Send Enquiry
-        </a>
+          </a>
+        </div>
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- Image Gallery (thumbnails only) -->
+<div class="mb-4">
+  <div class="gallery-thumbnails d-flex overflow-auto py-2">
+    {% for image in business.images.all %}
+      <img src="{{ image.image.url }}" 
+           alt="{{ image.caption|default:business.name }}" 
+           class="gallery-thumb {% if image.is_primary %}active{% endif %} me-2"
+           style="height: 60px; width: 60px; object-fit: cover; cursor: pointer; border-radius: 4px; border: 2px solid {% if image.is_primary %}#0d6efd{% else %}transparent{% endif %};"
+           onclick="changeMainImage(this, '{{ image.image.url }}')">
+    {% endfor %}
+  </div>
 </div>
 
 <!-- Special Offer Banner -->
@@ -405,7 +437,7 @@
                                     <i class="bi bi-star{% if forloop.counter <= related_business.avg_rating|default:0 %}-fill{% endif %} text-warning"></i>
                                 {% endfor %}
                             </div>
-                            <small class="text-muted">({{ related_business.reviews.count }})</small>
+                            <small class="text-muted">({{ related_business.reviews.filter.is_approved.count }})</small>
                         </div>
                         <p class="card-text small text-muted line-clamp-2">{{ related_business.description }}</p>
                         <a href="{% url 'directory:business_detail' related_business.pk %}" class="stretched-link"></a>
