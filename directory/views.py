@@ -424,3 +424,54 @@ def toggle_business_status(request):
         messages.success(request, f"Business {business.name} has been {status}.")
     
     return redirect('directory:dashboard_listings')
+
+@login_required
+def dashboard_leads(request):
+    """Dashboard leads view - combines enquiries and reviews"""
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
+        messages.error(request, "You don't have permission to access this page.")
+        return redirect('directory:home')
+    
+    # Get all businesses owned by the user
+    businesses = Business.objects.filter(owner=request.user)
+    
+    # Get all enquiries and convert them to a common lead format
+    enquiries = Enquiry.objects.filter(business__owner=request.user).select_related('business')
+    enquiry_leads = []
+    for enquiry in enquiries:
+        enquiry_leads.append({
+            'id': enquiry.id,
+            'name': enquiry.name,
+            'email': enquiry.email,
+            'phone': enquiry.phone,
+            'source': 'enquiry',
+            'business': enquiry.business,
+            'created_at': enquiry.created_at,
+            'is_responded': enquiry.is_responded,
+        })
+    
+    # Get all reviews and convert them to a common lead format
+    reviews = Review.objects.filter(business__owner=request.user).select_related('business')
+    review_leads = []
+    for review in reviews:
+        review_leads.append({
+            'id': review.id,
+            'name': review.name,
+            'email': review.email,
+            'phone': None,  # Reviews typically don't have phone numbers
+            'source': 'review',
+            'business': review.business,
+            'created_at': review.created_at,
+            'is_approved': review.is_approved,
+        })
+    
+    # Combine and sort by date
+    leads = sorted(enquiry_leads + review_leads, key=lambda x: x['created_at'], reverse=True)
+    
+    context = {
+        'active_tab': 'leads',
+        'leads': leads,
+        'businesses': businesses,
+    }
+    
+    return render(request, 'directory/dashboard/leads.html', context)

@@ -1,0 +1,146 @@
+{% extends 'directory/dashboard/base.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3">My Leads</h1>
+        <p class="text-muted">All your customer data in one place</p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="searchInput" placeholder="Search leads...">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="sourceFilter">
+                    <option value="">All Sources</option>
+                    <option value="enquiry">Enquiries</option>
+                    <option value="review">Reviews</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="businessFilter">
+                    <option value="">All Businesses</option>
+                    {% for business in businesses %}
+                        <option value="{{ business.id }}">{{ business.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-outline-secondary w-100" id="resetFilters">
+                    <i class="bi bi-x-circle me-1"></i>Reset
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if leads %}
+            <div class="table-responsive">
+                <table class="table table-hover" id="leadsTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Contact</th>
+                            <th scope="col">Source</th>
+                            <th scope="col">Business</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lead in leads %}
+                            <tr data-business-id="{{ lead.business.id }}">
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ lead.name }}</td>
+                                <td>
+                                    <div><a href="mailto:{{ lead.email }}">{{ lead.email }}</a></div>
+                                    {% if lead.phone %}
+                                        <div class="mt-1"><a href="tel:{{ lead.phone }}">{{ lead.phone }}</a></div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if lead.source == 'enquiry' %}
+                                        <span class="badge bg-primary">Enquiry</span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">Review</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ lead.business.name }}</td>
+                                <td>{{ lead.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if lead.source == 'enquiry' %}
+                                        {% if lead.is_responded %}
+                                            <span class="badge bg-success">Responded</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Pending</span>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if lead.is_approved %}
+                                            <span class="badge bg-success">Approved</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Pending</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-people text-muted fs-1"></i>
+                <p class="text-muted mt-3">No leads found. As you receive enquiries and reviews, they'll appear here.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Filter functionality
+        $("#searchInput, #sourceFilter, #businessFilter").on("change keyup", function() {
+            filterTable();
+        });
+        
+        // Reset filters
+        $("#resetFilters").click(function() {
+            $("#searchInput").val("");
+            $("#sourceFilter").val("");
+            $("#businessFilter").val("");
+            filterTable();
+        });
+        
+        function filterTable() {
+            const searchTerm = $("#searchInput").val().toLowerCase();
+            const sourceFilter = $("#sourceFilter").val();
+            const businessFilter = $("#businessFilter").val();
+            
+            $("#leadsTable tbody tr").each(function() {
+                const name = $(this).find("td:nth-child(2)").text().toLowerCase();
+                const contact = $(this).find("td:nth-child(3)").text().toLowerCase();
+                const source = $(this).find("td:nth-child(4) .badge").text().toLowerCase();
+                const business = $(this).find("td:nth-child(5)").text();
+                const businessId = $(this).data("business-id");
+                
+                const matchesSearch = name.includes(searchTerm) || contact.includes(searchTerm);
+                const matchesSource = sourceFilter === "" || source.includes(sourceFilter.toLowerCase());
+                const matchesBusiness = businessFilter === "" || businessId == businessFilter;
+                
+                if (matchesSearch && matchesSource && matchesBusiness) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}
