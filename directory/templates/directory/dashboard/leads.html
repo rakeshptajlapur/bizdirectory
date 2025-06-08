@@ -20,6 +20,7 @@
                     <option value="">All Sources</option>
                     <option value="enquiry">Enquiries</option>
                     <option value="review">Reviews</option>
+                    <option value="coupon">Coupon Requests</option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -66,8 +67,10 @@
                                 <td>
                                     {% if lead.source == 'enquiry' %}
                                         <span class="badge bg-primary">Enquiry</span>
-                                    {% else %}
+                                    {% elif lead.source == 'review' %}
                                         <span class="badge bg-warning text-dark">Review</span>
+                                    {% elif lead.source == 'coupon' %}
+                                        <span class="badge bg-success">Coupon Request</span>
                                     {% endif %}
                                 </td>
                                 <td>{{ lead.business.name }}</td>
@@ -79,12 +82,14 @@
                                         {% else %}
                                             <span class="badge bg-danger">Pending</span>
                                         {% endif %}
-                                    {% else %}
+                                    {% elif lead.source == 'review' %}
                                         {% if lead.is_approved %}
                                             <span class="badge bg-success">Approved</span>
                                         {% else %}
                                             <span class="badge bg-danger">Pending</span>
                                         {% endif %}
+                                    {% elif lead.source == 'coupon' %}
+                                        <span class="badge bg-info">Code: {{ lead.coupon_code }}</span>
                                     {% endif %}
                                 </td>
                             </tr>

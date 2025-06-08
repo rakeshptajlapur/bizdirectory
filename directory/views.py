@@ -7,7 +7,7 @@ from .models import Business, Category, Service
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from .models import Review, Enquiry
+from .models import Review, Enquiry, CouponRequest
 
 def home(request):
     search_query = request.GET.get('query', '')
@@ -303,6 +303,45 @@ def send_enquiry(request, business_id):
     # GET requests redirect back to business detail
     return redirect('directory:business_detail', pk=business_id)
 
+def request_coupon(request, business_id):
+    """Handle coupon form submissions"""
+    business = get_object_or_404(Business, pk=business_id)
+    
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        
+        # Basic email validation
+        if not email or '@' not in email or '.' not in email:
+            messages.error(request, "Please provide a valid email address")
+            return redirect('directory:business_detail', pk=business_id)
+            
+        try:
+            # Generate a unique coupon code
+            import random
+            import string
+            code_chars = string.ascii_uppercase + string.digits
+            coupon_code = ''.join(random.choice(code_chars) for _ in range(8))
+            
+            # Check if this email already requested a coupon
+            existing_coupon = CouponRequest.objects.filter(business=business, email=email).first()
+            if existing_coupon:
+                messages.info(request, f"You've already requested a coupon. Your code is: {existing_coupon.coupon_code}")
+            else:
+                # Create coupon request
+                CouponRequest.objects.create(
+                    business=business,
+                    email=email,
+                    coupon_code=coupon_code,
+                    is_sent=True
+                )
+                messages.success(request, f"Success! Your discount code is: {coupon_code}")
+                
+        except Exception as e:
+            messages.error(request, "Sorry, something went wrong. Please try again later.")
+            print(f"Error processing coupon request: {str(e)}")
+        
+    return redirect('directory:business_detail', pk=business_id)
+
 @login_required
 def dashboard_home(request):
     """Dashboard home view"""
@@ -443,7 +482,7 @@ def toggle_business_status(request):
 
 @login_required
 def dashboard_leads(request):
-    """Dashboard leads view - combines enquiries and reviews"""
+    """Dashboard leads view - combines enquiries, reviews and coupon requests"""
     if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
         messages.error(request, "You don't have permission to access this page.")
         return redirect('directory:home')
@@ -481,8 +520,25 @@ def dashboard_leads(request):
             'is_approved': review.is_approved,
         })
     
+    # Add this new section for coupon requests
+    coupons = CouponRequest.objects.filter(business__owner=request.user).select_related('business')
+    coupon_leads = []
+    for coupon in coupons:
+        coupon_leads.append({
+            'id': coupon.id,
+            'name': '',  # No name available
+            'email': coupon.email,
+            'phone': None,
+            'source': 'coupon',
+            'business': coupon.business,
+            'created_at': coupon.created_at,
+            'coupon_code': coupon.coupon_code,
+            'is_sent': coupon.is_sent,
+        })
+    
     # Combine and sort by date
-    leads = sorted(enquiry_leads + review_leads, key=lambda x: x['created_at'], reverse=True)
+    leads = sorted(enquiry_leads + review_leads + coupon_leads, 
+                   key=lambda x: x['created_at'], reverse=True)
     
     context = {
         'active_tab': 'leads',
