@@ -18,7 +18,8 @@ def home(request):
     
     # Add this filter to only include approved reviews
     businesses = businesses.annotate(
-        avg_rating=Avg('reviews__rating', filter=Q(reviews__is_approved=True))
+        avg_rating=Avg('reviews__rating', filter=Q(reviews__is_approved=True)),
+        approved_reviews_count=Count('reviews', filter=Q(reviews__is_approved=True))
     )
     
     if search_query:

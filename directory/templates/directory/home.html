@@ -138,13 +138,13 @@
                         </div>
                         
                         <!-- Star rating -->
-                        <div class="d-flex align-items-center small mb-2">
+                        <div class="d-flex align-items-center mb-2">
                             <div class="stars me-2">
                                 {% for i in "12345"|make_list %}
-                                    <i class="bi bi-star{% if forloop.counter <= business.avg_rating|default:0 %}-fill{% endif %} text-warning" style="font-size: 0.8rem;"></i>
+                                    <i class="bi bi-star{% if forloop.counter <= business.avg_rating|default:0 %}-fill{% endif %} text-warning"></i>
                                 {% endfor %}
                             </div>
-                            <span class="text-muted">({{ business.reviews.count }})</span>
+                            <small class="text-muted">({{ business.approved_reviews_count }})</small>
                         </div>
 
                      
