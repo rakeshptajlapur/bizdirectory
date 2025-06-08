@@ -16,8 +16,10 @@ def home(request):
     
     businesses = Business.objects.filter(is_active=True).prefetch_related('services')
     
-    # Add this annotation for the average rating
-    businesses = businesses.annotate(avg_rating=Avg('reviews__rating'))
+    # Add this filter to only include approved reviews
+    businesses = businesses.annotate(
+        avg_rating=Avg('reviews__rating', filter=Q(reviews__is_approved=True))
+    )
     
     if search_query:
         businesses = businesses.filter(
@@ -60,6 +62,9 @@ def business_detail(request, pk):
     business.avg_rating = business.reviews.filter(is_approved=True).aggregate(
         avg=Avg('rating')
     )['avg'] or 0
+    
+    # Count only approved reviews
+    business.approved_reviews_count = business.reviews.filter(is_approved=True).count()
     
     # Check if visitor has already submitted a review
     user_review = None

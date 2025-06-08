@@ -338,7 +338,7 @@
                                 <!-- Star rating -->
                                 <div class="d-flex align-items-center mb-2">
                                     <div class="stars me-2">
-                                        {% for i in "12345" %}
+                                        {% for i in "12345"|make_list %}
                                             <i class="bi bi-star{% if forloop.counter <= business.avg_rating|default:0 %}-fill{% endif %} text-warning"></i>
                                         {% endfor %}
                                     </div>

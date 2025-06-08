@@ -112,10 +112,12 @@
     
     <!-- Rating summary -->
     <div class="d-flex align-items-center mb-3">
-        <div class="stars-outer">
-            <div class="stars-inner" style="width: {{ business.avg_rating|default:0|floatformat:1|multiply:20 }}%"></div>
+        <div class="stars me-2">
+            {% for i in "12345"|make_list %}
+                <i class="bi bi-star{% if forloop.counter <= business.avg_rating|default:0 %}-fill{% endif %} text-warning"></i>
+            {% endfor %}
         </div>
-        <span class="ms-2 text-muted">{{ business.avg_rating|default:0|floatformat:1 }} ({{ business.reviews.count }} reviews)</span>
+        <span class="ms-2 text-muted">{{ business.avg_rating|default:0|floatformat:1 }} ({{ business.approved_reviews_count }} reviews)</span>
     </div>
     
     <!-- Quick contact buttons -->
