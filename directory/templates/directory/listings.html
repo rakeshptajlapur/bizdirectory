@@ -157,20 +157,65 @@
                     
                     <!-- Category filter -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Categories</label>
-                        <div class="overflow-auto" style="max-height: 200px;">
-                            {% for category in categories %}
-                            <div class="form-check">
-                                <input class="form-check-input filter-change" type="radio" name="category" 
-                                       id="category-{{ category.id }}" value="{{ category.id }}"
-                                       {% if current_filters.category|add:"0" == category.id %}checked{% endif %}>
-                                <label class="form-check-label" for="category-{{ category.id }}">
-                                    {{ category.name }}
-                                </label>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
+    <label class="form-label fw-bold d-flex justify-content-between align-items-center">
+        Categories
+        <a href="{% url 'directory:categories' %}" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-grid-3x3-gap-fill me-1"></i>All Categories
+        </a>
+    </label>
+    
+    <!-- Quick search for categories -->
+    <div class="input-group input-group-sm mb-2">
+        <input type="text" class="form-control" id="categorySearch" placeholder="Search categories...">
+        <button class="btn btn-outline-secondary" type="button">
+            <i class="bi bi-search"></i>
+        </button>
+    </div>
+    
+    <!-- Popular/Top categories (limited list) -->
+    <div class="overflow-auto" style="max-height: 200px;">
+        <div class="mb-2">
+            <strong class="small text-muted">Popular Categories</strong>
+        </div>
+        {% for category in categories|slice:":10" %}
+        <div class="form-check category-item">
+            <input class="form-check-input filter-change" type="radio" name="category" 
+                   id="category-{{ category.id }}" value="{{ category.id }}"
+                   {% if current_filters.category|add:"0" == category.id %}checked{% endif %}>
+            <label class="form-check-label" for="category-{{ category.id }}">
+                {{ category.name }}
+            </label>
+        </div>
+        {% endfor %}
+        
+        <!-- More categories (initially hidden) -->
+        <div id="moreCategoriesContainer" class="d-none">
+            <div class="mb-2 mt-3">
+                <strong class="small text-muted">More Categories</strong>
+            </div>
+            {% for category in categories|slice:"10:" %}
+            <div class="form-check category-item">
+                <input class="form-check-input filter-change" type="radio" name="category" 
+                       id="category-{{ category.id }}" value="{{ category.id }}"
+                       {% if current_filters.category|add:"0" == category.id %}checked{% endif %}>
+                <label class="form-check-label" for="category-{{ category.id }}">
+                    {{ category.name }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Toggle button for more categories -->
+        {% if categories.count > 10 %}
+        <button id="showMoreCategories" class="btn btn-sm btn-link text-decoration-none w-100 text-center mt-2">
+            <i class="bi bi-plus-circle me-1"></i>Show More Categories
+        </button>
+        <button id="showLessCategories" class="btn btn-sm btn-link text-decoration-none w-100 text-center mt-2 d-none">
+            <i class="bi bi-dash-circle me-1"></i>Show Less Categories
+        </button>
+        {% endif %}
+    </div>
+</div>
                     
                     <!-- Rating filter -->
                     <div class="mb-4">
@@ -504,6 +549,58 @@
         
         $('#pincode-filter').on('input', function() {
             $(this).val($(this).val().replace(/[^0-9]/g, ''));
+        });
+        
+        // Show/Hide more categories
+        let showMoreCategories = true;
+        $('#showMoreCategories').on('click', function() {
+            $('#moreCategoriesContainer').removeClass('d-none');
+            $(this).addClass('d-none');
+            $('#showLessCategories').removeClass('d-none');
+        });
+        
+        $('#showLessCategories').on('click', function() {
+            $('#moreCategoriesContainer').addClass('d-none');
+            $(this).addClass('d-none');
+            $('#showMoreCategories').removeClass('d-none');
+        });
+        
+        // Category filter UI improvements
+        $("#showMoreCategories").click(function() {
+            $("#moreCategoriesContainer").removeClass("d-none");
+            $(this).addClass("d-none");
+            $("#showLessCategories").removeClass("d-none");
+        });
+
+        $("#showLessCategories").click(function() {
+            $("#moreCategoriesContainer").addClass("d-none");
+            $(this).addClass("d-none");
+            $("#showMoreCategories").removeClass("d-none");
+        });
+
+        // Category search functionality
+        $("#categorySearch").on("input", function() {
+            const searchTerm = $(this).val().toLowerCase();
+            $(".category-item").each(function() {
+                const categoryName = $(this).find("label").text().toLowerCase();
+                if (categoryName.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+            
+            // Show all containers when searching
+            if (searchTerm.length > 0) {
+                $("#moreCategoriesContainer").removeClass("d-none");
+                $("#showMoreCategories").addClass("d-none");
+                $("#showLessCategories").removeClass("d-none");
+            } else {
+                // Reset to default state when search is cleared
+                $("#moreCategoriesContainer").addClass("d-none");
+                $("#showMoreCategories").removeClass("d-none");
+                $("#showLessCategories").addClass("d-none");
+            }
         });
     });
 </script>
