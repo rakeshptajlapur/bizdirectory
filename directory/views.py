@@ -145,6 +145,12 @@ def listings(request):
     # Base queryset with optimized queries
     businesses = Business.objects.filter(is_active=True).select_related('category', 'owner').prefetch_related('services', 'reviews')
     
+    # Add this annotation to calculate approved reviews count
+    businesses = businesses.annotate(
+        avg_rating=Avg('reviews__rating', filter=Q(reviews__is_approved=True)),
+        approved_reviews_count=Count('reviews', filter=Q(reviews__is_approved=True))
+    )
+    
     # Apply filters
     category_id = request.GET.get('category')
     if category_id:
