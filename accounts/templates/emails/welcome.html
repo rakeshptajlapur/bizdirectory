@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to FindNearBiz</title>
+</head>
+<body>
+    <p>Hi {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %},</p>
+    <p>Welcome to <strong>FindNearBiz</strong>! We're excited to have you on board.</p>
+    <p>Feel free to explore listings, leave reviews, and connect with local businesses.</p>
+    <p>If you have any questions, reply to this email or visit our support page.</p>
+    <p>Best regards,<br/>
+    The FindNearBiz Team</p>
+</body>
+</html>

@@ -2,9 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse_lazy
 from .forms import UserRegisterForm, ProfileUpdateForm
 from directory.models import Business
 from django.contrib.auth.models import User
+from .signals import send_password_changed_email, send_profile_updated_email
 
 def register(request):
     if request.method == 'POST':
@@ -78,12 +82,24 @@ def profile_view(request):
         form = ProfileUpdateForm(request.POST, instance=request.user.profile)
         if form.is_valid():
             form.save()
+            # Send profile update confirmation email via Celery
+            send_profile_updated_email.delay(request.user.id)
             messages.success(request, 'Your profile has been updated successfully.')
             return redirect('accounts:profile')
     else:
         form = ProfileUpdateForm(instance=request.user.profile)
     
     return render(request, 'accounts/profile.html', {'form': form})
+
+class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    template_name = 'accounts/password_change.html'
+    success_url = reverse_lazy('accounts:password_change_done')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # Queue password change notification
+        send_password_changed_email.delay(self.request.user.id)
+        return response
 
 @login_required
 def upgrade_to_business(request):

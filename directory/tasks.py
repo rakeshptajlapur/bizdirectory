@@ -11,3 +11,6 @@ from .signals import (
     send_business_live_email,
     send_business_deactivated_email,
 )
+
+# Import welcome email task from accounts to ensure Celery registers it
+from accounts.signals import send_welcome_email
