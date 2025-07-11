@@ -42,13 +42,7 @@
                                     <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
                                     <a href="{% url 'directory:business_detail' business.pk %}" class="btn btn-sm btn-outline-secondary">View</a>
                                     
-                                    <form method="post" action="{% url 'directory:toggle_business_status' %}" class="d-inline">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="business_id" value="{{ business.id }}">
-                                        <button type="submit" class="btn btn-sm btn-outline-{% if business.is_active %}danger{% else %}success{% endif %}">
-                                            {% if business.is_active %}Deactivate{% else %}Activate{% endif %}
-                                        </button>
-                                    </form>
+                                    {# Activation/deactivation now handled by admins; owner toggle removed #}
                                 </td>
                             </tr>
                         {% endfor %}

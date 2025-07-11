@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Business Live</title></head>
+<body>
+  <p>Hi {{ business.owner.first_name }},</p>
+  <p>Your business <strong>{{ business.name }}</strong> is now approved and live on our site!</p>
+  <p>Visit your listing: <a href="{{ business.get_absolute_url }}">View Listing</a></p>
+  <p>Congratulations and best wishes,<br/>The Directory Team</p>
+</body>
+</html>

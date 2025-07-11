@@ -152,6 +152,10 @@ EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 
+# Admin email addresses for notifications
+ADMIN_EMAILS = os.getenv('ADMIN_EMAILS', '').split(',')
+ADMINS = [(None, email) for email in ADMIN_EMAILS if email]
+
 # Celery/Redis configuration from .env
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL

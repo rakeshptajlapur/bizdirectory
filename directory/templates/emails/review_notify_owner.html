@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>New Review Pending Approval</title>
+</head>
+<body>
+    <p>Hello {{ review.business.owner.first_name }},</p>
+    <p>A new review has been submitted for your business <strong>{{ review.business.name }}</strong>:</p>
+    <blockquote>
+        <p><strong>{{ review.name }}</strong> ({{ review.email }}) rated it {{ review.rating }}/5.</p>
+        <p>"{{ review.comment }}"</p>
+    </blockquote>
+    <p>Visit your admin panel to approve or reject this review.</p>
+    <p>Best regards,<br/>
+    Your moderation team</p>
+</body>
+</html>

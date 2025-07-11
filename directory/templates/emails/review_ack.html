@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Thank You for Your Review</title>
+</head>
+<body>
+    <p>Dear {{ review.name }},</p>
+    <p>Thank you for submitting your review of <strong>{{ review.business.name }}</strong>.</p>
+    <p>Your feedback helps others make informed decisions. Your review is currently pending approval.</p>
+    <p>Best regards,<br/>
+    The {{ review.business.name }} Team</p>
+</body>
+</html>

@@ -65,7 +65,9 @@ class Business(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
-    
+    # Whether the listing has been approved by an admin
+    is_approved = models.BooleanField(default=False)
+
     class Meta:
         verbose_name_plural = "Businesses"
         

@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from celery import shared_task
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from .models import Business, Enquiry, CouponRequest
+from .models import Business, Enquiry, CouponRequest, Review
 import logging
 import uuid
 
@@ -23,8 +23,9 @@ def business_created_notification(sender, instance, created, **kwargs):
     if created and not instance.is_approved:
         subject = f"New Business Listing Pending Approval: {instance.name}"
         message = f"A new business listing '{instance.name}' has been submitted and is pending approval."
-        # Send to admin (replace with your admin email)
-        send_notification_email.delay(subject, message, [settings.DEFAULT_FROM_EMAIL])
+        # Send to site admins
+        admins = getattr(settings, 'ADMIN_EMAILS', []) or [settings.DEFAULT_FROM_EMAIL]
+        send_notification_email.delay(subject, message, admins)
 
 # Add tasks and receivers for Enquiry notifications
 @shared_task
@@ -85,3 +86,76 @@ def coupon_request_notifications(sender, instance, created, **kwargs):
     if created:
         send_coupon_user_ack_email.delay(instance.id)
         send_coupon_owner_notification_email.delay(instance.id)
+
+# Add tasks and receivers for Review notifications
+@shared_task
+def send_review_ack_email(review_id):
+    review = Review.objects.get(id=review_id)
+    context = {'review': review}
+    subject = f"Thank you for your review of {review.business.name}"
+    html_message = render_to_string('emails/review_ack.html', context)
+    text_message = strip_tags(html_message)
+    send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, [review.email], html_message=html_message)
+
+@shared_task
+def send_review_owner_pending_email(review_id):
+    review = Review.objects.get(id=review_id)
+    context = {'review': review}
+    subject = f"New review pending approval for {review.business.name}"
+    html_message = render_to_string('emails/review_notify_owner.html', context)
+    text_message = strip_tags(html_message)
+    recipients = [review.business.owner.email, settings.DEFAULT_FROM_EMAIL]
+    send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, recipients, html_message=html_message)
+
+@shared_task
+def send_review_visible_email(review_id):
+    review = Review.objects.get(id=review_id)
+    context = {'review': review}
+    subject = f"Your review for {review.business.name} is now live"
+    html_message = render_to_string('emails/review_approved.html', context)
+    text_message = strip_tags(html_message)
+    send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, [review.email], html_message=html_message)
+
+@receiver(post_save, sender=Review)
+def review_submission_notifications(sender, instance, created, **kwargs):
+    if created:
+        # Acknowledge reviewer
+        send_review_ack_email.delay(instance.id)
+        # Notify owner of pending review
+        if not instance.is_approved:
+            send_review_owner_pending_email.delay(instance.id)
+
+@receiver(post_save, sender=Review)
+def review_approval_notification(sender, instance, created, **kwargs):
+    # On approval toggle
+    if not created and instance.is_approved:
+        send_review_visible_email.delay(instance.id)
+
+# Add tasks and receiver for Business status change notifications
+@shared_task
+def send_business_live_email(business_id):
+    business = Business.objects.get(id=business_id)
+    context = {'business': business}
+    subject = f"Your business '{business.name}' is now live"
+    html_message = render_to_string('emails/business_live.html', context)
+    text_message = strip_tags(html_message)
+    send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, [business.owner.email], html_message=html_message)
+
+@shared_task
+def send_business_deactivated_email(business_id):
+    business = Business.objects.get(id=business_id)
+    context = {'business': business}
+    subject = f"Your business '{business.name}' has been deactivated"
+    html_message = render_to_string('emails/business_deactivated.html', context)
+    text_message = strip_tags(html_message)
+    recipients = [business.owner.email, settings.DEFAULT_FROM_EMAIL]
+    send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, recipients, html_message=html_message)
+
+@receiver(post_save, sender=Business)
+def business_status_notifications(sender, instance, created, **kwargs):
+    # Notify owner when listing is activated or deactivated
+    if not created:
+        if instance.is_active:
+            send_business_live_email.delay(instance.id)
+        else:
+            send_business_deactivated_email.delay(instance.id)
