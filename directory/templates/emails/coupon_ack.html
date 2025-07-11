@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Your Coupon Code</title>
+</head>
+<body>
+    <p>Dear {{ coupon.email }},</p>
+    <p>Thank you for requesting a coupon for <strong>{{ coupon.business.name }}</strong>.</p>
+    <p>Your coupon code is: <strong>{{ coupon.coupon_code }}</strong></p>
+    <p>Please present this code in-store to claim your discount. The coupon is valid for 30 days from the date of issuance.</p>
+    <p>Enjoy your shopping!<br/>
+    The {{ coupon.business.name }} Team</p>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>New Coupon Request</title>
+</head>
+<body>
+    <p>Hello {{ coupon.business.owner.first_name }},</p>
+    <p>A new coupon request has been made for your business <strong>{{ coupon.business.name }}</strong>:</p>
+    <ul>
+        <li><strong>User Email:</strong> {{ coupon.email }}</li>
+        <li><strong>Coupon Code:</strong> {{ coupon.coupon_code }}</li>
+        <li><strong>Requested at:</strong> {{ coupon.created_at }}</li>
+    </ul>
+    <p>Please prepare the coupon for the customer to claim in-store.</p>
+    <p>Best regards,<br/>
+    Your Support Team</p>
+</body>
+</html>

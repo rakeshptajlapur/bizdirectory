@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>New Enquiry Notification</title>
+</head>
+<body>
+    <p>Hello {{ enquiry.business.owner.first_name }},</p>
+    <p>You have a new enquiry for your business <strong>{{ enquiry.business.name }}</strong>:</p>
+    <ul>
+        <li><strong>Name:</strong> {{ enquiry.name }}</li>
+        <li><strong>Email:</strong> {{ enquiry.email }}</li>
+        <li><strong>Phone:</strong> {{ enquiry.phone }}</li>
+        <li><strong>Message:</strong><br/>{{ enquiry.message }}</li>
+        <li><strong>Submitted at:</strong> {{ enquiry.created_at }}</li>
+    </ul>
+    <p>Please follow up with the enquirer as soon as possible.</p>
+    <p>Best regards,<br/>
+    Your Support Team</p>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Thank you for your enquiry</title>
+</head>
+<body>
+    <p>Dear {{ enquiry.name }},</p>
+    <p>Thank you for your enquiry about <strong>{{ enquiry.business.name }}</strong>. We have received the following message from you:</p>
+    <blockquote>
+        {{ enquiry.message }}
+    </blockquote>
+    <p>We will review your enquiry and get back to you shortly.</p>
+    <p>Best regards,<br/>
+    The {{ enquiry.business.name }} Team</p>
+</body>
+</html>
