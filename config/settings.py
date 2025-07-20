@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-9x5vlq=rqgfc)xe&g!6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,157.230.214.103,.findnearbiz.com,.appliku.com').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,157.230.214.103,.findnearbiz.com,.applikuapp.com',).split(',')
 
 
 # Application definition
