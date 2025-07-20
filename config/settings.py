@@ -82,15 +82,15 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Use PostgreSQL in production, SQLite in development
-#if os.getenv('DATABASE_URL'):
-#    # For production with DATABASE_URL
-#    import dj_database_url
-#    DATABASES = {
-#        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
-#    }
-#else:
+if os.getenv('DATABASE_URL'):
+    # For production with DATABASE_URL
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    }
+else:
     # For development
-DATABASES = {
+    DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
