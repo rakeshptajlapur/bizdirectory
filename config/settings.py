@@ -98,24 +98,32 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Use PostgreSQL in production, SQLite in development
-if os.getenv('DATABASE_URL'):
-    # For production with DATABASE_URL
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+#if os.getenv('DATABASE_URL'):
+#    # For production with DATABASE_URL
+#    import dj_database_url
+#    DATABASES = {
+#        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+#    }
+#else:
+#    # For development
+#    DATABASES = {
+#        'default': {
+#            'ENGINE': 'django.db.backends.postgresql',
+#            'NAME': os.getenv('DB_NAME', 'bizdirectory'),
+#            'USER': os.getenv('DB_USER', 'postgres'),
+#            'PASSWORD': os.getenv('DB_PASSWORD', ''),
+#            'HOST': os.getenv('DB_HOST', 'localhost'),
+#            'PORT': os.getenv('DB_PORT', '5432'),
+#        }
+#    }
+
+# Temporarily force SQLite for data cleaning
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    # For development
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME', 'bizdirectory'),
-            'USER': os.getenv('DB_USER', 'postgres'),
-            'PASSWORD': os.getenv('DB_PASSWORD', ''),
-            'HOST': os.getenv('DB_HOST', 'localhost'),
-            'PORT': os.getenv('DB_PORT', '5432'),
-        }
-    }
+}
 
 
 
