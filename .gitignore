@@ -31,6 +31,27 @@ local_settings.py
 db.sqlite3-journal
 media/
 
+# Database files
+*.sqlite3
+db.sqlite3
+
+# Backup files
+*_backup.json
+backup_*.json
+clean_*.json
+fixed_*.json
+
+# Temporary scripts
+create_dummy_data.py
+fix_*.py
+migrate_data.py
+
+# Test files (optional - you might want to keep these)
+test_*.py
+
+# Media files
+media/
+
 # Coverage
 htmlcov/
 .tox/
