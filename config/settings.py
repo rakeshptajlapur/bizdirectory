@@ -31,7 +31,11 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-9x5vlq=rqgfc)xe&g!6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+# Improved ALLOWED_HOSTS handling
+allowed_hosts_str = os.getenv('ALLOWED_HOSTS', '')
+ALLOWED_HOSTS = [host for host in allowed_hosts_str.split(',') if host.strip()]
+print(f"DEBUG: ALLOWED_HOSTS from env: {os.getenv('ALLOWED_HOSTS')}")
+print(f"DEBUG: ALLOWED_HOSTS after processing: {ALLOWED_HOSTS}")
 
 # CSRF Trusted Origins - domains that can submit forms to your site
 CSRF_TRUSTED_ORIGINS = []
@@ -92,6 +96,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+
 # Use PostgreSQL in production, SQLite in development
 if os.getenv('DATABASE_URL'):
     # For production with DATABASE_URL
@@ -103,10 +108,18 @@ else:
     # For development
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME', 'bizdirectory'),
+            'USER': os.getenv('DB_USER', 'postgres'),
+            'PASSWORD': os.getenv('DB_PASSWORD', ''),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '5432'),
         }
     }
+
+
+
+
 
 
 # Password validation
