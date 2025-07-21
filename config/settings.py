@@ -33,6 +33,18 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
+# CSRF Trusted Origins - domains that can submit forms to your site
+CSRF_TRUSTED_ORIGINS = []
+
+# Add all allowed hosts with https:// prefix to CSRF_TRUSTED_ORIGINS
+for host in ALLOWED_HOSTS:
+    if host and not host.startswith('.') and not host.startswith('*'):
+        CSRF_TRUSTED_ORIGINS.append(f'https://{host}')
+        CSRF_TRUSTED_ORIGINS.append(f'http://{host}')
+    elif host and host.startswith('.'):
+        CSRF_TRUSTED_ORIGINS.append(f'https://*{host}')
+        CSRF_TRUSTED_ORIGINS.append(f'http://*{host}')
+
 # Application definition
 
 INSTALLED_APPS = [
