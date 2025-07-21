@@ -214,3 +214,16 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+# Static files configuration for App Platform
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+
+# Don't require database for collectstatic
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# For DigitalOcean App Platform
+if 'DYNO' in os.environ or 'PORT' in os.environ:
+    # Production settings
+    DEBUG = False
+    ALLOWED_HOSTS.extend(['.ondigitalocean.app', '.appspec.app'])
