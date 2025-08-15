@@ -9,28 +9,32 @@ from .forms import UserRegisterForm, ProfileUpdateForm
 from directory.models import Business
 from django.contrib.auth.models import User
 from .signals import send_password_changed_email, send_profile_updated_email
+from .signals import send_verification_email, send_welcome_email
+from .models import EmailVerification
+from django.utils import timezone
+from datetime import timedelta
 
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
-        print(f"Form valid: {form.is_valid()}")
         if form.is_valid():
-            user = form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Welcome to BizDirectory, {username}! Your account has been created.')
+            user = form.save(commit=False)
+            user.is_active = False  # Keep inactive until verified
+            user.save()
             
-            # Automatically log in the user
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
+            # Generate OTP and send email
+            otp_code = EmailVerification.generate_otp()
+            EmailVerification.objects.create(
+                user=user,
+                otp_code=otp_code
+            )
+            send_verification_email.delay(user.id, otp_code)
             
-            # Redirect based on user type
-            if user.profile.is_business_owner:
-                return redirect('directory:dashboard_home')
-            else:
-                return redirect('directory:home')
-        else:
-            print(f"Form errors: {form.errors}")
+            # Store email for verification
+            request.session['pending_verification_email'] = user.email
+            
+            messages.success(request, 'Registration successful! Please check your email for verification code.')
+            return redirect('accounts:verify_email')
     else:
         form = UserRegisterForm()
     
@@ -118,3 +122,83 @@ def upgrade_to_business(request):
         return redirect('directory:dashboard_home')
     
     return render(request, 'accounts/upgrade_to_business.html')
+
+def verify_email(request):
+    """Email verification page"""
+    if request.method == 'POST':
+        otp_entered = request.POST.get('otp', '').strip()
+        email = request.session.get('pending_verification_email')
+        
+        if not email:
+            messages.error(request, 'Verification session expired. Please register again.')
+            return redirect('accounts:register')
+        
+        try:
+            user = User.objects.get(email=email, is_active=False)
+            verification = user.email_verification
+            
+            if verification.otp_code == otp_entered and verification.is_otp_valid():
+                # Activate user
+                user.is_active = True
+                user.save()
+                
+                # Mark as verified
+                verification.is_verified = True
+                verification.save()
+                
+                # Auto-login user
+                login(request, user)
+                
+                # Send welcome email
+                send_welcome_email.delay(user.id)
+                
+                # Clear session
+                del request.session['pending_verification_email']
+                
+                messages.success(request, 'Email verified successfully! Welcome to BizDirectory.')
+                
+                # Redirect based on user type
+                if user.profile.user_type == 'business_owner':
+                    return redirect('directory:dashboard_home')
+                else:
+                    return redirect('directory:home')
+            else:
+                messages.error(request, 'Invalid or expired verification code. Please try again.')
+                
+        except User.DoesNotExist:
+            messages.error(request, 'Verification failed. Please register again.')
+            return redirect('accounts:register')
+        except EmailVerification.DoesNotExist:
+            messages.error(request, 'No verification code found. Please register again.')
+            return redirect('accounts:register')
+    
+    return render(request, 'accounts/verify_email.html')
+
+def resend_otp(request):
+    """Resend OTP verification code"""
+    email = request.session.get('pending_verification_email')
+    
+    if not email:
+        messages.error(request, 'No pending verification found.')
+        return redirect('accounts:register')
+    
+    try:
+        user = User.objects.get(email=email, is_active=False)
+        verification = user.email_verification
+        
+        # Generate new OTP
+        verification.otp_code = EmailVerification.generate_otp()
+        verification.created_at = timezone.now()
+        verification.expires_at = timezone.now() + timedelta(minutes=10)
+        verification.save()
+        
+        # Send new OTP email
+        send_verification_email.delay(user.id, verification.otp_code)
+        
+        messages.success(request, 'New verification code sent to your email.')
+        
+    except User.DoesNotExist:
+        messages.error(request, 'User not found.')
+        return redirect('accounts:register')
+    
+    return redirect('accounts:verify_email')
