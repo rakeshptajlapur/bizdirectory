@@ -16,24 +16,44 @@
                     <a href="{% url 'directory:dashboard_home' %}" class="list-group-item list-group-item-action {% if active_tab == 'home' %}active{% endif %}">
                         <i class="bi bi-speedometer2 me-2"></i> Dashboard Home
                     </a>
-                    <a href="{% url 'directory:dashboard_listings' %}" class="list-group-item list-group-item-action {% if active_tab == 'listings' %}active{% endif %}">
-                        <i class="bi bi-building me-2"></i> My Listings
+                    
+                    <!-- Profile and Security for ALL users -->
+                    <a href="{% url 'accounts:profile' %}" class="list-group-item list-group-item-action {% if active_tab == 'profile' %}active{% endif %}">
+                        <i class="bi bi-person me-2"></i> Profile Settings
                     </a>
-                    <a href="{% url 'directory:dashboard_reviews' %}" class="list-group-item list-group-item-action {% if active_tab == 'reviews' %}active{% endif %}">
-                        <i class="bi bi-star me-2"></i> Reviews
-                        {% if pending_reviews_count %}
-                            <span class="badge bg-danger float-end">{{ pending_reviews_count }}</span>
-                        {% endif %}
+                    <a href="{% url 'accounts:password_change' %}" class="list-group-item list-group-item-action {% if active_tab == 'security' %}active{% endif %}">
+                        <i class="bi bi-shield-lock me-2"></i> Security
                     </a>
-                    <a href="{% url 'directory:dashboard_enquiries' %}" class="list-group-item list-group-item-action {% if active_tab == 'enquiries' %}active{% endif %}">
-                        <i class="bi bi-envelope me-2"></i> Enquiries
-                        {% if unread_enquiries_count %}
-                            <span class="badge bg-danger float-end">{{ unread_enquiries_count }}</span>
-                        {% endif %}
-                    </a>
-                    <a href="{% url 'directory:dashboard_leads' %}" class="list-group-item list-group-item-action {% if active_tab == 'leads' %}active{% endif %}">
-                        <i class="bi bi-people me-2"></i> My Leads
-                    </a>
+                    
+                    {% if user.profile.is_business_owner %}
+                        <!-- Business Owner Only Features -->
+                        <a href="{% url 'directory:dashboard_listings' %}" class="list-group-item list-group-item-action {% if active_tab == 'listings' %}active{% endif %}">
+                            <i class="bi bi-building me-2"></i> My Listings
+                        </a>
+                        <a href="{% url 'directory:dashboard_reviews' %}" class="list-group-item list-group-item-action {% if active_tab == 'reviews' %}active{% endif %}">
+                            <i class="bi bi-star me-2"></i> Reviews
+                        </a>
+                        <a href="{% url 'directory:dashboard_enquiries' %}" class="list-group-item list-group-item-action {% if active_tab == 'enquiries' %}active{% endif %}">
+                            <i class="bi bi-envelope me-2"></i> Enquiries
+                        </a>
+                        <a href="{% url 'directory:dashboard_leads' %}" class="list-group-item list-group-item-action {% if active_tab == 'leads' %}active{% endif %}">
+                            <i class="bi bi-people me-2"></i> My Leads
+                        </a>
+                        <a href="{% url 'directory:kyc_gst_documents' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-shield-check me-2"></i> KYC & GST
+                            {% if business.kyc_status == 'pending' %}
+                                <span class="badge bg-warning ms-auto">Under Review</span>
+                            {% elif business.kyc_status == 'completed' and business.gst_verified %}
+                                <span class="badge bg-success ms-auto">Verified</span>
+                            {% endif %}
+                        </a>
+                    {% else %}
+                        <!-- Regular User - Show Upgrade Option -->
+                        <a href="{% url 'accounts:upgrade_to_business' %}" class="list-group-item list-group-item-action {% if active_tab == 'upgrade' %}active{% endif %} text-primary">
+                            <i class="bi bi-arrow-up-circle me-2"></i> Upgrade to Business
+                        </a>
+                    {% endif %}
+                    
                     <a href="{% url 'accounts:logout' %}" class="list-group-item list-group-item-action text-danger">
                         <i class="bi bi-box-arrow-right me-2"></i> Logout
                     </a>

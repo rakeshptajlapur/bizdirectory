@@ -10,7 +10,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
 
     # Profile management
-    path('profile/', views.profile_view, name='profile'),
+    path('profile/', views.profile, name='profile'),
     path('upgrade-to-business/', views.upgrade_to_business, name='upgrade_to_business'),
 
     # Password management

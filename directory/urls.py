@@ -27,4 +27,7 @@ urlpatterns = [
     path('dashboard/listings/toggle-status/', views.toggle_business_status, name='toggle_business_status'),
     path('dashboard/leads/', views.dashboard_leads, name='dashboard_leads'),
     path('business/<int:business_id>/coupon/', views.request_coupon, name='request_coupon'),
+    
+    # KYC & GST Documents
+    path('dashboard/kyc-gst/', views.kyc_gst_documents, name='kyc_gst_documents'),
 ]

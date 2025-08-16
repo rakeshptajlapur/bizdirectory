@@ -80,7 +80,7 @@ def logout_view(request):
     return redirect('directory:home')
 
 @login_required
-def profile_view(request):
+def profile(request):
     """View and update user profile information"""
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, instance=request.user.profile)
@@ -93,7 +93,11 @@ def profile_view(request):
     else:
         form = ProfileUpdateForm(instance=request.user.profile)
     
-    return render(request, 'accounts/profile.html', {'form': form})
+    context = {
+        'form': form,
+        'active_tab': 'profile',  # Add this
+    }
+    return render(request, 'accounts/profile.html', context)
 
 class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     template_name = 'accounts/password_change.html'
@@ -104,6 +108,25 @@ class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
         # Queue password change notification
         send_password_changed_email.delay(self.request.user.id)
         return response
+
+@login_required
+def password_change(request):
+    """Change password view"""
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password has been updated successfully.')
+            return redirect('accounts:password_change_done')
+    else:
+        form = PasswordChangeForm(request.user)
+    
+    context = {
+        'form': form,
+        'active_tab': 'security',  # Add this
+    }
+    return render(request, 'accounts/password_change.html', context)
 
 @login_required
 def upgrade_to_business(request):
@@ -121,7 +144,10 @@ def upgrade_to_business(request):
         messages.success(request, 'Congratulations! Your account has been upgraded to business owner. You can now add business listings.')
         return redirect('directory:dashboard_home')
     
-    return render(request, 'accounts/upgrade_to_business.html')
+    context = {
+        'active_tab': 'upgrade',  # Add this
+    }
+    return render(request, 'accounts/upgrade_to_business.html', context)
 
 def verify_email(request):
     """Email verification page"""

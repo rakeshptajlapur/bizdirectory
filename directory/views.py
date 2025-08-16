@@ -377,8 +377,17 @@ def dashboard_home(request):
         business__owner=request.user
     ).order_by('-created_at')[:5]
     
+    # Get business for sidebar context
+    business = None
+    if hasattr(request.user, 'profile') and request.user.profile.is_business_owner:
+        try:
+            business = Business.objects.get(owner=request.user)
+        except Business.DoesNotExist:
+            pass
+    
     context = {
         'active_tab': 'home',
+        'business': business,  # Add this
         'businesses': businesses,
         'enquiries_count': enquiries_count,
         'reviews_count': reviews_count,
@@ -549,3 +558,49 @@ def dashboard_leads(request):
     }
     
     return render(request, 'directory/dashboard/leads.html', context)
+
+@login_required
+def kyc_gst_documents(request):
+    """KYC & GST documents management view"""
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
+        messages.error(request, "You don't have permission to access this page.")
+        return redirect('directory:home')
+    
+    # Get user's business (assuming one business per user)
+    try:
+        business = Business.objects.get(owner=request.user)
+    except Business.DoesNotExist:
+        messages.error(request, "Please create a business listing first.")
+        return redirect('directory:dashboard_home')
+    
+    if request.method == 'POST':
+        # Handle form submission
+        registration_number = request.POST.get('registration_number', '').strip()
+        gst_number = request.POST.get('gst_number', '').strip()
+        registration_document = request.FILES.get('registration_document')
+        
+        # Update business details
+        if registration_number:
+            business.registration_number = registration_number
+        
+        if gst_number:
+            business.gst_number = gst_number
+            # Reset GST verification when number changes
+            if business.gst_number != gst_number:
+                business.gst_verified = False
+        
+        if registration_document:
+            business.registration_document = registration_document
+            # Reset KYC status when new document is uploaded
+            business.kyc_status = 'pending'
+        
+        business.save()
+        
+        messages.success(request, 'Documents updated successfully! Our team will review and verify them within 24-48 hours.')
+        return redirect('directory:kyc_gst_documents')
+    
+    context = {
+        'active_tab': 'kyc_gst',
+        'business': business,
+    }
+    return render(request, 'directory/dashboard/kyc_gst.html', context)

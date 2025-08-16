@@ -1,166 +1,107 @@
-{% extends 'directory/base.html' %}
+{% extends 'directory/dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Upgrade to Business Owner | BizDirectory{% endblock %}
-
-{% block extra_css %}
-<style>
-    .upgrade-section {
-        background-color: #f8f9fa;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.03'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 20.83l2.83-2.83 1.41 1.41L1.41 22.24H0v-1.41zM0 3.07l2.83-2.83 1.41 1.41L1.41 4.48H0V3.07zm20 0l2.83-2.83 1.41 1.41L21.41 4.48H20V3.07zm0 17.76l2.83-2.83 1.41 1.41L21.41 22.24H20v-1.41zm0 17.76l2.83-2.83 1.41 1.41L21.41 40H20v-1.41zM20 3.07l2.83-2.83 1.41 1.41L21.41 4.48H20V3.07zm0 17.76l2.83-2.83 1.41 1.41L21.41 22.24H20v-1.41zm0 17.76l2.83-2.83 1.41 1.41L21.41 40H20v-1.41zM40 3.07l2.83-2.83 1.41 1.41L41.41 4.48H40V3.07zm0 17.76l2.83-2.83 1.41 1.41L41.41 22.24H40v-1.41zm0 17.76l2.83-2.83 1.41 1.41L41.41 40H40v-1.41z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        min-height: 85vh;
-        display: flex;
-        align-items: center;
-    }
-    
-    .upgrade-card {
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        border: none;
-        overflow: hidden;
-    }
-    
-    .upgrade-card .card-header {
-        background-color: #f8f9fa;
-        background-image: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(13, 110, 253, 0.1) 100%);
-        padding: 1.5rem;
-        border-bottom: 1px solid rgba(13, 110, 253, 0.1);
-    }
-    
-    .upgrade-card .card-body {
-        padding: 2.5rem;
-    }
-    
-    .alert-info {
-        background-color: rgba(13, 202, 240, 0.1);
-        border-color: rgba(13, 202, 240, 0.2);
-    }
-    
-    .form-check-input:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
-    
-    .btn-primary {
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-    }
-    
-    /* Badge styling for benefits list */
-    .benefit-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-        background-color: rgba(13, 110, 253, 0.1);
-        color: #0d6efd;
-        border-radius: 50%;
-        margin-right: 8px;
-    }
-    
-    /* Account sidebar styles */
-    .account-sidebar .list-group-item {
-        border-left: none;
-        border-right: none;
-        border-radius: 0;
-        padding: 0.75rem 1.25rem;
-    }
-    
-    .account-sidebar .list-group-item.active {
-        background-color: rgba(13, 110, 253, 0.1);
-        color: #0d6efd;
-        border-color: rgba(0,0,0,.125);
-        font-weight: 500;
-    }
-    
-    .account-sidebar .list-group-item:first-child {
-        border-top: none;
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="upgrade-section py-5">
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-lg-3 mb-4 mb-lg-0">
-                <div class="card border-0 shadow-sm account-sidebar">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Account Settings</h5>
-                    </div>
-                    <div class="list-group list-group-flush">
-                        <a href="{% url 'accounts:profile' %}" class="list-group-item list-group-item-action">
-                            <i class="bi bi-person me-2"></i> Profile Settings
-                        </a>
-                        <a href="{% url 'accounts:password_change' %}" class="list-group-item list-group-item-action">
-                            <i class="bi bi-shield-lock me-2"></i> Password & Security
-                        </a>
-                        <a href="{% url 'accounts:upgrade_to_business' %}" class="list-group-item list-group-item-action active">
-                            <i class="bi bi-arrow-up-circle me-2"></i> Upgrade to Business
-                        </a>
-                        <a href="{% url 'accounts:logout' %}" class="list-group-item list-group-item-action text-danger">
-                            <i class="bi bi-box-arrow-right me-2"></i> Logout
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Main content -->
-            <div class="col-lg-9">
-                <div class="upgrade-card card">
-                    <div class="card-header border-0">
-                        <h1 class="h3 mb-0">Upgrade to Business Owner</h1>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="bi bi-info-circle me-2 fs-4"></i>
-                                <strong>Unlock premium features for your business</strong>
-                            </div>
-                            <ul class="mb-0 mt-3 list-unstyled">
-                                <li class="mb-2">
-                                    <span class="benefit-badge"><i class="bi bi-building"></i></span>
-                                    Add and manage your business listings
-                                </li>
-                                <li class="mb-2">
-                                    <span class="benefit-badge"><i class="bi bi-star"></i></span>
-                                    Respond to customer reviews
-                                </li>
-                                <li class="mb-2">
-                                    <span class="benefit-badge"><i class="bi bi-chat"></i></span>
-                                    Reply to enquiries directly
-                                </li>
-                                <li class="mb-2">
-                                    <span class="benefit-badge"><i class="bi bi-graph-up"></i></span>
-                                    Track your business performance
-                                </li>
-                                <li class="mb-2">
-                                    <span class="benefit-badge"><i class="bi bi-megaphone"></i></span>
-                                    Access exclusive promotional tools
-                                </li>
-                            </ul>
-                        </div>
-                        
-                        <form method="post" class="mt-4">
-                            {% csrf_token %}
-                            
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="terms" required>
-                                <label class="form-check-label" for="terms">
-                                    I agree to the <a href="#" target="_blank">Terms & Conditions</a> for Business Owners
-                                </label>
-                            </div>
-                            
-                            <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-primary btn-lg">Upgrade My Account</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+{% block dashboard_content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3">Upgrade to Business Account</h1>
+        <p class="text-muted">Unlock all business features and start growing your presence</p>
     </div>
 </div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="text-center mb-4">
+            <div class="upgrade-icon">
+                <i class="bi bi-arrow-up-circle"></i>
+            </div>
+            <h4 class="fw-bold">Ready to Grow Your Business?</h4>
+        </div>
+        
+        <div class="alert alert-info">
+            <div class="d-flex align-items-center mb-2">
+                <i class="bi bi-info-circle me-2 fs-4"></i>
+                <strong>Unlock premium features for your business</strong>
+            </div>
+            <ul class="mb-0 mt-3 list-unstyled">
+                <li class="mb-2">
+                    <span class="benefit-badge"><i class="bi bi-building"></i></span>
+                    Add and manage your business listings
+                </li>
+                <li class="mb-2">
+                    <span class="benefit-badge"><i class="bi bi-star"></i></span>
+                    Respond to customer reviews
+                </li>
+                <li class="mb-2">
+                    <span class="benefit-badge"><i class="bi bi-chat"></i></span>
+                    Reply to enquiries directly
+                </li>
+                <li class="mb-2">
+                    <span class="benefit-badge"><i class="bi bi-graph-up"></i></span>
+                    Track your business performance
+                </li>
+                <li class="mb-2">
+                    <span class="benefit-badge"><i class="bi bi-megaphone"></i></span>
+                    Access exclusive promotional tools
+                </li>
+            </ul>
+        </div>
+        
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="terms" required>
+                <label class="form-check-label" for="terms">
+                    I agree to the <a href="#" target="_blank">Terms & Conditions</a> for Business Owners
+                </label>
+            </div>
+            
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">Upgrade My Account</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.upgrade-icon {
+    width: 80px;
+    height: 80px;
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 1.5rem;
+}
+
+.benefit-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.alert-info {
+    background-color: rgba(13, 202, 240, 0.1);
+    border-color: rgba(13, 202, 240, 0.2);
+}
+</style>
 {% endblock %}
