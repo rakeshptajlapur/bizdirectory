@@ -18,23 +18,34 @@ def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False  # Keep inactive until verified
-            user.save()
-            
-            # Generate OTP and send email
-            otp_code = EmailVerification.generate_otp()
-            EmailVerification.objects.create(
-                user=user,
-                otp_code=otp_code
-            )
-            send_verification_email.delay(user.id, otp_code)
-            
-            # Store email for verification
-            request.session['pending_verification_email'] = user.email
-            
-            messages.success(request, 'Registration successful! Please check your email for verification code.')
-            return redirect('accounts:verify_email')
+            try:
+                user = form.save(commit=False)
+                user.is_active = False  # Keep inactive until verified
+                user.save()
+                
+                # Generate OTP and send email
+                otp_code = EmailVerification.generate_otp()
+                EmailVerification.objects.create(
+                    user=user,
+                    otp_code=otp_code
+                )
+                
+                # Send verification email - wrap in try/except
+                try:
+                    send_verification_email.delay(user.id, otp_code)
+                except Exception as e:
+                    # Log the error but continue - don't break registration
+                    print(f"Error sending verification email: {str(e)}")
+                
+                # Store email for verification
+                request.session['pending_verification_email'] = user.email
+                
+                messages.success(request, 'Registration successful! Please check your email for verification code.')
+                return redirect('accounts:verify_email')
+            except Exception as e:
+                # Log the error and show user-friendly message
+                print(f"Registration error: {str(e)}")
+                messages.error(request, 'Registration failed. Please try again.')
     else:
         form = UserRegisterForm()
     

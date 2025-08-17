@@ -86,21 +86,19 @@ def send_profile_updated_email(user_id):
 
 @shared_task
 def send_verification_email(user_id, otp_code):
-    """Send email verification OTP"""
     try:
         user = User.objects.get(id=user_id)
         context = {
             'user': user,
-            'otp_code': otp_code,
-            'site_name': 'BizDirectory'
+            'otp_code': otp_code
         }
-        subject = "Verify Your Email - BizDirectory"
+        subject = "Verify your email address"
         html_message = render_to_string('emails/email_verification.html', context)
         text_message = strip_tags(html_message)
         send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, [user.email], html_message=html_message)
-        print(f"✅ Verification email sent to {user.email}")
     except Exception as e:
-        print(f"❌ Failed to send verification email: {str(e)}")
+        print(f"ERROR: Failed to send verification email: {str(e)}")
+        # Re-raise the exception to ensure it's logged properly by Celery
         raise
     finally:
         # Close connections to prevent leaks
