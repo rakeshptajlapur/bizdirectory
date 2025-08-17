@@ -609,6 +609,77 @@ def kyc_gst_documents(request):
     }
     return render(request, 'directory/dashboard/kyc_gst.html', context)
 
+@login_required
+def business_form(request, business_id=None):
+    """Add new business or edit existing business"""
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
+        messages.error(request, "You need to upgrade to a business owner account first.")
+        return redirect('accounts:upgrade_to_business')
+    
+    # Determine if editing or adding
+    if business_id:
+        business = get_object_or_404(Business, id=business_id, owner=request.user)
+        is_edit = True
+    else:
+        business = None
+        is_edit = False
+    
+    if request.method == 'POST':
+        form = BusinessForm(request.POST, request.FILES, instance=business, user=request.user)
+        
+        if form.is_valid():
+            business = form.save(commit=False)
+            
+            if not is_edit:
+                business.owner = request.user
+            
+            # Handle action (draft vs submit)
+            action = request.POST.get('action', 'draft')
+            if action == 'draft':
+                business.is_active = False
+                business.kyc_status = 'not_submitted'
+                status_message = 'Business listing saved as draft successfully!'
+            else:  # submit
+                business.is_active = True
+                business.kyc_status = 'pending'
+                status_message = 'Business listing submitted for approval successfully!'
+            
+            business.save()
+            
+            # Handle primary image
+            primary_image = request.FILES.get('primary_image')
+            if primary_image:
+                # Remove existing primary image
+                BusinessImage.objects.filter(business=business, is_primary=True).delete()
+                # Add new primary image
+                BusinessImage.objects.create(
+                    business=business,
+                    image=primary_image,
+                    is_primary=True,
+                    caption=f"{business.name} - Main Image"
+                )
+            
+            messages.success(request, status_message)
+            return redirect('directory:dashboard_listings')
+        
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    
+    else:
+        form = BusinessForm(instance=business, user=request.user)
+    
+    # Get categories for dropdown
+    categories = Category.objects.all().order_by('name')
+    
+    context = {
+        'active_tab': 'add_business' if not is_edit else 'listings',
+        'form': form,
+        'business': business,
+        'categories': categories,
+        'is_edit': is_edit,
+    }
+    return render(request, 'directory/dashboard/business_form.html', context)
+
 
 
 
