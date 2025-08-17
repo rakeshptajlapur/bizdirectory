@@ -572,7 +572,7 @@
                     </li>
                     
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'directory:add_listing' %}"><i class="bi bi-plus-circle"></i> Add Listing</a>
+                        <a class="nav-link" href="{% url 'directory:add_business' %}"><i class="bi bi-plus-circle"></i> Add Listing</a>
                     </li>
                 </ul>
                 <!-- Update the auth links in navbar -->
@@ -677,7 +677,7 @@
                 <div class="ps-lg-4">
                     <h5 class="fw-bold mb-3 text-dark">For Businesses</h5>
                     <ul class="list-unstyled small">
-                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-plus-circle me-1"></i>Add Listing</a></li>
+                        <li class="mb-2"><a href="{% url 'directory:add_business' %}" class="text-decoration-none link-dark"><i class="bi bi-plus-circle me-1"></i>Add Listing</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-currency-dollar me-1"></i>Pricing</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-tag me-1"></i>Latest Deals</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-speedometer2 me-1"></i>Business Dashboard</a></li>

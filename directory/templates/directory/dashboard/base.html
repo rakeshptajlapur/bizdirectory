@@ -30,6 +30,9 @@
                         <a href="{% url 'directory:dashboard_listings' %}" class="list-group-item list-group-item-action {% if active_tab == 'listings' %}active{% endif %}">
                             <i class="bi bi-building me-2"></i> My Listings
                         </a>
+                        <a href="{% url 'directory:add_business' %}" class="list-group-item list-group-item-action {% if active_tab == 'add_business' %}active{% endif %}">
+                            <i class="bi bi-plus-circle me-2"></i> Add Listing
+                        </a>
                         <a href="{% url 'directory:dashboard_reviews' %}" class="list-group-item list-group-item-action {% if active_tab == 'reviews' %}active{% endif %}">
                             <i class="bi bi-star me-2"></i> Reviews
                         </a>

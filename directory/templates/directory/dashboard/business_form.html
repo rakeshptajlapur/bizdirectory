@@ -1,11 +1,12 @@
 {% extends "directory/dashboard/base.html" %}
 {% load static %}
+{% load directory_filters %}
 
 {% block dashboard_content %}
 <div class="container-fluid py-4">
     <h1 class="mb-4">{% if is_edit %}Edit{% else %}Add New{% endif %} Business</h1>
 
-    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+    <form method="post" enctype="multipart/form-data" class="needs-validation">
         {% csrf_token %}
 
         {% if form.non_field_errors %}
@@ -124,6 +125,9 @@
                                 {{ form.website.errors.0 }}
                             </div>
                         {% endif %}
+                        <div class="form-text">
+                            Enter complete URL including http:// or https:// (e.g., https://example.com)
+                        </div>
                     </div>
                 </div>
             </div>
@@ -138,7 +142,7 @@
                 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label for="{{ form.registration_number.id_for_label }}" class="form-label">Registration Number (optional)</label>
+                        <label for="{{ form.registration_number.id_for_label }}" class="form-label">Registration Number*</label>
                         {{ form.registration_number }}
                         {% if form.registration_number.errors %}
                             <div class="invalid-feedback d-block">
@@ -181,8 +185,8 @@
                 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Primary Image*</label>
-                        <input type="file" class="form-control" name="primary_image" accept="image/*">
+                        <label class="form-label">Primary Image{% if not business %}*{% endif %}</label>
+                        <input type="file" class="form-control" name="primary_image" accept="image/*" {% if not business %}required{% endif %}>
                         <div class="form-text">This will be the main image for your business listing.</div>
                         
                         {% if business and business.get_primary_image %}
@@ -196,6 +200,117 @@
             </div>
         </div>
 
+        <!-- Business Hours Card -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="border-bottom pb-2 mb-3">
+                    <i class="bi bi-clock me-2"></i>Business Hours
+                </h5>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Status</th>
+                                <th>Opening Time</th>
+                                <th>Closing Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day in days_of_week %}
+                                {% with day_hours=business_hours|get_item:day.number %}
+                                <tr>
+                                    <td>
+                                        <label class="form-label mb-0">{{ day.name }}</label>
+                                    </td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input business-day-toggle" type="checkbox" 
+                                                   id="closed_{{ day.number }}" name="closed_{{ day.number }}"
+                                                   data-target="time-row-{{ day.number }}"
+                                                   {% if day_hours.is_closed %}checked{% endif %}>
+                                            <label class="form-check-label" for="closed_{{ day.number }}">
+                                                Closed
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div id="time-row-{{ day.number }}" class="{% if day_hours.is_closed %}d-none{% endif %}">
+                                            <input type="time" class="form-control" name="open_time_{{ day.number }}" 
+                                                   value="{{ day_hours.open_time|default:'09:00' }}"
+                                                   {% if day_hours.is_closed %}disabled{% endif %}>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="{% if day_hours.is_closed %}d-none{% endif %}" id="close-time-{{ day.number }}">
+                                            <input type="time" class="form-control" name="close_time_{{ day.number }}" 
+                                                   value="{{ day_hours.close_time|default:'17:00' }}"
+                                                   {% if day_hours.is_closed %}disabled{% endif %}>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endwith %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Card -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="border-bottom pb-2 mb-3">
+                    <i class="bi bi-tag me-2"></i>Services Offered
+                </h5>
+                
+                <div id="services-container">
+                    {% if services %}
+                        {% for service in services %}
+                        <div class="row g-3 mb-3 service-row">
+                            <div class="col-md-5">
+                                <label class="form-label">Service Name</label>
+                                <input type="text" class="form-control" name="service_name" value="{{ service.name }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Short Description (optional)</label>
+                                <input type="text" class="form-control" name="service_description" value="{{ service.description }}">
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end">
+                                <button type="button" class="btn btn-outline-danger remove-service-btn">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="row g-3 mb-3 service-row">
+                            <div class="col-md-5">
+                                <label class="form-label">Service Name</label>
+                                <input type="text" class="form-control" name="service_name">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Short Description (optional)</label>
+                                <input type="text" class="form-control" name="service_description">
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end">
+                                <button type="button" class="btn btn-outline-danger remove-service-btn">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mt-3">
+                    <button type="button" id="add-service-btn" class="btn btn-outline-primary">
+                        <i class="bi bi-plus-circle me-1"></i>Add Another Service
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Form Actions -->
         <div class="d-flex gap-2 mb-5">
             <button type="submit" name="action" value="draft" class="btn btn-outline-primary">Save as Draft</button>
@@ -204,29 +319,76 @@
         </div>
     </form>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Form validation
-    (function() {
-        'use strict'
+    // Business hours toggle
+    document.querySelectorAll('.business-day-toggle').forEach(function(toggle) {
+        toggle.addEventListener('change', function() {
+            const targetId = this.dataset.target;
+            const timeInputs = document.querySelectorAll('#' + targetId + ' input, #close-time-' + targetId.split('-')[2] + ' input');
+            const timeRows = document.querySelectorAll('#' + targetId + ', #close-time-' + targetId.split('-')[2]);
+            
+            if (this.checked) {
+                // Day is closed
+                timeRows.forEach(row => row.classList.add('d-none'));
+                timeInputs.forEach(input => input.disabled = true);
+            } else {
+                // Day is open
+                timeRows.forEach(row => row.classList.remove('d-none'));
+                timeInputs.forEach(input => input.disabled = false);
+            }
+        });
+    });
+    
+    // Add service
+    document.getElementById('add-service-btn').addEventListener('click', function() {
+        const servicesContainer = document.getElementById('services-container');
+        const serviceRow = document.querySelector('.service-row').cloneNode(true);
         
-        // Fetch all forms we want to apply validation styles to
-        var forms = document.querySelectorAll('.needs-validation')
+        // Clear inputs
+        serviceRow.querySelectorAll('input').forEach(input => {
+            input.value = '';
+        });
         
-        // Loop over them and prevent submission
-        Array.prototype.slice.call(forms).forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-                
-                form.classList.add('was-validated')
-            }, false)
-        })
-    })()
+        // Add remove event listener
+        serviceRow.querySelector('.remove-service-btn').addEventListener('click', function() {
+            if (document.querySelectorAll('.service-row').length > 1) {
+                this.closest('.service-row').remove();
+            }
+        });
+        
+        servicesContainer.appendChild(serviceRow);
+    });
+    
+    // Initial setup for remove service buttons
+    document.querySelectorAll('.remove-service-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            if (document.querySelectorAll('.service-row').length > 1) {
+                this.closest('.service-row').remove();
+            }
+        });
+    });
+    
+    // File size validation
+    document.querySelector('input[name="primary_image"]').addEventListener('change', function() {
+        validateFileSize(this, 5);
+    });
+    
+    function validateFileSize(input, maxMB, file = null) {
+        const fileToCheck = file || input.files[0];
+        if (fileToCheck && fileToCheck.size > maxMB * 1024 * 1024) {
+            alert(`File "${fileToCheck.name}" is too large. Maximum size is ${maxMB}MB.`);
+            input.value = '';
+            return false;
+        }
+        return true;
+    }
+
+    // Don't prevent form submission with custom validation
+    document.querySelector('form').addEventListener('submit', function(event) {
+        console.log('Form submitted');
+    });
 </script>
 {% endblock %}

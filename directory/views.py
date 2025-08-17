@@ -2,16 +2,17 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
 from django.core.paginator import Paginator
-from django.utils import timezone  # Add this import at the top
-from .models import Business, Category, Service
+from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from .models import Review, Enquiry, CouponRequest
 from django.contrib.admin.views.decorators import staff_member_required
 import redis
-from django.conf import settings  # Add this import
+from django.conf import settings
+from .forms import BusinessForm
 import os
+# Fix missing imports
+from .models import Business, Category, Service, BusinessImage, BusinessHours, Review, Enquiry, CouponRequest
 
 
 def home(request):
@@ -659,6 +660,58 @@ def business_form(request, business_id=None):
                     caption=f"{business.name} - Main Image"
                 )
             
+            # Handle gallery images
+            gallery_images = request.FILES.getlist('gallery_images')
+            for img in gallery_images:
+                BusinessImage.objects.create(
+                    business=business,
+                    image=img,
+                    is_primary=False,
+                    caption=f"{business.name} - Gallery Image"
+                )
+            
+            # Handle business hours
+            days_of_week = range(1, 8)  # 1-7 (Monday to Sunday)
+            for day in days_of_week:
+                is_closed = request.POST.get(f'closed_{day}') == 'on'
+                open_time = request.POST.get(f'open_time_{day}', '')
+                close_time = request.POST.get(f'close_time_{day}', '')
+                
+                # Find existing hours or create new
+                hours, created = BusinessHours.objects.get_or_create(
+                    business=business,
+                    day=day,
+                    defaults={
+                        'is_closed': True,
+                        'open_time': '09:00',
+                        'close_time': '17:00'
+                    }
+                )
+                
+                # Update the hours
+                hours.is_closed = is_closed
+                if not is_closed and open_time and close_time:
+                    hours.open_time = open_time
+                    hours.close_time = close_time
+                hours.save()
+            
+            # Handle services
+            service_names = request.POST.getlist('service_name')
+            service_descriptions = request.POST.getlist('service_description')
+            
+            # Delete existing services for this business
+            Service.objects.filter(business=business).delete()
+            
+            # Create new services
+            for i, name in enumerate(service_names):
+                if name.strip():  # Only process non-empty service names
+                    description = service_descriptions[i] if i < len(service_descriptions) else ""
+                    Service.objects.create(
+                        business=business,
+                        name=name.strip(),
+                        description=description.strip()
+                    )
+            
             messages.success(request, status_message)
             return redirect('directory:dashboard_listings')
         
@@ -668,15 +721,43 @@ def business_form(request, business_id=None):
     else:
         form = BusinessForm(instance=business, user=request.user)
     
-    # Get categories for dropdown
-    categories = Category.objects.all().order_by('name')
+    # Get business hours for the form
+    business_hours = {}
+    if business:
+        for hours in business.hours.all():
+            business_hours[hours.day] = {
+                'is_closed': hours.is_closed,
+                'open_time': hours.open_time,
+                'close_time': hours.close_time
+            }
+    
+    # Get services for the form
+    services = []
+    if business:
+        services = list(business.services.all().values('name', 'description'))
+    
+    # Get gallery images
+    gallery_images = []
+    if business:
+        gallery_images = business.images.filter(is_primary=False)
     
     context = {
         'active_tab': 'add_business' if not is_edit else 'listings',
         'form': form,
         'business': business,
-        'categories': categories,
+        'business_hours': business_hours,
+        'services': services,
+        'gallery_images': gallery_images,
         'is_edit': is_edit,
+        'days_of_week': [
+            {'number': 1, 'name': 'Monday'},
+            {'number': 2, 'name': 'Tuesday'},
+            {'number': 3, 'name': 'Wednesday'},
+            {'number': 4, 'name': 'Thursday'},
+            {'number': 5, 'name': 'Friday'},
+            {'number': 6, 'name': 'Saturday'},
+            {'number': 7, 'name': 'Sunday'}
+        ]
     }
     return render(request, 'directory/dashboard/business_form.html', context)
 

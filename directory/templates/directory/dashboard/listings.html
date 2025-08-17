@@ -7,7 +7,7 @@
         <h1 class="h3 mb-0">My Listings</h1>
     </div>
     <div class="col-auto">
-        <a href="#" class="btn btn-primary">Add New Listing</a>
+        <a href="{% url 'directory:add_business' %}" class="btn btn-primary">Add New Listing</a>
     </div>
 </div>
 
@@ -21,7 +21,7 @@
                             <th>Name</th>
                             <th>Category</th>
                             <th>Status</th>
-                            <th>City</th>
+                            <th>Verification Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -37,9 +37,25 @@
                                         <span class="badge bg-secondary">Inactive</span>
                                     {% endif %}
                                 </td>
-                                <td>{{ business.city }}</td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
+                                    {% if business.kyc_status == 'completed' %}
+                                        <span class="badge bg-success">KYC Verified</span>
+                                    {% elif business.kyc_status == 'pending' %}
+                                        <span class="badge bg-warning">KYC Pending</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">KYC Missing</span>
+                                    {% endif %}
+                                    
+                                    {% if business.gst_verified %}
+                                        <span class="badge bg-success">GST Verified</span>
+                                    {% elif business.gst_number %}
+                                        <span class="badge bg-warning">GST Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'directory:edit_business' business.pk %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil me-1"></i>Edit
+                                    </a>
                                     <a href="{% url 'directory:business_detail' business.pk %}" class="btn btn-sm btn-outline-secondary">View</a>
                                     
                                     {# Activation/deactivation now handled by admins; owner toggle removed #}
@@ -53,7 +69,9 @@
             <div class="text-center py-4">
                 <i class="bi bi-building text-muted fs-2"></i>
                 <p class="text-muted mt-2">You don't have any listings yet. Add your first business!</p>
-                <a href="#" class="btn btn-primary mt-2">Add Business</a>
+                <a href="{% url 'directory:add_business' %}" class="btn btn-primary mt-2">
+                    <i class="bi bi-plus-circle me-1"></i>Add Business
+                </a>
             </div>
         {% endif %}
     </div>
