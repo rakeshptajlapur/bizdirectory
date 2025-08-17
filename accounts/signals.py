@@ -10,21 +10,31 @@ from django.core.mail import send_mail
 
 @shared_task
 def send_welcome_email(user_id):
-    user = User.objects.get(id=user_id)
-    context = {'user': user}
-    subject = "Welcome to FindNearBiz!"
-    html_message = render_to_string('emails/welcome.html', context)
-    text_message = strip_tags(html_message)
-    send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, [user.email], html_message=html_message)
+    try:
+        user = User.objects.get(id=user_id)
+        context = {'user': user}
+        subject = "Welcome to FindNearBiz!"
+        html_message = render_to_string('emails/welcome.html', context)
+        text_message = strip_tags(html_message)
+        send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, [user.email], html_message=html_message)
+    finally:
+        # Close connections to prevent leaks
+        from django.db import connection
+        connection.close()
 
 @shared_task
 def send_password_changed_email(user_id):
-    user = User.objects.get(id=user_id)
-    context = {'user': user}
-    subject = "Your password has been changed"
-    html_message = render_to_string('emails/password_changed.html', context)
-    text_message = strip_tags(html_message)
-    send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, [user.email], html_message=html_message)
+    try:
+        user = User.objects.get(id=user_id)
+        context = {'user': user}
+        subject = "Your password has been changed"
+        html_message = render_to_string('emails/password_changed.html', context)
+        text_message = strip_tags(html_message)
+        send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, [user.email], html_message=html_message)
+    finally:
+        # Close connections to prevent leaks
+        from django.db import connection
+        connection.close()
 
 @shared_task
 def send_password_reset_email(user_id, reset_url):
@@ -47,6 +57,10 @@ def send_password_reset_email(user_id, reset_url):
         print(f"ERROR: Failed to send password reset email: {str(e)}")
         # Re-raise the exception to ensure it's logged properly by Celery
         raise
+    finally:
+        # Close connections to prevent leaks
+        from django.db import connection
+        connection.close()
 
 @shared_task
 def send_profile_updated_email(user_id):
@@ -65,8 +79,11 @@ def send_profile_updated_email(user_id):
         print(f"ERROR: Failed to send profile update email: {str(e)}")
         # Re-raise the exception to ensure it's logged properly by Celery
         raise
+    finally:
+        # Close connections to prevent leaks
+        from django.db import connection
+        connection.close()
 
-# Add this new task for email verification
 @shared_task
 def send_verification_email(user_id, otp_code):
     """Send email verification OTP"""
@@ -85,6 +102,10 @@ def send_verification_email(user_id, otp_code):
     except Exception as e:
         print(f"❌ Failed to send verification email: {str(e)}")
         raise
+    finally:
+        # Close connections to prevent leaks
+        from django.db import connection
+        connection.close()
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

@@ -13,9 +13,17 @@ logger = logging.getLogger(__name__)
 
 @shared_task
 def send_notification_email(subject, message, recipient_list):
-    sent_count = send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient_list, fail_silently=False)
-    logger.info(f"send_mail returned: {sent_count}")
-    return sent_count
+    try:
+        sent_count = send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient_list, fail_silently=False)
+        logger.info(f"send_mail returned: {sent_count}")
+        return sent_count
+    except Exception as e:
+        logger.error(f"Error in send_notification_email: {str(e)}")
+        raise
+    finally:
+        # Close connections to prevent leaks
+        from django.db import connection
+        connection.close()
 
 # Example: Send notification when a new business is created (pending approval)
 @receiver(post_save, sender=Business)
@@ -30,23 +38,30 @@ def business_created_notification(sender, instance, created, **kwargs):
 # Add tasks and receivers for Enquiry notifications
 @shared_task
 def send_enquiry_ack_email(enquiry_id):
-    enquiry = Enquiry.objects.get(id=enquiry_id)
-    context = {'enquiry': enquiry}
-    subject = f"Thank you for your enquiry about {enquiry.business.name}"
-    html_message = render_to_string('emails/enquiry_ack.html', context)
-    text_message = strip_tags(html_message)
-    send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, [enquiry.email], html_message=html_message)
+    try:
+        enquiry = Enquiry.objects.get(id=enquiry_id)
+        context = {'enquiry': enquiry}
+        subject = f"Thank you for your enquiry about {enquiry.business.name}"
+        html_message = render_to_string('emails/enquiry_ack.html', context)
+        text_message = strip_tags(html_message)
+        send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, [enquiry.email], html_message=html_message)
+    finally:
+        from django.db import connection
+        connection.close()
 
 @shared_task
 def send_enquiry_owner_email(enquiry_id):
-    enquiry = Enquiry.objects.get(id=enquiry_id)
-    context = {'enquiry': enquiry}
-    subject = f"New enquiry for {enquiry.business.name}"
-    html_message = render_to_string('emails/enquiry_notify_owner.html', context)
-    text_message = strip_tags(html_message)
-    # Send notifications to the business owner’s account email and admin
-    recipients = [enquiry.business.owner.email, settings.DEFAULT_FROM_EMAIL]
-    send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, recipients, html_message=html_message)
+    try:
+        enquiry = Enquiry.objects.get(id=enquiry_id)
+        context = {'enquiry': enquiry}
+        subject = f"New enquiry for {enquiry.business.name}"
+        html_message = render_to_string('emails/enquiry_notify_owner.html', context)
+        text_message = strip_tags(html_message)
+        recipients = [enquiry.business.owner.email, settings.DEFAULT_FROM_EMAIL]
+        send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, recipients, html_message=html_message)
+    finally:
+        from django.db import connection
+        connection.close()
 
 @receiver(post_save, sender=Enquiry)
 def enquiry_notifications(sender, instance, created, **kwargs):

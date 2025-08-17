@@ -30,4 +30,5 @@ urlpatterns = [
     
     # KYC & GST Documents
     path('dashboard/kyc-gst/', views.kyc_gst_documents, name='kyc_gst_documents'),
+    path('dashboard/monitor-redis/', views.monitor_redis, name='monitor_redis'),
 ]

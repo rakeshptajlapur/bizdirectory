@@ -13,7 +13,14 @@ app.autodiscover_tasks()
 app.conf.update(
     task_soft_time_limit=30,
     task_time_limit=60,
-    worker_prefetch_multiplier=1,
-    task_acks_late=True,
-    worker_max_tasks_per_child=1000,
+)
+
+# Reduce connection usage
+app.conf.update(
+    worker_prefetch_multiplier=1,  # Fetch one task at a time
+    broker_pool_limit=10,  # Limit broker connections per worker
+    task_acks_late=True,    # Acknowledge after task completes
+    broker_connection_timeout=5,  # Timeout for broker connection
+    broker_connection_max_retries=0,  # Don't retry connections endlessly
+    broker_connection_retry=False,  # Don't retry connections automatically
 )

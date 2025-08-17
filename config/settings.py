@@ -200,7 +200,28 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
+# Define REDIS_URL explicitly as a setting
+REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/1')
 
+# Redis connection pooling settings
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/1'),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 10},  # Limit max connections
+            "SOCKET_CONNECT_TIMEOUT": 5,  # seconds
+            "SOCKET_TIMEOUT": 5,  # seconds
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+        }
+    }
+}
+
+# Celery connection pooling
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'max_connections': 10,  # Limit max connections per process
+}
 
 # Security settings for production
 if not DEBUG:

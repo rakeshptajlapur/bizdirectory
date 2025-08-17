@@ -8,6 +8,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from .models import Review, Enquiry, CouponRequest
+from django.contrib.admin.views.decorators import staff_member_required
+import redis
+from django.conf import settings  # Add this import
+import os
+
 
 def home(request):
     search_query = request.GET.get('query', '')
@@ -95,7 +100,6 @@ def business_detail(request, pk):
         'related_businesses': related_businesses,
         'user_review': user_review,
     }
-    
     return render(request, 'directory/business_detail.html', context)
 
 def search_suggestions(request):
@@ -604,3 +608,24 @@ def kyc_gst_documents(request):
         'business': business,
     }
     return render(request, 'directory/dashboard/kyc_gst.html', context)
+
+
+
+
+
+@staff_member_required
+def monitor_redis(request):
+    """Monitor Redis connections"""
+    try:
+        # Connect to Redis
+        r = redis.from_url(settings.REDIS_URL)
+        
+        # Get client list
+        clients = r.client_list()
+        
+        return JsonResponse({
+            'active_connections': len(clients),
+            'clients': clients
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)})
