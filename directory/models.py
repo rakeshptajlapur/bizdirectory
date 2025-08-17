@@ -48,7 +48,9 @@ class Business(models.Model):
     
     # Business Details (Non-public)
     registration_number = models.CharField(max_length=50)
+    registration_document = models.FileField(upload_to='documents/')
     gst_number = models.CharField(max_length=15, blank=True)
+    gst_document = models.FileField(upload_to='gst_documents/', null=True, blank=True)  # New field
     gst_verified = models.BooleanField(default=False)
     kyc_status = models.CharField(
         max_length=20,
@@ -59,8 +61,8 @@ class Business(models.Model):
         ],
         default='not_submitted'
     )
-    registration_document = models.FileField(upload_to='documents/')
-    
+    # ...other fields...
+
     # Meta Info
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

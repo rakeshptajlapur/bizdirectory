@@ -27,7 +27,7 @@ class BusinessAdmin(admin.ModelAdmin):
             'fields': ('registration_number', 'registration_document')
         }),
         ('Trust & Verification', {
-            'fields': ('gst_number', 'gst_verified', 'kyc_status')
+            'fields': ('gst_number', 'gst_document', 'gst_verified', 'kyc_status')
         }),
     )
 
