@@ -18,6 +18,12 @@ def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
+            # Check if email already exists
+            email = form.cleaned_data['email']
+            if User.objects.filter(email=email).exists():
+                messages.warning(request, 'An account with this email already exists. Please login instead.')
+                return redirect('accounts:login')
+                
             try:
                 user = form.save(commit=False)
                 user.is_active = False  # Keep inactive until verified
@@ -30,12 +36,8 @@ def register(request):
                     otp_code=otp_code
                 )
                 
-                # Send verification email - wrap in try/except
-                try:
-                    send_verification_email.delay(user.id, otp_code)
-                except Exception as e:
-                    # Log the error but continue - don't break registration
-                    print(f"Error sending verification email: {str(e)}")
+                # Send verification email
+                send_verification_email.delay(user.id, otp_code)
                 
                 # Store email for verification
                 request.session['pending_verification_email'] = user.email
@@ -171,7 +173,19 @@ def verify_email(request):
             return redirect('accounts:register')
         
         try:
-            user = User.objects.get(email=email, is_active=False)
+            # Check if this email already has an active account
+            existing_active = User.objects.filter(email=email, is_active=True).exists()
+            if existing_active:
+                messages.info(request, 'An active account with this email already exists. Please login instead.')
+                return redirect('accounts:login')
+                
+            # Handle the specific case for this error - get the most recent inactive account
+            user = User.objects.filter(email=email, is_active=False).order_by('-date_joined').first()
+            
+            if not user:
+                messages.error(request, 'User not found. Please register again.')
+                return redirect('accounts:register')
+                
             verification = user.email_verification
             
             if verification.otp_code == otp_entered and verification.is_otp_valid():
@@ -195,18 +209,17 @@ def verify_email(request):
                 messages.success(request, 'Email verified successfully! Welcome to BizDirectory.')
                 
                 # Redirect based on user type
-                if user.profile.user_type == 'business_owner':
-                    return redirect('directory:dashboard_home')
+                if user.profile.is_business_owner:
+                    return redirect('directory:subscription_plans')
                 else:
                     return redirect('directory:home')
             else:
                 messages.error(request, 'Invalid or expired verification code. Please try again.')
                 
-        except User.DoesNotExist:
-            messages.error(request, 'Verification failed. Please register again.')
-            return redirect('accounts:register')
-        except EmailVerification.DoesNotExist:
-            messages.error(request, 'No verification code found. Please register again.')
+        except Exception as e:
+            # Log the error and show user-friendly message
+            print(f"Verification error: {str(e)}")
+            messages.error(request, 'Verification failed. Please try registering again.')
             return redirect('accounts:register')
     
     return render(request, 'accounts/verify_email.html')

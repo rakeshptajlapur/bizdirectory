@@ -30,7 +30,7 @@
                         <a href="{% url 'directory:dashboard_listings' %}" class="list-group-item list-group-item-action {% if active_tab == 'listings' %}active{% endif %}">
                             <i class="bi bi-building me-2"></i> My Listings
                         </a>
-                        <a href="{% url 'directory:add_business' %}" class="list-group-item list-group-item-action {% if active_tab == 'add_business' %}active{% endif %}">
+                        <a href="{% url 'directory:add_business_start' %}" class="list-group-item list-group-item-action {% if active_tab == 'add_business' %}active{% endif %}">
                             <i class="bi bi-plus-circle me-2"></i> Add Listing
                         </a>
                         <a href="{% url 'directory:dashboard_reviews' %}" class="list-group-item list-group-item-action {% if active_tab == 'reviews' %}active{% endif %}">
@@ -49,6 +49,9 @@
                             {% elif business.kyc_status == 'completed' and business.gst_verified %}
                                 <span class="badge bg-success ms-auto">Verified</span>
                             {% endif %}
+                        </a>
+                        <a href="{% url 'directory:subscription_dashboard' %}" class="list-group-item list-group-item-action {% if active_tab == 'subscription' %}active{% endif %}">
+                            <i class="bi bi-credit-card me-2"></i> Subscription
                         </a>
                     {% else %}
                         <!-- Regular User - Show Upgrade Option -->

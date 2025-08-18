@@ -1,0 +1,58 @@
+{% extends 'directory/base.html' %}
+{% load static %}
+
+{% block title %}Complete Payment | BizDirectory{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">Complete Your Payment</h2>
+                    
+                    <div class="alert alert-info mb-4">
+                        <h5><i class="bi bi-info-circle-fill me-2"></i>Payment Details</h5>
+                        <p class="mb-0">Please make a payment of <strong>₹{{ subscription.plan.price }}</strong> to activate your subscription.</p>
+                    </div>
+                    
+                    <div class="row align-items-center mb-4">
+                        <div class="col-md-6 text-center mb-4 mb-md-0">
+                            <div class="p-4 border rounded">
+                                <h5 class="mb-3">Scan QR Code to Pay</h5>
+                                <img src="{% static 'directory/images/payment-qr.jpeg' %}" alt="Payment QR Code" class="img-fluid mb-2" style="max-width: 200px;">
+                                <p class="small text-muted mb-0">or pay directly to UPI ID:</p>
+                                <p class="font-monospace fw-bold">{{ upi_id|default:"yourbusiness@upi" }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h5>Payment Instructions</h5>
+                            <ol class="mb-0">
+                                <li class="mb-2">Scan the QR code using any UPI app</li>
+                                <li class="mb-2">Make a payment of ₹{{ subscription.plan.price }}</li>
+                                <li class="mb-2">Take a screenshot of the successful payment</li>
+                                <li>Upload the screenshot below</li>
+                            </ol>
+                        </div>
+                    </div>
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="payment_screenshot" class="form-label">Upload Payment Screenshot</label>
+                            <input class="form-control" type="file" id="payment_screenshot" name="payment_screenshot" accept="image/*" required>
+                            <div class="form-text">Please upload a screenshot of your successful payment.</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Submit Payment Proof</button>
+                            <a href="{% url 'directory:subscription_plans' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

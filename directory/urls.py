@@ -33,6 +33,14 @@ urlpatterns = [
     path('dashboard/monitor-redis/', views.monitor_redis, name='monitor_redis'),
 
     # Business addition and editing
+    path('dashboard/business/start/', views.add_business_start, name='add_business_start'),  # New URL
     path('dashboard/business/add/', views.business_form, name='add_business'),
     path('dashboard/business/edit/<int:business_id>/', views.business_form, name='edit_business'),
+
+    # Subscription URLs
+    path('dashboard/subscription/', views.subscription_dashboard, name='subscription_dashboard'),
+    path('plans/', views.subscription_plans, name='subscription_plans'),
+    path('plans/select/<int:plan_id>/', views.select_plan, name='select_plan'),
+    path('plans/payment/<int:subscription_id>/', views.payment_upload, name='payment_upload'),
+    path('plans/success/', views.payment_success, name='payment_success'),
 ]

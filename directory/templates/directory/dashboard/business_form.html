@@ -201,62 +201,66 @@
         </div>
 
         <!-- Business Hours Card -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="border-bottom pb-2 mb-3">
-                    <i class="bi bi-clock me-2"></i>Business Hours
-                </h5>
-                
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Day</th>
-                                <th>Status</th>
-                                <th>Opening Time</th>
-                                <th>Closing Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for day in days_of_week %}
-                                {% with day_hours=business_hours|get_item:day.number %}
-                                <tr>
-                                    <td>
-                                        <label class="form-label mb-0">{{ day.name }}</label>
-                                    </td>
-                                    <td>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input business-day-toggle" type="checkbox" 
-                                                   id="closed_{{ day.number }}" name="closed_{{ day.number }}"
-                                                   data-target="time-row-{{ day.number }}"
-                                                   {% if day_hours.is_closed %}checked{% endif %}>
-                                            <label class="form-check-label" for="closed_{{ day.number }}">
-                                                Closed
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div id="time-row-{{ day.number }}" class="{% if day_hours.is_closed %}d-none{% endif %}">
-                                            <input type="time" class="form-control" name="open_time_{{ day.number }}" 
-                                                   value="{{ day_hours.open_time|default:'09:00' }}"
-                                                   {% if day_hours.is_closed %}disabled{% endif %}>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="{% if day_hours.is_closed %}d-none{% endif %}" id="close-time-{{ day.number }}">
-                                            <input type="time" class="form-control" name="close_time_{{ day.number }}" 
-                                                   value="{{ day_hours.close_time|default:'17:00' }}"
-                                                   {% if day_hours.is_closed %}disabled{% endif %}>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endwith %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
+        {% with subscription=request.user|get_subscription %}
+            {% if subscription.plan.price > 0 %}
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-clock me-2"></i>Business Hours
+                        </h5>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Status</th>
+                                        <th>Opening Time</th>
+                                        <th>Closing Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for day in days_of_week %}
+                                        {% with day_hours=business_hours|get_item:day.number %}
+                                        <tr>
+                                            <td>
+                                                <label class="form-label mb-0">{{ day.name }}</label>
+                                            </td>
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input business-day-toggle" type="checkbox" 
+                                                           id="closed_{{ day.number }}" name="closed_{{ day.number }}"
+                                                           data-target="time-row-{{ day.number }}"
+                                                           {% if day_hours.is_closed %}checked{% endif %}>
+                                                    <label class="form-check-label" for="closed_{{ day.number }}">
+                                                        Closed
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div id="time-row-{{ day.number }}" class="{% if day_hours.is_closed %}d-none{% endif %}">
+                                                    <input type="time" class="form-control" name="open_time_{{ day.number }}" 
+                                                           value="{{ day_hours.open_time|default:'09:00' }}"
+                                                           {% if day_hours.is_closed %}disabled{% endif %}>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="{% if day_hours.is_closed %}d-none{% endif %}" id="close-time-{{ day.number }}">
+                                                    <input type="time" class="form-control" name="close_time_{{ day.number }}" 
+                                                           value="{{ day_hours.close_time|default:'17:00' }}"
+                                                           {% if day_hours.is_closed %}disabled{% endif %}>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endwith %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            {% endif %}
+        {% endwith %}
 
         <!-- Services Card -->
         <div class="card border-0 shadow-sm mb-4">

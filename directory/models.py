@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -164,3 +165,46 @@ class CouponRequest(models.Model):
     
     def __str__(self):
         return f"Coupon request from {self.email} for {self.business.name}"
+
+# Add these new models at the end
+
+class SubscriptionPlan(models.Model):
+    name = models.CharField(max_length=100)  # "Free", "Premium"
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField()
+    features = models.TextField()  # Store features as comma-separated list
+    duration_days = models.IntegerField(default=365)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.name
+
+class UserSubscription(models.Model):
+    PAYMENT_STATUS_CHOICES = (
+        ('pending', 'Payment Pending'),
+        ('verified', 'Payment Verified'),
+        ('expired', 'Expired')
+    )
+    
+    # Add this field to link subscription to business
+    business = models.OneToOneField(Business, on_delete=models.CASCADE, null=True, blank=True, related_name='subscription')
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions')
+    plan = models.ForeignKey(SubscriptionPlan, on_delete=models.PROTECT)
+    start_date = models.DateTimeField(auto_now_add=True)
+    expiry_date = models.DateTimeField()
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
+    payment_screenshot = models.ImageField(upload_to='payment_screenshots/', blank=True, null=True)
+    is_active = models.BooleanField(default=False)  # Only active after admin verification
+    
+    def is_expired(self):
+        return timezone.now() > self.expiry_date
+    
+    def days_remaining(self):
+        if self.is_expired():
+            return 0
+        delta = self.expiry_date - timezone.now()
+        return delta.days
+    
+    def __str__(self):
+        return f"{self.user.username}'s {self.plan.name} subscription"

@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse  # Add this line
 from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
 from django.core.paginator import Paginator
@@ -10,9 +11,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 import redis
 from django.conf import settings
 from .forms import BusinessForm
+from datetime import timedelta
 import os
 # Fix missing imports
-from .models import Business, Category, Service, BusinessImage, BusinessHours, Review, Enquiry, CouponRequest
+from .models import Business, Category, Service, BusinessImage, BusinessHours, Review, Enquiry, CouponRequest, SubscriptionPlan, UserSubscription
 
 
 def home(request):
@@ -382,18 +384,9 @@ def dashboard_home(request):
         business__owner=request.user
     ).order_by('-created_at')[:5]
     
-    # Get business for sidebar context
-    business = None
-    if hasattr(request.user, 'profile') and request.user.profile.is_business_owner:
-        try:
-            business = Business.objects.get(owner=request.user)
-        except Business.DoesNotExist:
-            pass
-    
     context = {
         'active_tab': 'home',
-        'business': business,  # Add this
-        'businesses': businesses,
+        'businesses': businesses,  # This already contains all businesses
         'enquiries_count': enquiries_count,
         'reviews_count': reviews_count,
         'avg_rating': avg_rating,
@@ -587,18 +580,44 @@ def kyc_gst_documents(request):
 @login_required
 def business_form(request, business_id=None):
     """Add new business or edit existing business"""
+    # Permission checks
     if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
         messages.error(request, "You need to upgrade to a business owner account first.")
         return redirect('accounts:upgrade_to_business')
+    
+    # Initialize variables
+    business = None
+    is_edit = False
+    subscription = None
     
     # Determine if editing or adding
     if business_id:
         business = get_object_or_404(Business, id=business_id, owner=request.user)
         is_edit = True
+        
+        # For editing, check if business has an active subscription
+        subscription = UserSubscription.objects.filter(
+            business=business,
+            is_active=True, 
+            expiry_date__gt=timezone.now()
+        ).first()
+        
+        if not subscription:
+            messages.warning(request, "This listing doesn't have an active subscription.")
+            return redirect(f"{reverse('directory:subscription_plans')}?for_business={business_id}")
     else:
-        business = None
-        is_edit = False
+        # For new business, get the subscription from session
+        subscription_id = request.session.get('pending_subscription_id')
+        if not subscription_id:
+            messages.warning(request, "Please select a subscription plan first.")
+            return redirect('directory:add_business_start')
+        
+        subscription = get_object_or_404(UserSubscription, id=subscription_id, user=request.user)
+        if not subscription.is_active:
+            messages.warning(request, "Your subscription isn't active yet.")
+            return redirect('directory:dashboard_home')
     
+    # Process form submission
     if request.method == 'POST':
         form = BusinessForm(request.POST, request.FILES, instance=business, user=request.user)
         
@@ -704,6 +723,15 @@ def business_form(request, business_id=None):
             
             business.save()
             
+            # Link subscription to business if adding new business
+            if not is_edit and 'pending_subscription_id' in request.session:
+                subscription_id = request.session.get('pending_subscription_id')
+                subscription = UserSubscription.objects.get(id=subscription_id)
+                subscription.business = business
+                subscription.save()
+                # Clear the session
+                del request.session['pending_subscription_id']
+            
             messages.success(request, status_message)
             return redirect('directory:dashboard_listings')
         
@@ -753,9 +781,142 @@ def business_form(request, business_id=None):
     }
     return render(request, 'directory/dashboard/business_form.html', context)
 
+# Add these view functions
 
+@login_required
+def subscription_plans(request):
+    """View to select subscription plans"""
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
+        messages.error(request, "Only business owners can subscribe to plans.")
+        return redirect('accounts:upgrade_to_business')
+    
+    # Get available subscription plans
+    plans = SubscriptionPlan.objects.all()
+    
+    # Check if this is for a new business or an existing one
+    for_new_business = request.GET.get('for_new_business') == 'true'
+    for_business_id = request.GET.get('for_business')
+    business = None
+    
+    if for_business_id:
+        business = get_object_or_404(Business, id=for_business_id, owner=request.user)
+    
+    context = {
+        'plans': plans,
+        'for_new_business': for_new_business,
+        'business': business
+    }
+    
+    return render(request, 'directory/subscription/plans.html', context)
 
+@login_required
+def select_plan(request, plan_id):
+    """Handle plan selection"""
+    # Permission check
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
+        messages.error(request, "Only business owners can subscribe to plans.")
+        return redirect('accounts:upgrade_to_business')
+    
+    plan = get_object_or_404(SubscriptionPlan, id=plan_id)
+    
+    # Check if this is for a new or existing business
+    for_new_business = request.GET.get('for_new_business') == 'true'
+    for_business_id = request.GET.get('for_business')
+    business = None
+    
+    if for_business_id:
+        business = get_object_or_404(Business, id=for_business_id, owner=request.user)
+    
+    # Create a new subscription
+    subscription = UserSubscription.objects.create(
+        user=request.user,
+        business=business,  # Will be None for new businesses
+        plan=plan,
+        expiry_date=timezone.now() + timedelta(days=plan.duration_days)
+    )
+    
+    # If free plan, activate immediately
+    if plan.price == 0:
+        subscription.is_active = True
+        subscription.payment_status = 'verified'
+        subscription.save()
+        
+        if business:
+            # Update existing business subscription
+            messages.success(request, f"Your {business.name} subscription has been updated to {plan.name}.")
+            return redirect('directory:dashboard_listings')
+        else:
+            # For new business
+            request.session['pending_subscription_id'] = subscription.id
+            messages.success(request, f"You've selected the {plan.name} plan. Now add your business details.")
+            return redirect('directory:add_business')
+    
+    # For paid plans, redirect to payment
+    return redirect(f"{reverse('directory:payment_upload', args=[subscription.id])}?for_new_business={for_new_business}&for_business_id={for_business_id or ''}")
 
+@login_required
+def payment_upload(request, subscription_id):
+    """Handle payment screenshot upload"""
+    subscription = get_object_or_404(UserSubscription, id=subscription_id, user=request.user)
+    
+    # Get query parameters
+    for_new_business = request.GET.get('for_new_business') == 'true'
+    for_business_id = request.GET.get('for_business_id')
+    
+    if request.method == 'POST':
+        payment_screenshot = request.FILES.get('payment_screenshot')
+        
+        if payment_screenshot:
+            subscription.payment_screenshot = payment_screenshot
+            subscription.payment_status = 'pending'
+            subscription.save()
+            
+            if for_new_business:
+                # Store subscription ID in session for the business form to use
+                request.session['pending_subscription_id'] = subscription.id
+            
+            messages.success(request, "Payment proof uploaded successfully. Your subscription will be activated after verification.")
+            return redirect('directory:payment_success')
+        else:
+            messages.error(request, "Please upload a payment screenshot.")
+    
+    context = {
+        'subscription': subscription,
+        'for_new_business': for_new_business,
+        'for_business_id': for_business_id,
+        'upi_id': 'yourbusiness@upi'  # Replace with your actual UPI ID
+    }
+    
+    return render(request, 'directory/subscription/payment.html', context)
+
+@login_required
+def payment_success(request):
+    """Payment success page"""
+    return render(request, 'directory/subscription/success.html')
+
+@login_required
+def subscription_dashboard(request):
+    """User's subscription dashboard"""
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
+        messages.error(request, "Only business owners can access subscription dashboard.")
+        return redirect('accounts:upgrade_to_business')
+    
+    # Get user's subscriptions
+    subscriptions = UserSubscription.objects.filter(user=request.user).order_by('-start_date')
+    
+    # Get current active subscription
+    active_subscription = subscriptions.filter(
+        is_active=True, 
+        expiry_date__gt=timezone.now()
+    ).first()
+    
+    context = {
+        'active_tab': 'subscription',
+        'subscriptions': subscriptions,
+        'active_subscription': active_subscription
+    }
+    
+    return render(request, 'directory/dashboard/subscription.html', context)
 
 @staff_member_required
 def monitor_redis(request):
@@ -773,3 +934,23 @@ def monitor_redis(request):
         })
     except Exception as e:
         return JsonResponse({'error': str(e)})
+
+# Add this helper function
+
+def get_user_subscription(user):
+    """Get active subscription details for a user"""
+    return UserSubscription.objects.filter(
+        user=user, 
+        is_active=True, 
+        expiry_date__gt=timezone.now()
+    ).select_related('plan').first()
+
+@login_required
+def add_business_start(request):
+    """Start the add business process by selecting a plan"""
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
+        messages.error(request, "You need to upgrade to a business owner account first.")
+        return redirect('accounts:upgrade_to_business')
+    
+    # Redirect to subscription plans with a flag to indicate new business flow
+    return redirect(f"{reverse('directory:subscription_plans')}?for_new_business=true")

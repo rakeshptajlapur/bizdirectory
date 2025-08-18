@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.db.models import Avg
-from .models import Category, Business, BusinessImage, BusinessHours, Service, Review, Enquiry
+from .models import Category, Business, BusinessImage, BusinessHours, Service, Review, Enquiry, SubscriptionPlan, UserSubscription
+from django.utils import timezone
+from datetime import timedelta
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -76,3 +78,29 @@ class EnquiryAdmin(admin.ModelAdmin):
     list_filter = ('is_responded', 'created_at')
     search_fields = ('business__name', 'name', 'email', 'message')
     actions = [mark_as_responded]
+
+@admin.register(SubscriptionPlan)
+class SubscriptionPlanAdmin(admin.ModelAdmin):
+    list_display = ('name', 'price', 'duration_days')
+    search_fields = ('name',)
+
+@admin.action(description="Verify selected payments")
+def verify_payments(modeladmin, request, queryset):
+    queryset.update(is_active=True, payment_status='verified')
+    # Update expiry date for all verified subscriptions
+    for subscription in queryset:
+        subscription.expiry_date = timezone.now() + timedelta(days=subscription.plan.duration_days)
+        subscription.save()
+    
+    modeladmin.message_user(request, f"{queryset.count()} payments verified successfully.")
+
+@admin.register(UserSubscription)
+class UserSubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'plan', 'start_date', 'expiry_date', 'payment_status', 'is_active')
+    list_filter = ('plan', 'payment_status', 'is_active')
+    search_fields = ('user__username', 'user__email')
+    actions = [verify_payments]
+    
+    def has_payment_screenshot(self, obj):
+        return bool(obj.payment_screenshot)
+    has_payment_screenshot.boolean = True

@@ -1,0 +1,70 @@
+{% extends 'directory/base.html' %}
+{% load static %}
+{% load directory_filters %}  <!-- Add this line -->
+
+
+{% block title %}Subscription Plans | BizDirectory{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">Choose Your Subscription Plan</h1>
+    
+    {% if active_subscription %}
+        <div class="alert alert-success mb-5">
+            <h5><i class="bi bi-check-circle-fill me-2"></i>You have an active subscription</h5>
+            <p class="mb-0">
+                Your {{ active_subscription.plan.name }} plan is active until 
+                <strong>{{ active_subscription.expiry_date|date:"F d, Y" }}</strong> 
+                ({{ active_subscription.days_remaining }} days remaining).
+            </p>
+        </div>
+    {% endif %}
+    
+    <div class="row row-cols-1 row-cols-md-2 g-4 mb-5">
+        {% for plan in plans %}
+        <div class="col">
+            <div class="card h-100 {% if plan.price > 0 %}border-primary{% endif %}">
+                {% if plan.price > 0 %}
+                <div class="card-header bg-primary text-white">
+                    <span class="badge bg-white text-primary">RECOMMENDED</span>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h3 class="card-title">{{ plan.name }}</h3>
+                    
+                    {% if plan.price > 0 %}
+                        <h4 class="display-6 fw-bold my-3">₹{{ plan.price }}<span class="text-muted fs-6 fw-normal">/year</span></h4>
+                    {% else %}
+                        <h4 class="display-6 fw-bold my-3">Free<span class="text-muted fs-6 fw-normal">/forever</span></h4>
+                    {% endif %}
+                    
+                    <p class="card-text">{{ plan.description }}</p>
+                    
+                    <h6 class="fw-bold mt-4">Features:</h6>
+                    <ul class="list-group list-group-flush mb-4">
+                        {% for feature in plan.features|split:"," %}
+                            <li class="list-group-item bg-transparent">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>{{ feature }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'directory:select_plan' plan.id %}" class="btn {% if plan.price > 0 %}btn-primary{% else %}btn-outline-primary{% endif %} btn-lg">
+                            Select Plan
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-md-8 mx-auto text-center">
+            <h5>Need help choosing a plan?</h5>
+            <p class="mb-4">Contact our support team at <a href="mailto:support@bizdirectory.com">support@bizdirectory.com</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
