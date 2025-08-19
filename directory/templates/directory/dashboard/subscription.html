@@ -4,116 +4,65 @@
 {% block dashboard_content %}
 <div class="row mb-4">
     <div class="col">
-        <h1 class="h3">Your Subscription</h1>
-        <p class="text-muted">Manage your BizDirectory subscription</p>
+        <h2>Your Subscriptions</h2>
     </div>
     <div class="col-auto">
-        <a href="{% url 'directory:subscription_plans' %}" class="btn btn-primary">
-            <i class="bi bi-arrow-up-circle me-1"></i>Upgrade Plan
+        <a href="{% url 'directory:add_business' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Add New Listing
         </a>
     </div>
 </div>
 
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endfor %}
-{% endif %}
-
-<!-- Current Subscription Card -->
-{% if active_subscription %}
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <h5 class="border-bottom pb-2 mb-3">
-                <i class="bi bi-star-fill text-warning me-2"></i>Current Plan
-            </h5>
-            
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="mb-3">
-                        <div class="d-flex align-items-center mb-2">
-                            <h4 class="mb-0">{{ active_subscription.plan.name }}</h4>
-                            <span class="badge bg-success ms-2">Active</span>
-                        </div>
-                        <p class="text-muted mb-0">{{ active_subscription.plan.description }}</p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <p class="mb-1"><strong>Start Date:</strong> {{ active_subscription.start_date|date:"F d, Y" }}</p>
-                        <p class="mb-1"><strong>Expiry Date:</strong> {{ active_subscription.expiry_date|date:"F d, Y" }}</p>
-                        <p class="mb-0"><strong>Days Remaining:</strong> {{ active_subscription.days_remaining }}</p>
-                    </div>
-                </div>
-                
-                <div class="col-md-4 text-md-end">
-                    {% if active_subscription.plan.price > 0 %}
-                        <div class="mb-2">
-                            <span class="h3 fw-bold">₹{{ active_subscription.plan.price }}</span>
-                            <span class="text-muted">/year</span>
-                        </div>
-                    {% else %}
-                        <div class="mb-2">
-                            <span class="h3 fw-bold">Free</span>
-                        </div>
-                    {% endif %}
-                </div>
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <h5 class="card-title border-bottom pb-2">Active Subscriptions</h5>
+        
+        {% if not subscriptions %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i> You don't have any active subscriptions yet.
             </div>
-        </div>
-    </div>
-{% else %}
-    <div class="alert alert-warning mb-4">
-        <h5><i class="bi bi-exclamation-triangle-fill me-2"></i>No Active Subscription</h5>
-        <p class="mb-3">You don't have an active subscription. Select a plan to add business listings.</p>
-        <a href="{% url 'directory:subscription_plans' %}" class="btn btn-primary">View Available Plans</a>
-    </div>
-{% endif %}
-
-<!-- Subscription History Card -->
-{% if subscriptions %}
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <h5 class="border-bottom pb-2 mb-3">
-                <i class="bi bi-clock-history me-2"></i>Subscription History
-            </h5>
-            
+        {% else %}
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover align-middle">
                     <thead>
                         <tr>
+                            <th>Business</th>
                             <th>Plan</th>
+                            <th>Transaction ID</th>
                             <th>Start Date</th>
                             <th>Expiry Date</th>
                             <th>Status</th>
-                            <th>Amount</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for sub in subscriptions %}
-                            <tr>
-                                <td>{{ sub.plan.name }}</td>
-                                <td>{{ sub.start_date|date:"M d, Y" }}</td>
-                                <td>{{ sub.expiry_date|date:"M d, Y" }}</td>
-                                <td>
-                                    {% if sub.is_active and not sub.is_expired %}
-                                        <span class="badge bg-success">Active</span>
-                                    {% elif sub.payment_status == 'pending' %}
-                                        <span class="badge bg-warning">Payment Pending</span>
-                                    {% elif sub.is_expired %}
-                                        <span class="badge bg-secondary">Expired</span>
-                                    {% else %}
-                                        <span class="badge bg-danger">Inactive</span>
-                                    {% endif %}
-                                </td>
-                                <td>₹{{ sub.plan.price }}</td>
-                            </tr>
+                        {% for subscription in subscriptions %}
+                        <tr>
+                            <td>
+                                {% if subscription.business %}
+                                    <a href="{% url 'directory:business_detail' subscription.business.id %}">
+                                        {{ subscription.business.name }}
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">Not assigned</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ subscription.plan.name }}</td>
+                            <td><code>{{ subscription.id }}</code></td>
+                            <td>{{ subscription.start_date|date:"M d, Y" }}</td>
+                            <td>{{ subscription.expiry_date|date:"M d, Y" }}</td>
+                            <td>
+                                {% if subscription.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-warning">{{ subscription.payment_status|title }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-        </div>
+        {% endif %}
     </div>
-{% endif %}
+</div>
 {% endblock %}

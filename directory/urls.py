@@ -1,4 +1,6 @@
 from django.urls import path
+from django.shortcuts import redirect  # Add this line
+
 from . import views
 
 app_name = 'directory'
@@ -33,7 +35,7 @@ urlpatterns = [
     path('dashboard/monitor-redis/', views.monitor_redis, name='monitor_redis'),
 
     # Business addition and editing
-    path('dashboard/business/start/', views.add_business_start, name='add_business_start'),  # New URL
+    path('dashboard/business/start/', lambda request: redirect('directory:add_business'), name='add_business_start'),
     path('dashboard/business/add/', views.business_form, name='add_business'),
     path('dashboard/business/edit/<int:business_id>/', views.business_form, name='edit_business'),
 

@@ -396,3 +396,45 @@
     });
 </script>
 {% endblock %}
+
+{% with subscription=business.subscription %}
+    <!-- Basic business info section (always visible) -->
+    <!-- ... -->
+
+    <!-- Premium features - only show if paid plan -->
+    {% if business.has_premium_features %}
+        <!-- Business Hours Card -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="border-bottom pb-2 mb-3">Business Hours</h5>
+                <!-- Hours content -->
+            </div>
+        </div>
+        
+        <!-- Additional images gallery -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="border-bottom pb-2 mb-3">Image Gallery</h5>
+                <!-- Gallery content -->
+            </div>
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body text-center">
+                <h5 class="border-bottom pb-2 mb-3">Premium Features</h5>
+                <p class="text-muted">
+                    <i class="bi bi-lock"></i> Unlock advanced features with our Premium plan:
+                </p>
+                <ul class="list-unstyled mb-4">
+                    <li><i class="bi bi-check-circle me-2"></i> Business hours management</li>
+                    <li><i class="bi bi-check-circle me-2"></i> Multiple image gallery</li>
+                    <li><i class="bi bi-check-circle me-2"></i> Verification badges</li>
+                    <li><i class="bi bi-check-circle me-2"></i> Advanced analytics</li>
+                </ul>
+                <a href="{% url 'directory:subscription_plans' %}?for_business={{ business.id }}" class="btn btn-primary">
+                    Upgrade to Premium
+                </a>
+            </div>
+        </div>
+    {% endif %}
+{% endwith %}

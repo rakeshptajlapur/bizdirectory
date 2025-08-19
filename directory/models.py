@@ -71,6 +71,15 @@ class Business(models.Model):
     # Whether the listing has been approved by an admin
     is_approved = models.BooleanField(default=False)
 
+    # Add these fields to track subscription status
+    subscription_plan = models.ForeignKey(
+        'SubscriptionPlan', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='businesses'
+    )
+    
     class Meta:
         verbose_name_plural = "Businesses"
         
@@ -96,6 +105,19 @@ class Business(models.Model):
             category_id = self.category_id if self.category_id else 0
             return category_fallbacks.get(category_id, 
                 f"https://via.placeholder.com/500x300?text={self.name.replace(' ', '+')}") + "?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+
+    @property
+    def has_premium_features(self):
+        """Check if business has premium features"""
+        subscription = UserSubscription.objects.filter(
+            business=self, 
+            is_active=True,
+            expiry_date__gt=timezone.now()
+        ).first()
+        
+        if subscription and subscription.plan.price > 0:
+            return True
+        return False
 
 class BusinessImage(models.Model):
     business = models.ForeignKey(Business, related_name='images', on_delete=models.CASCADE)

@@ -86,13 +86,16 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
 
 @admin.action(description="Verify selected payments")
 def verify_payments(modeladmin, request, queryset):
-    queryset.update(is_active=True, payment_status='verified')
-    # Update expiry date for all verified subscriptions
+    """Verify selected payments and activate subscriptions"""
+    count = 0
     for subscription in queryset:
-        subscription.expiry_date = timezone.now() + timedelta(days=subscription.plan.duration_days)
-        subscription.save()
+        if subscription.payment_status == 'pending' and subscription.payment_screenshot:
+            subscription.payment_status = 'verified'
+            subscription.is_active = True  # Make sure this is set to True
+            subscription.save()
+            count += 1
     
-    modeladmin.message_user(request, f"{queryset.count()} payments verified successfully.")
+    messages.success(request, f"Successfully verified {count} payments.")
 
 @admin.register(UserSubscription)
 class UserSubscriptionAdmin(admin.ModelAdmin):

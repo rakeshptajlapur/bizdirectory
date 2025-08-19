@@ -580,7 +580,6 @@ def kyc_gst_documents(request):
 @login_required
 def business_form(request, business_id=None):
     """Add new business or edit existing business"""
-    # Permission checks
     if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
         messages.error(request, "You need to upgrade to a business owner account first.")
         return redirect('accounts:upgrade_to_business')
@@ -588,34 +587,11 @@ def business_form(request, business_id=None):
     # Initialize variables
     business = None
     is_edit = False
-    subscription = None
     
     # Determine if editing or adding
     if business_id:
         business = get_object_or_404(Business, id=business_id, owner=request.user)
         is_edit = True
-        
-        # For editing, check if business has an active subscription
-        subscription = UserSubscription.objects.filter(
-            business=business,
-            is_active=True, 
-            expiry_date__gt=timezone.now()
-        ).first()
-        
-        if not subscription:
-            messages.warning(request, "This listing doesn't have an active subscription.")
-            return redirect(f"{reverse('directory:subscription_plans')}?for_business={business_id}")
-    else:
-        # For new business, get the subscription from session
-        subscription_id = request.session.get('pending_subscription_id')
-        if not subscription_id:
-            messages.warning(request, "Please select a subscription plan first.")
-            return redirect('directory:add_business_start')
-        
-        subscription = get_object_or_404(UserSubscription, id=subscription_id, user=request.user)
-        if not subscription.is_active:
-            messages.warning(request, "Your subscription isn't active yet.")
-            return redirect('directory:dashboard_home')
     
     # Process form submission
     if request.method == 'POST':
@@ -626,6 +602,20 @@ def business_form(request, business_id=None):
             
             if not is_edit:
                 business.owner = request.user
+                # Auto-assign free plan for new businesses
+                free_plan = SubscriptionPlan.objects.filter(price=0).first()
+                business.subscription_plan = free_plan
+                business.save()
+                
+                # Create an active subscription record for the free plan
+                UserSubscription.objects.create(
+                    user=request.user,
+                    business=business,
+                    plan=free_plan,
+                    is_active=True,
+                    payment_status='verified',
+                    expiry_date=timezone.now() + timedelta(days=free_plan.duration_days)
+                )
             
             # Handle action (draft vs submit)
             action = request.POST.get('action', 'draft')
@@ -734,11 +724,8 @@ def business_form(request, business_id=None):
             
             messages.success(request, status_message)
             return redirect('directory:dashboard_listings')
-        
-        else:
-            messages.error(request, 'Please correct the errors below.')
-    
     else:
+        # Initialize an empty form for GET requests - THIS WAS MISSING
         form = BusinessForm(instance=business, user=request.user)
     
     # Get business hours for the form
@@ -826,11 +813,43 @@ def select_plan(request, plan_id):
     
     if for_business_id:
         business = get_object_or_404(Business, id=for_business_id, owner=request.user)
+        
+        # Check if the business already has a subscription
+        try:
+            existing_subscription = UserSubscription.objects.get(business=business)
+            
+            # If upgrading to the same plan, just redirect back
+            if existing_subscription.plan == plan:
+                messages.info(request, f"This business is already on the {plan.name} plan.")
+                return redirect('directory:dashboard_listings')
+                
+            # For existing subscriptions, just update the plan instead of creating a new one
+            existing_subscription.plan = plan
+            existing_subscription.expiry_date = timezone.now() + timedelta(days=plan.duration_days)
+            existing_subscription.payment_status = 'pending'  # Reset payment status for paid upgrades
+            existing_subscription.is_active = False if plan.price > 0 else True  # Only auto-activate free plans
+            existing_subscription.save()
+            
+            # If free plan, activate immediately
+            if plan.price == 0:
+                existing_subscription.is_active = True
+                existing_subscription.payment_status = 'verified'
+                existing_subscription.save()
+                
+                messages.success(request, f"Your subscription has been updated to {plan.name}.")
+                return redirect('directory:dashboard_listings')
+            
+            # For paid plans, redirect to payment
+            return redirect('directory:payment_upload', subscription_id=existing_subscription.id)
+            
+        except UserSubscription.DoesNotExist:
+            # No existing subscription, so we'll create a new one
+            pass
     
-    # Create a new subscription
+    # Create a new subscription for new businesses or businesses without a subscription
     subscription = UserSubscription.objects.create(
         user=request.user,
-        business=business,  # Will be None for new businesses
+        business=business,
         plan=plan,
         expiry_date=timezone.now() + timedelta(days=plan.duration_days)
     )
@@ -842,11 +861,9 @@ def select_plan(request, plan_id):
         subscription.save()
         
         if business:
-            # Update existing business subscription
             messages.success(request, f"Your {business.name} subscription has been updated to {plan.name}.")
             return redirect('directory:dashboard_listings')
         else:
-            # For new business
             request.session['pending_subscription_id'] = subscription.id
             messages.success(request, f"You've selected the {plan.name} plan. Now add your business details.")
             return redirect('directory:add_business')
