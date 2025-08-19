@@ -1,0 +1,115 @@
+{% extends 'directory/dashboard/base.html' %}
+{% load static %}
+{% load widget_tweaks %}  <!-- Add this line -->
+
+
+{% block dashboard_content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3">KYC Verification</h1>
+        <p class="text-muted">Upload your identification documents for verification</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.aadhar_card.id_for_label }}" class="form-label">{{ form.aadhar_card.label }}</label>
+                        {{ form.aadhar_card|add_class:"form-control" }}
+                        <div class="form-text">Upload a clear, color scan or photo of your Aadhar card (front and back). Maximum file size: 5MB.</div>
+                        {% if form.aadhar_card.errors %}
+                            <div class="text-danger">
+                                {{ form.aadhar_card.errors }}
+                            </div>
+                        {% endif %}
+                        {% if affiliate.aadhar_card %}
+                            <div class="mt-2">
+                                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Uploaded</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.pan_card.id_for_label }}" class="form-label">{{ form.pan_card.label }}</label>
+                        {{ form.pan_card|add_class:"form-control" }}
+                        <div class="form-text">Upload a clear, color scan or photo of your PAN card. Maximum file size: 5MB.</div>
+                        {% if form.pan_card.errors %}
+                            <div class="text-danger">
+                                {{ form.pan_card.errors }}
+                            </div>
+                        {% endif %}
+                        {% if affiliate.pan_card %}
+                            <div class="mt-2">
+                                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Uploaded</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="alert alert-warning mb-4">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Please ensure that all submitted documents are valid, unexpired, and clearly legible. Blurry or incomplete documents may delay your verification.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Upload Documents</button>
+                        <a href="{% url 'affiliate:dashboard' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title border-bottom pb-2">
+                    <i class="bi bi-info-circle me-2 text-primary"></i>Why KYC Verification?
+                </h5>
+                <p class="text-muted">KYC (Know Your Customer) verification is required for:</p>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>Preventing fraud
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>Compliance with regulations
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>Secure commission payments
+                    </li>
+                    <li>
+                        <i class="bi bi-check-circle text-success me-2"></i>Building a trusted network
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title border-bottom pb-2">
+                    <i class="bi bi-shield-check me-2 text-primary"></i>Document Security
+                </h5>
+                <ul class="list-unstyled small mb-0">
+                    <li class="mb-2"><i class="bi bi-lock text-success me-2"></i>SSL encrypted uploads</li>
+                    <li class="mb-2"><i class="bi bi-lock text-success me-2"></i>Secure storage</li>
+                    <li class="mb-2"><i class="bi bi-lock text-success me-2"></i>Privacy protected</li>
+                    <li><i class="bi bi-lock text-success me-2"></i>GDPR compliant</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

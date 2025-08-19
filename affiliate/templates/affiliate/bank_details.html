@@ -1,0 +1,109 @@
+{% extends 'directory/dashboard/base.html' %}
+{% load static %}
+{% load widget_tweaks %}  <!-- Add this line -->
+
+{% block dashboard_content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3">Bank Details</h1>
+        <p class="text-muted">Add your bank account information for affiliate payments</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.account_holder_name.id_for_label }}" class="form-label">Account Holder Name</label>
+                        {{ form.account_holder_name|add_class:"form-control" }}
+                        {% if form.account_holder_name.errors %}
+                            <div class="text-danger">
+                                {{ form.account_holder_name.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.bank_name.id_for_label }}" class="form-label">Bank Name</label>
+                        {{ form.bank_name|add_class:"form-control" }}
+                        {% if form.bank_name.errors %}
+                            <div class="text-danger">
+                                {{ form.bank_name.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.account_number.id_for_label }}" class="form-label">Account Number</label>
+                        {{ form.account_number|add_class:"form-control" }}
+                        {% if form.account_number.errors %}
+                            <div class="text-danger">
+                                {{ form.account_number.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.ifsc_code.id_for_label }}" class="form-label">IFSC Code</label>
+                        {{ form.ifsc_code|add_class:"form-control" }}
+                        <div class="form-text">The 11-digit IFSC code of your bank branch</div>
+                        {% if form.ifsc_code.errors %}
+                            <div class="text-danger">
+                                {{ form.ifsc_code.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Your bank details will be used for commission payouts when you reach the minimum threshold of ₹5,000.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Save Bank Details</button>
+                        <a href="{% url 'affiliate:dashboard' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title border-bottom pb-2">
+                    <i class="bi bi-shield-lock me-2 text-primary"></i>Secure Banking
+                </h5>
+                <p class="text-muted">Your banking information is securely stored and encrypted. We follow strict security protocols to protect your financial data.</p>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="bi bi-lock text-success me-2"></i>End-to-end encryption
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-lock text-success me-2"></i>Secure database storage
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-lock text-success me-2"></i>Limited administrative access
+                    </li>
+                    <li>
+                        <i class="bi bi-lock text-success me-2"></i>Regular security audits
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

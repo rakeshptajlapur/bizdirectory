@@ -1,0 +1,135 @@
+{% extends 'directory/dashboard/base.html' %}
+{% load static %}
+{% load widget_tweaks %}  <!-- Add this line -->
+
+
+{% block dashboard_content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3">Affiliate Application</h1>
+        <p class="text-muted">Join our affiliate program and earn commissions</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.promotion_strategy.id_for_label }}" class="form-label">{{ form.promotion_strategy.label }}</label>
+                        {{ form.promotion_strategy|add_class:"form-control" }}
+                        <div class="form-text">
+                            Explain how you plan to promote BizDirectory. Include details about your audience, marketing channels, and promotion strategies.
+                        </div>
+                        {% if form.promotion_strategy.errors %}
+                            <div class="text-danger">
+                                {{ form.promotion_strategy.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                        <label class="form-check-label" for="termsCheck">
+                            I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#affiliateTermsModal">Affiliate Terms & Conditions</a>
+                        </label>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <button type="submit" class="btn btn-primary">Submit Application</button>
+                        <a href="{% url 'affiliate:dashboard' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title border-bottom pb-2">Application Tips</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="bi bi-lightbulb text-warning me-2"></i>
+                        Be specific about your promotion methods
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-lightbulb text-warning me-2"></i>
+                        Mention if you have experience with business directories
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-lightbulb text-warning me-2"></i>
+                        Describe your target audience or existing network
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-lightbulb text-warning me-2"></i>
+                        Include any marketing channels you'll use
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title border-bottom pb-2">Next Steps</h5>
+                <ol class="ps-3">
+                    <li class="mb-2">Submit your application</li>
+                    <li class="mb-2">Add your bank details for payouts</li>
+                    <li class="mb-2">Complete KYC verification</li>
+                    <li class="mb-2">Receive your unique affiliate code</li>
+                    <li>Start earning commissions!</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms and Conditions Modal -->
+<div class="modal fade" id="affiliateTermsModal" tabindex="-1" aria-labelledby="affiliateTermsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="affiliateTermsModalLabel">Affiliate Terms & Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Commission Structure</h6>
+                <p>Affiliates earn 20% commission on all premium subscriptions purchased using their unique affiliate code.</p>
+                
+                <h6>2. Payment Terms</h6>
+                <p>Commissions are accumulated until they reach the minimum payout threshold of ₹5,000. Payments are processed within 30 days of reaching the threshold.</p>
+                
+                <h6>3. Commission Duration</h6>
+                <p>Commissions are paid on the initial subscription purchase only, not on renewals.</p>
+                
+                <h6>4. Prohibited Activities</h6>
+                <p>Affiliates must not engage in spamming, false advertising, or any deceptive practices. Violation will result in termination from the program and forfeiture of unpaid commissions.</p>
+                
+                <h6>5. Program Changes</h6>
+                <p>BizDirectory reserves the right to modify or terminate the affiliate program at any time with a 30-day notice.</p>
+                
+                <h6>6. Relationship</h6>
+                <p>Affiliates are independent contractors and not employees of BizDirectory.</p>
+                
+                <h6>7. Tax Reporting</h6>
+                <p>Affiliates are responsible for reporting and paying taxes on their commission earnings as required by law.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

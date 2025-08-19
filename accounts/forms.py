@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
 from .models import Profile
+from affiliate.models import AffiliateProfile  # Import from affiliate app instead
 from .signals import send_password_reset_email
 
 class UserRegisterForm(UserCreationForm):
@@ -93,3 +94,4 @@ class CustomPasswordResetForm(PasswordResetForm):
         except User.DoesNotExist:
             # If user doesn't exist, don't send email (same as Django default)
             pass
+

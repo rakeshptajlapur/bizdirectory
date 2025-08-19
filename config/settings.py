@@ -59,6 +59,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'directory',
     'accounts.apps.AccountsConfig',  # Use the AppConfig instead of just 'accounts'
+    'affiliate.apps.AffiliateConfig',  # Add this line
+    'widget_tweaks',
+
 ]
 
 MIDDLEWARE = [

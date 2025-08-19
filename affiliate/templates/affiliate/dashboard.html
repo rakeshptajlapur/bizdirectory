@@ -1,0 +1,238 @@
+{% extends 'directory/dashboard/base.html' %}
+{% load static %}
+{% load widget_tweaks %}  <!-- Add this line -->
+
+
+{% block dashboard_content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3">Affiliate Dashboard</h1>
+        <p class="text-muted">Track your referrals and earnings</p>
+    </div>
+</div>
+
+{% if affiliate.status == 'pending' %}
+    <div class="alert alert-warning">
+        <i class="bi bi-hourglass-split me-2"></i> Your affiliate application is under review. We'll notify you once it's approved.
+    </div>
+{% elif affiliate.status == 'rejected' %}
+    <div class="alert alert-danger">
+        <i class="bi bi-x-circle me-2"></i> Your affiliate application was not approved. You can apply again with updated information.
+        <div class="mt-3">
+            <a href="{% url 'affiliate:apply' %}" class="btn btn-outline-primary">Apply Again</a>
+        </div>
+    </div>
+{% elif affiliate.status == 'approved' %}
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <!-- Total Earnings -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-2 me-3">
+                            <i class="bi bi-currency-rupee text-primary"></i>
+                        </div>
+                        <h6 class="card-title mb-0">Total Earnings</h6>
+                    </div>
+                    <h3 class="fw-bold mb-0">₹{{ affiliate.total_earnings }}</h3>
+                    <small class="text-muted">Lifetime earnings</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pending Earnings -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-2 me-3">
+                            <i class="bi bi-hourglass-split text-warning"></i>
+                        </div>
+                        <h6 class="card-title mb-0">Pending</h6>
+                    </div>
+                    <h3 class="fw-bold mb-0">₹{{ affiliate.pending_earnings }}</h3>
+                    <small class="text-muted">Awaiting payout</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Paid Earnings -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-2 me-3">
+                            <i class="bi bi-check-circle text-success"></i>
+                        </div>
+                        <h6 class="card-title mb-0">Paid</h6>
+                    </div>
+                    <h3 class="fw-bold mb-0">₹{{ affiliate.paid_earnings }}</h3>
+                    <small class="text-muted">Already processed</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Referrals Count -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-2 me-3">
+                            <i class="bi bi-people text-info"></i>
+                        </div>
+                        <h6 class="card-title mb-0">Referrals</h6>
+                    </div>
+                    <h3 class="fw-bold mb-0">{{ total_referrals }}</h3>
+                    <small class="text-muted">Total businesses referred</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Your Affiliate Code -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Your Affiliate Code</h5>
+            <p class="text-muted">Share this code with businesses to earn commission when they upgrade to premium.</p>
+            
+            <div class="input-group mb-3">
+                <input type="text" class="form-control form-control-lg bg-light" value="{{ affiliate.affiliate_code }}" id="affiliateCode" readonly>
+                <button class="btn btn-primary" type="button" onclick="copyAffiliateCode()">
+                    <i class="bi bi-clipboard me-1"></i> Copy
+                </button>
+            </div>
+            
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i> 
+                You earn <strong>20% commission</strong> on every premium subscription purchased using your code.
+                Minimum payout threshold: <strong>₹5,000</strong>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Referrals -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Recent Referrals</h5>
+            <a href="{% url 'affiliate:referrals' %}" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="card-body">
+            {% if referrals %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Business</th>
+                                <th>Date</th>
+                                <th>Commission</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for referral in referrals|slice:":5" %}
+                                <tr>
+                                    <td>{{ referral.subscription.business.name }}</td>
+                                    <td>{{ referral.created_at|date:"M d, Y" }}</td>
+                                    <td>₹{{ referral.commission_amount }}</td>
+                                    <td>
+                                        {% if referral.status == 'pending' %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% elif referral.status == 'paid' %}
+                                            <span class="badge bg-success">Paid</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ referral.status|title }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-people text-muted display-4"></i>
+                    <p class="mt-3 text-muted">You don't have any referrals yet. Share your affiliate code to start earning!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Payout Request -->
+    {% if payout_eligible %}
+        <div class="card border-0 shadow-sm mb-4 border-success border-2">
+            <div class="card-body">
+                <h5 class="card-title text-success">
+                    <i class="bi bi-cash-coin me-2"></i> You're eligible for payout!
+                </h5>
+                <p>You've reached the minimum payout threshold of ₹5,000.</p>
+                <a href="{% url 'affiliate:bank_details' %}" class="btn btn-success">Request Payout</a>
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    <!-- Not an affiliate yet -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-5 text-center">
+            <div class="mb-4">
+                <i class="bi bi-people-fill text-primary" style="font-size: 4rem;"></i>
+            </div>
+            <h2 class="mb-4">Become an Affiliate Partner</h2>
+            <p class="lead mb-4">Earn 20% commission for every business that subscribes to our premium plan using your referral code.</p>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                            <div class="text-start">
+                                <h5 class="mb-0">Easy Promotion</h5>
+                                <p class="mb-0 text-muted">Simple code sharing with businesses</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                            <div class="text-start">
+                                <h5 class="mb-0">Generous Commission</h5>
+                                <p class="mb-0 text-muted">Earn 20% on every premium subscription</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                            <div class="text-start">
+                                <h5 class="mb-0">Reliable Tracking</h5>
+                                <p class="mb-0 text-muted">Detailed reports of your referrals</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'affiliate:apply' %}" class="btn btn-primary btn-lg px-5">Apply Now</a>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyAffiliateCode() {
+    var copyText = document.getElementById("affiliateCode");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    
+    // Show a temporary success message
+    var button = document.querySelector("button[onclick='copyAffiliateCode()']");
+    var originalText = button.innerHTML;
+    button.innerHTML = '<i class="bi bi-check-lg me-1"></i> Copied!';
+    button.classList.remove('btn-primary');
+    button.classList.add('btn-success');
+    
+    setTimeout(function() {
+        button.innerHTML = originalText;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-primary');
+    }, 2000);
+}
+</script>
+{% endblock %}

@@ -876,26 +876,34 @@ def payment_upload(request, subscription_id):
     """Handle payment screenshot upload"""
     subscription = get_object_or_404(UserSubscription, id=subscription_id, user=request.user)
     
-    # Get query parameters
-    for_new_business = request.GET.get('for_new_business') == 'true'
-    for_business_id = request.GET.get('for_business_id')
-    
     if request.method == 'POST':
         payment_screenshot = request.FILES.get('payment_screenshot')
+        
+        # Add affiliate code handling
+        affiliate_code = request.POST.get('affiliate_code')
+        if affiliate_code:
+            # Check if valid affiliate code
+            from affiliate.models import AffiliateProfile
+            try:
+                affiliate = AffiliateProfile.objects.get(affiliate_code=affiliate_code, status='approved')
+                subscription.affiliate_code = affiliate_code
+                subscription.save()
+            except AffiliateProfile.DoesNotExist:
+                messages.warning(request, "Invalid affiliate code, but your payment is still being processed.")
         
         if payment_screenshot:
             subscription.payment_screenshot = payment_screenshot
             subscription.payment_status = 'pending'
             subscription.save()
             
-            if for_new_business:
-                # Store subscription ID in session for the business form to use
-                request.session['pending_subscription_id'] = subscription.id
-            
             messages.success(request, "Payment proof uploaded successfully. Your subscription will be activated after verification.")
             return redirect('directory:payment_success')
         else:
             messages.error(request, "Please upload a payment screenshot.")
+    
+    # Get query parameters
+    for_new_business = request.GET.get('for_new_business') == 'true'
+    for_business_id = request.GET.get('for_business_id')
     
     context = {
         'subscription': subscription,

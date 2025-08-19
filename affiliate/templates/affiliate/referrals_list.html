@@ -1,0 +1,117 @@
+{% extends 'directory/dashboard/base.html' %}
+{% load static %}
+{% load widget_tweaks %}  <!-- Add this line -->
+
+
+{% block dashboard_content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3">My Referrals</h1>
+        <p class="text-muted">Track all your referred businesses and commissions</p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        {% if referrals %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Business Name</th>
+                            <th>Plan</th>
+                            <th>Commission</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for referral in referrals %}
+                            <tr>
+                                <td>
+                                    {% if referral.subscription.business %}
+                                        {{ referral.subscription.business.name }}
+                                    {% else %}
+                                        <span class="text-muted">Unknown Business</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if referral.subscription.plan %}
+                                        {{ referral.subscription.plan.name }}
+                                        <div class="small text-muted">₹{{ referral.subscription.plan.price }}</div>
+                                    {% else %}
+                                        <span class="text-muted">Unknown Plan</span>
+                                    {% endif %}
+                                </td>
+                                <td>₹{{ referral.commission_amount }}</td>
+                                <td>{{ referral.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if referral.status == 'pending_approval' %}
+                                        <span class="badge bg-warning">Pending Approval</span>
+                                    {% elif referral.status == 'approved' %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% elif referral.status == 'rejected' %}
+                                        <span class="badge bg-danger">Rejected</span>
+                                    {% elif referral.status == 'paid' %}
+                                        <span class="badge bg-primary">Paid</span>
+                                    {% elif referral.status == 'cancelled' %}
+                                        <span class="badge bg-secondary">Cancelled</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ referral.status|title }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-people text-muted display-4"></i>
+                <p class="mt-3 text-muted">You don't have any referrals yet. Share your affiliate code to start earning!</p>
+                <a href="{% url 'affiliate:dashboard' %}" class="btn btn-primary mt-2">Go to Dashboard</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if referrals %}
+<div class="card border-0 shadow-sm mt-4">
+    <div class="card-body">
+        <h5 class="card-title">Your Affiliate Code</h5>
+        <p class="text-muted">Share this code with businesses to earn more commissions.</p>
+        
+        <div class="input-group">
+            <input type="text" class="form-control bg-light" value="{{ affiliate.affiliate_code }}" id="affiliateCode" readonly>
+            <button class="btn btn-primary" type="button" onclick="copyAffiliateCode()">
+                <i class="bi bi-clipboard me-1"></i> Copy
+            </button>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyAffiliateCode() {
+    var copyText = document.getElementById("affiliateCode");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    
+    // Show a temporary success message
+    var button = document.querySelector("button[onclick='copyAffiliateCode()']");
+    var originalText = button.innerHTML;
+    button.innerHTML = '<i class="bi bi-check-lg me-1"></i> Copied!';
+    button.classList.remove('btn-primary');
+    button.classList.add('btn-success');
+    
+    setTimeout(function() {
+        button.innerHTML = originalText;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-primary');
+    }, 2000);
+}
+</script>
+{% endblock %}

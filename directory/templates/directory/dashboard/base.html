@@ -53,6 +53,37 @@
                         <a href="{% url 'directory:subscription_dashboard' %}" class="list-group-item list-group-item-action {% if active_tab == 'subscription' %}active{% endif %}">
                             <i class="bi bi-credit-card me-2"></i> Subscription
                         </a>
+                        <a class="list-group-item list-group-item-action {% if 'affiliate' in active_tab %}active{% endif %}" 
+                           data-bs-toggle="collapse" href="#affiliateSubmenu" role="button" 
+                           aria-expanded="{% if 'affiliate' in active_tab %}true{% else %}false{% endif %}" 
+                           aria-controls="affiliateSubmenu">
+                            <i class="bi bi-people me-2"></i> Affiliate Program
+                            {% if user.affiliate_profile.status == 'approved' %}
+                                <span class="badge bg-success ms-2">Active</span>
+                            {% elif user.affiliate_profile.status == 'pending' %}
+                                <span class="badge bg-warning ms-2">Pending</span>
+                            {% endif %}
+                        </a>
+
+                        <div class="collapse {% if 'affiliate' in active_tab %}show{% endif %}" id="affiliateSubmenu">
+                            <div class="list-group border-0 rounded-0 ms-3">
+                                <a href="{% url 'affiliate:dashboard' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_dashboard' %}active{% endif %}">
+                                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                                </a>
+                                <a href="{% url 'affiliate:referrals' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_referrals' %}active{% endif %}">
+                                    <i class="bi bi-list-check me-2"></i> My Referrals
+                                </a>
+                                <a href="{% url 'affiliate:bank_details' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_bank' %}active{% endif %}">
+                                    <i class="bi bi-bank me-2"></i> Bank Details
+                                </a>
+                                <a href="{% url 'affiliate:kyc' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_kyc' %}active{% endif %}">
+                                    <i class="bi bi-shield-check me-2"></i> KYC Documents
+                                </a>
+                                <a href="{% url 'affiliate:payments' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_payments' %}active{% endif %}">
+                                    <i class="bi bi-cash-coin me-2"></i> Payment History
+                                </a>
+                            </div>
+                        </div>
                     {% else %}
                         <!-- Regular User - Show Upgrade Option -->
                         <a href="{% url 'accounts:upgrade_to_business' %}" class="list-group-item list-group-item-action {% if active_tab == 'upgrade' %}active{% endif %} text-primary">

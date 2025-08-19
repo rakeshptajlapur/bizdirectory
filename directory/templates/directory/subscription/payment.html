@@ -45,6 +45,12 @@
                             <div class="form-text">Please upload a screenshot of your successful payment.</div>
                         </div>
                         
+                        <div class="mb-3">
+                            <label for="affiliate_code" class="form-label">Affiliate/Referral Code (Optional)</label>
+                            <input type="text" class="form-control" id="affiliate_code" name="affiliate_code" placeholder="Enter code if you have one">
+                            <div class="form-text">If someone referred you, enter their code here.</div>
+                        </div>
+                        
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">Submit Payment Proof</button>
                             <a href="{% url 'directory:subscription_plans' %}" class="btn btn-outline-secondary">Cancel</a>

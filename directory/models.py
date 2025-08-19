@@ -218,6 +218,7 @@ class UserSubscription(models.Model):
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
     payment_screenshot = models.ImageField(upload_to='payment_screenshots/', blank=True, null=True)
     is_active = models.BooleanField(default=False)  # Only active after admin verification
+    affiliate_code = models.CharField(max_length=8, blank=True, null=True)
     
     def is_expired(self):
         return timezone.now() > self.expiry_date
@@ -227,6 +228,13 @@ class UserSubscription(models.Model):
             return 0
         delta = self.expiry_date - timezone.now()
         return delta.days
+    
+    @property
+    def commission_earned(self):
+        """Calculate 20% commission on plan price"""
+        if self.plan:
+            return float(self.plan.price) * 0.20
+        return 0
     
     def __str__(self):
         return f"{self.user.username}'s {self.plan.name} subscription"
