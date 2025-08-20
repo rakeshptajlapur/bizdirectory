@@ -1,7 +1,6 @@
 {% extends 'directory/dashboard/base.html' %}
 {% load static %}
-{% load widget_tweaks %}  <!-- Add this line -->
-
+{% load widget_tweaks %}
 
 {% block dashboard_content %}
 <div class="row mb-4">
@@ -24,9 +23,10 @@
                     {% endfor %}
                 {% endif %}
                 
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     
+                    <!-- Promotion Strategy -->
                     <div class="mb-4">
                         <label for="{{ form.promotion_strategy.id_for_label }}" class="form-label">{{ form.promotion_strategy.label }}</label>
                         {{ form.promotion_strategy|add_class:"form-control" }}
@@ -38,6 +38,54 @@
                                 {{ form.promotion_strategy.errors }}
                             </div>
                         {% endif %}
+                    </div>
+                    
+                    <!-- KYC Documents Section -->
+                    <div class="card bg-light border-0 mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title border-bottom pb-2 mb-3">
+                                <i class="bi bi-shield-check me-2"></i>Identity Verification Documents
+                            </h5>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.aadhar_card.id_for_label }}" class="form-label">Aadhar Card <span class="text-danger">*</span></label>
+                                    {{ form.aadhar_card|add_class:"form-control" }}
+                                    <div class="form-text">Upload a clear, color scan or photo of your Aadhar card (front and back). Maximum file size: 5MB.</div>
+                                    {% if form.aadhar_card.errors %}
+                                        <div class="text-danger">
+                                            {{ form.aadhar_card.errors }}
+                                        </div>
+                                    {% endif %}
+                                    {% if form.instance.aadhar_card %}
+                                        <div class="mt-2">
+                                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Previously Uploaded</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="{{ form.pan_card.id_for_label }}" class="form-label">PAN Card <span class="text-danger">*</span></label>
+                                    {{ form.pan_card|add_class:"form-control" }}
+                                    <div class="form-text">Upload a clear, color scan or photo of your PAN card. Maximum file size: 5MB.</div>
+                                    {% if form.pan_card.errors %}
+                                        <div class="text-danger">
+                                            {{ form.pan_card.errors }}
+                                        </div>
+                                    {% endif %}
+                                    {% if form.instance.pan_card %}
+                                        <div class="mt-2">
+                                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Previously Uploaded</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-warning mt-3 mb-0">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Please ensure that all submitted documents are valid, unexpired, and clearly legible. Blurry or incomplete documents may delay your application approval.
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="form-check mb-4">
@@ -57,6 +105,30 @@
     </div>
     
     <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title border-bottom pb-2">Application Requirements</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Valid Aadhar Card (Government ID)
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Valid PAN Card (Tax ID)
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Detailed promotion strategy
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Agreement to terms & conditions
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
                 <h5 class="card-title border-bottom pb-2">Application Tips</h5>
@@ -85,9 +157,9 @@
             <div class="card-body">
                 <h5 class="card-title border-bottom pb-2">Next Steps</h5>
                 <ol class="ps-3">
-                    <li class="mb-2">Submit your application</li>
+                    <li class="mb-2">Submit your application with documents</li>
+                    <li class="mb-2">Wait for admin approval (24-48 hours)</li>
                     <li class="mb-2">Add your bank details for payouts</li>
-                    <li class="mb-2">Complete KYC verification</li>
                     <li class="mb-2">Receive your unique affiliate code</li>
                     <li>Start earning commissions!</li>
                 </ol>
@@ -132,4 +204,33 @@
         </div>
     </div>
 </div>
+
+<script>
+// File upload validation
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    
+    fileInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                // Check file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size should not exceed 5MB');
+                    this.value = '';
+                    return;
+                }
+                
+                // Check file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Please upload only JPG, PNG, or PDF files');
+                    this.value = '';
+                    return;
+                }
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

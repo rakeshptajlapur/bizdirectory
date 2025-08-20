@@ -1,13 +1,12 @@
 {% extends 'directory/dashboard/base.html' %}
 {% load static %}
-{% load widget_tweaks %}  <!-- Add this line -->
-
+{% load widget_tweaks %}
 
 {% block dashboard_content %}
 <div class="row mb-4">
     <div class="col">
-        <h1 class="h3">KYC Verification</h1>
-        <p class="text-muted">Upload your identification documents for verification</p>
+        <h1 class="h3">KYC Document Management</h1>
+        <p class="text-muted">View and update your identification documents</p>
     </div>
 </div>
 
@@ -24,21 +23,56 @@
                     {% endfor %}
                 {% endif %}
                 
+                <!-- Current Documents Status -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Aadhar Card</h6>
+                                {% if affiliate.aadhar_card %}
+                                    <i class="bi bi-check-circle-fill text-success fs-1 mb-2"></i>
+                                    <p class="text-success mb-2">Document Uploaded</p>
+                                    <small class="text-muted">Uploaded on: {{ affiliate.aadhar_card.name|default:"Unknown date" }}</small>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill text-danger fs-1 mb-2"></i>
+                                    <p class="text-danger mb-0">No Document</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">PAN Card</h6>
+                                {% if affiliate.pan_card %}
+                                    <i class="bi bi-check-circle-fill text-success fs-1 mb-2"></i>
+                                    <p class="text-success mb-2">Document Uploaded</p>
+                                    <small class="text-muted">Uploaded on: {{ affiliate.pan_card.name|default:"Unknown date" }}</small>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill text-danger fs-1 mb-2"></i>
+                                    <p class="text-danger mb-0">No Document</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     
                     <div class="mb-4">
                         <label for="{{ form.aadhar_card.id_for_label }}" class="form-label">{{ form.aadhar_card.label }}</label>
                         {{ form.aadhar_card|add_class:"form-control" }}
-                        <div class="form-text">Upload a clear, color scan or photo of your Aadhar card (front and back). Maximum file size: 5MB.</div>
+                        <div class="form-text">
+                            {% if affiliate.aadhar_card %}
+                                Current file will be replaced if you upload a new one. 
+                            {% endif %}
+                            Upload a clear, color scan or photo of your Aadhar card (front and back). Maximum file size: 5MB.
+                        </div>
                         {% if form.aadhar_card.errors %}
                             <div class="text-danger">
                                 {{ form.aadhar_card.errors }}
-                            </div>
-                        {% endif %}
-                        {% if affiliate.aadhar_card %}
-                            <div class="mt-2">
-                                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Uploaded</span>
                             </div>
                         {% endif %}
                     </div>
@@ -46,15 +80,15 @@
                     <div class="mb-4">
                         <label for="{{ form.pan_card.id_for_label }}" class="form-label">{{ form.pan_card.label }}</label>
                         {{ form.pan_card|add_class:"form-control" }}
-                        <div class="form-text">Upload a clear, color scan or photo of your PAN card. Maximum file size: 5MB.</div>
+                        <div class="form-text">
+                            {% if affiliate.pan_card %}
+                                Current file will be replaced if you upload a new one. 
+                            {% endif %}
+                            Upload a clear, color scan or photo of your PAN card. Maximum file size: 5MB.
+                        </div>
                         {% if form.pan_card.errors %}
                             <div class="text-danger">
                                 {{ form.pan_card.errors }}
-                            </div>
-                        {% endif %}
-                        {% if affiliate.pan_card %}
-                            <div class="mt-2">
-                                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Uploaded</span>
                             </div>
                         {% endif %}
                     </div>
@@ -65,7 +99,7 @@
                     </div>
                     
                     <div class="mb-3">
-                        <button type="submit" class="btn btn-primary">Upload Documents</button>
+                        <button type="submit" class="btn btn-primary">Update Documents</button>
                         <a href="{% url 'affiliate:dashboard' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
                     </div>
                 </form>
@@ -77,21 +111,23 @@
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
                 <h5 class="card-title border-bottom pb-2">
-                    <i class="bi bi-info-circle me-2 text-primary"></i>Why KYC Verification?
+                    <i class="bi bi-info-circle me-2 text-primary"></i>Document Requirements
                 </h5>
-                <p class="text-muted">KYC (Know Your Customer) verification is required for:</p>
                 <ul class="list-unstyled mb-0">
                     <li class="mb-2">
-                        <i class="bi bi-check-circle text-success me-2"></i>Preventing fraud
+                        <i class="bi bi-check-circle text-success me-2"></i>Clear and legible scans/photos
                     </li>
                     <li class="mb-2">
-                        <i class="bi bi-check-circle text-success me-2"></i>Compliance with regulations
+                        <i class="bi bi-check-circle text-success me-2"></i>All four corners visible
                     </li>
                     <li class="mb-2">
-                        <i class="bi bi-check-circle text-success me-2"></i>Secure commission payments
+                        <i class="bi bi-check-circle text-success me-2"></i>No glare or shadows
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>Valid and unexpired documents
                     </li>
                     <li>
-                        <i class="bi bi-check-circle text-success me-2"></i>Building a trusted network
+                        <i class="bi bi-check-circle text-success me-2"></i>File formats: JPG, PNG, PDF
                     </li>
                 </ul>
             </div>

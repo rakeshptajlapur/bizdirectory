@@ -77,19 +77,23 @@ def apply_affiliate(request):
         affiliate = None
     
     if request.method == 'POST':
-        form = AffiliateApplicationForm(request.POST)
+        form = AffiliateApplicationForm(request.POST, request.FILES, instance=affiliate)
         if form.is_valid():
             affiliate = form.save(commit=False)
             affiliate.user = request.user
             affiliate.status = 'pending'
             affiliate.save()
             
-            messages.success(request, "Your affiliate application has been submitted for review.")
+            messages.success(request, "Your affiliate application with KYC documents has been submitted for review.")
             return redirect('affiliate:dashboard')
     else:
         form = AffiliateApplicationForm(instance=affiliate)
     
-    return render(request, 'affiliate/apply.html', {'form': form})
+    context = {
+        'form': form,
+        'active_tab': 'affiliate_apply'
+    }
+    return render(request, 'affiliate/apply.html', context)
 
 @login_required
 def update_bank_details(request):

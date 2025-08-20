@@ -2,6 +2,19 @@
 {% load static %}
 
 {% block title %}Dashboard | BizDirectory{% endblock %}
+{% block extra_css %}
+
+<style>
+      .list-group .list-group .list-group-item.active {
+        background-color: #f8f9fa !important;
+        border-color: transparent !important;
+        color: #0d6efd !important;
+        border-bottom: 2px solid #0d6efd !important;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
 
 {% block content %}
 <div class="container-fluid py-4">
