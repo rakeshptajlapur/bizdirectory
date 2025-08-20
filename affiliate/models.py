@@ -38,8 +38,6 @@ class AffiliateReferral(models.Model):
         ('pending_approval', 'Pending Approval'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
-        ('paid', 'Commission Paid'),
-        ('cancelled', 'Cancelled')
     ]
     
     affiliate = models.ForeignKey(AffiliateProfile, on_delete=models.CASCADE, related_name='referrals')
@@ -55,7 +53,7 @@ class AffiliatePayment(models.Model):
     STATUS_CHOICES = [
         ('processing', 'Processing'),
         ('completed', 'Completed'),
-        ('failed', 'Failed')
+        ('on_hold', 'On Hold')
     ]
     
     affiliate = models.ForeignKey(AffiliateProfile, on_delete=models.CASCADE, related_name='payments')

@@ -35,40 +35,40 @@
                         </div>
                         <h6 class="card-title mb-0">Total Earnings</h6>
                     </div>
-                    <h3 class="fw-bold mb-0">₹{{ affiliate.total_earnings }}</h3>
-                    <small class="text-muted">Lifetime earnings</small>
+                    <h3 class="fw-bold mb-0">₹{{ approved_earnings }}</h3>
+                    <small class="text-muted">From approved referrals</small>
                 </div>
             </div>
         </div>
         
-        <!-- Pending Earnings -->
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-warning bg-opacity-10 p-2 me-3">
-                            <i class="bi bi-hourglass-split text-warning"></i>
-                        </div>
-                        <h6 class="card-title mb-0">Pending</h6>
-                    </div>
-                    <h3 class="fw-bold mb-0">₹{{ affiliate.pending_earnings }}</h3>
-                    <small class="text-muted">Awaiting payout</small>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Paid Earnings -->
+        <!-- Available Balance -->
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
                         <div class="rounded-circle bg-success bg-opacity-10 p-2 me-3">
-                            <i class="bi bi-check-circle text-success"></i>
+                            <i class="bi bi-wallet2 text-success"></i>
                         </div>
-                        <h6 class="card-title mb-0">Paid</h6>
+                        <h6 class="card-title mb-0">Available Balance</h6>
                     </div>
-                    <h3 class="fw-bold mb-0">₹{{ affiliate.paid_earnings }}</h3>
-                    <small class="text-muted">Already processed</small>
+                    <h3 class="fw-bold mb-0">₹{{ available_balance }}</h3>
+                    <small class="text-muted">Ready for payout</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Settlements -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-2 me-3">
+                            <i class="bi bi-check-circle text-info"></i>
+                        </div>
+                        <h6 class="card-title mb-0">Total Settlements</h6>
+                    </div>
+                    <h3 class="fw-bold mb-0">₹{{ total_settlements }}</h3>
+                    <small class="text-muted">Paid out to you</small>
                 </div>
             </div>
         </div>
@@ -111,52 +111,7 @@
         </div>
     </div>
     
-    <!-- Recent Referrals -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Recent Referrals</h5>
-            <a href="{% url 'affiliate:referrals' %}" class="btn btn-sm btn-outline-primary">View All</a>
-        </div>
-        <div class="card-body">
-            {% if referrals %}
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>Business</th>
-                                <th>Date</th>
-                                <th>Commission</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for referral in referrals|slice:":5" %}
-                                <tr>
-                                    <td>{{ referral.subscription.business.name }}</td>
-                                    <td>{{ referral.created_at|date:"M d, Y" }}</td>
-                                    <td>₹{{ referral.commission_amount }}</td>
-                                    <td>
-                                        {% if referral.status == 'pending' %}
-                                            <span class="badge bg-warning">Pending</span>
-                                        {% elif referral.status == 'paid' %}
-                                            <span class="badge bg-success">Paid</span>
-                                        {% else %}
-                                            <span class="badge bg-secondary">{{ referral.status|title }}</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <div class="text-center py-4">
-                    <i class="bi bi-people text-muted display-4"></i>
-                    <p class="mt-3 text-muted">You don't have any referrals yet. Share your affiliate code to start earning!</p>
-                </div>
-            {% endif %}
-        </div>
-    </div>
+    
     
     <!-- Payout Request -->
     {% if payout_eligible %}
@@ -166,7 +121,11 @@
                     <i class="bi bi-cash-coin me-2"></i> You're eligible for payout!
                 </h5>
                 <p>You've reached the minimum payout threshold of ₹5,000.</p>
-                <a href="{% url 'affiliate:bank_details' %}" class="btn btn-success">Request Payout</a>
+                {% if bank_details_complete %}
+                    <a href="{% url 'affiliate:request_payout' %}" class="btn btn-success">Request Payout</a>
+                {% else %}
+                    <a href="{% url 'affiliate:bank_details' %}" class="btn btn-success">Add Bank Details</a>
+                {% endif %}
             </div>
         </div>
     {% endif %}

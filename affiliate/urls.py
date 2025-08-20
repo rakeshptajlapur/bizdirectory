@@ -12,4 +12,5 @@ urlpatterns = [
     path('kyc/', views.upload_kyc_documents, name='kyc'),
     path('referrals/', views.referrals_list, name='referrals'),
     path('payments/', views.payments_history, name='payments'),
+    path('request-payout/', views.request_payout, name='request_payout'),
 ]

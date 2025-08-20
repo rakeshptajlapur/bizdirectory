@@ -57,25 +57,6 @@
                 </table>
             </div>
             
-            <!-- Summary Box -->
-            <div class="card bg-light border-0 mt-4">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <h6 class="mb-2">Total Paid</h6>
-                            <p class="fw-bold mb-0">₹{{ affiliate.paid_earnings }}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <h6 class="mb-2">Pending Earnings</h6>
-                            <p class="fw-bold mb-0">₹{{ affiliate.pending_earnings }}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <h6 class="mb-2">Payout Threshold</h6>
-                            <p class="fw-bold mb-0">₹5,000</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         {% else %}
             <div class="text-center py-5">
                 <i class="bi bi-cash-coin text-muted display-4"></i>
@@ -86,7 +67,7 @@
     </div>
 </div>
 
-{% if affiliate.pending_earnings >= 5000 %}
+{% if payout_eligible %}
 <div class="card border-0 shadow-sm mt-4 border-success border-2">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
@@ -94,9 +75,9 @@
                 <h5 class="card-title text-success mb-1">
                     <i class="bi bi-cash-coin me-2"></i> You're eligible for payout!
                 </h5>
-                <p class="mb-0">You've reached the minimum payout threshold of ₹5,000.</p>
+                <p class="mb-0">Available balance: ₹{{ available_balance }}</p>
             </div>
-            <a href="{% url 'affiliate:bank_details' %}" class="btn btn-success">Request Payout</a>
+            <a href="{% url 'affiliate:request_payout' %}" class="btn btn-success">Request Payout</a>
         </div>
     </div>
 </div>

@@ -11,25 +11,50 @@ def affiliate_dashboard(request):
     try:
         affiliate = AffiliateProfile.objects.get(user=request.user)
     except AffiliateProfile.DoesNotExist:
-        # If not an affiliate yet, redirect to application page
         messages.info(request, "Apply to become an affiliate partner first.")
         return redirect('affiliate:apply')
-    
-    # Get referral stats
+
+    # Get all referrals
     referrals = AffiliateReferral.objects.filter(affiliate=affiliate)
     total_referrals = referrals.count()
+
+    # Get only approved referrals for earnings calculation
+    approved_referrals = referrals.filter(status='approved')
     
-    # Get business count
-    business_count = referrals.values('subscription__business').distinct().count()
+    # 1. TOTAL EARNINGS: Sum of all approved referral commissions
+    approved_earnings = approved_referrals.aggregate(Sum('commission_amount'))['commission_amount__sum'] or 0
     
-    # Check if payout threshold reached
-    payout_eligible = affiliate.pending_earnings >= 5000
+    # 2. TOTAL SETTLEMENTS: Sum of all completed payments (NOT from affiliate.paid_earnings)
+    total_settlements = AffiliatePayment.objects.filter(
+        affiliate=affiliate,
+        status='completed'
+    ).aggregate(Sum('amount'))['amount__sum'] or 0
+    
+    # 3. AVAILABLE BALANCE: Total Earnings - Total Settlements
+    available_balance = max(0, approved_earnings - total_settlements)
+    
+    # Get latest referrals for dashboard display
+    latest_referrals = referrals.order_by('-created_at')[:5]
+    
+    # Check if payout threshold reached and bank details submitted
+    payout_eligible = (available_balance >= 5000)
+    bank_details_complete = all([
+        affiliate.account_holder_name,
+        affiliate.bank_name,
+        affiliate.account_number,
+        affiliate.ifsc_code
+    ])
     
     context = {
         'affiliate': affiliate,
         'total_referrals': total_referrals,
-        'business_count': business_count,
+        'approved_earnings': approved_earnings,
+        'available_balance': available_balance,
+        'total_settlements': total_settlements,
+        'business_count': referrals.values('subscription__business').distinct().count(),
+        'referrals': latest_referrals,
         'payout_eligible': payout_eligible,
+        'bank_details_complete': bank_details_complete,
         'active_tab': 'affiliate_dashboard'
     }
     
@@ -84,7 +109,12 @@ def update_bank_details(request):
     else:
         form = BankDetailsForm(instance=affiliate)
     
-    return render(request, 'affiliate/bank_details.html', {'form': form})
+    context = {
+        'form': form,
+        'active_tab': 'affiliate_bank'  # Make sure this is set
+    }
+    
+    return render(request, 'affiliate/bank_details.html', context)
 
 @login_required
 def upload_kyc_documents(request):
@@ -104,7 +134,13 @@ def upload_kyc_documents(request):
     else:
         form = KYCDocumentsForm(instance=affiliate)
     
-    return render(request, 'affiliate/kyc_documents.html', {'form': form})
+    context = {
+        'form': form,
+        'affiliate': affiliate,
+        'active_tab': 'affiliate_kyc'  # Make sure this is set
+    }
+    
+    return render(request, 'affiliate/kyc_documents.html', context)
 
 @login_required
 def referrals_list(request):
@@ -136,10 +172,92 @@ def payments_history(request):
     
     payments = AffiliatePayment.objects.filter(affiliate=affiliate).order_by('-payment_date')
     
+    # Calculate approved earnings from approved referrals
+    approved_referrals = AffiliateReferral.objects.filter(
+        affiliate=affiliate,
+        status='approved'
+    )
+    approved_earnings = approved_referrals.aggregate(Sum('commission_amount'))['commission_amount__sum'] or 0
+    
+    # Calculate total settlements from completed payments
+    total_settlements = AffiliatePayment.objects.filter(
+        affiliate=affiliate,
+        status='completed'
+    ).aggregate(Sum('amount'))['amount__sum'] or 0
+    
+    # Calculate available balance
+    available_balance = max(0, approved_earnings - total_settlements)
+    
+    # Check if eligible for payout
+    payout_eligible = available_balance >= 5000
+    
     context = {
         'affiliate': affiliate,
         'payments': payments,
+        'approved_earnings': approved_earnings,
+        'available_balance': available_balance,
+        'total_settlements': total_settlements,
+        'payout_eligible': payout_eligible,
         'active_tab': 'affiliate_payments'
     }
     
     return render(request, 'affiliate/payment_history.html', context)
+
+@login_required
+def request_payout(request):
+    """Request payout for available balance"""
+    try:
+        affiliate = AffiliateProfile.objects.get(user=request.user)
+    except AffiliateProfile.DoesNotExist:
+        messages.error(request, "You need to apply as an affiliate first.")
+        return redirect('affiliate:apply')
+    
+    # Calculate available balance from approved referrals and completed payments
+    approved_referrals = AffiliateReferral.objects.filter(
+        affiliate=affiliate, 
+        status='approved'
+    )
+    approved_earnings = approved_referrals.aggregate(Sum('commission_amount'))['commission_amount__sum'] or 0
+    
+    total_settlements = AffiliatePayment.objects.filter(
+        affiliate=affiliate,
+        status='completed'
+    ).aggregate(Sum('amount'))['amount__sum'] or 0
+    
+    available_balance = max(0, approved_earnings - total_settlements)
+    
+    # Check if eligible for payout
+    if available_balance < 5000:
+        messages.error(request, "You need at least ₹5,000 in available balance to request a payout.")
+        return redirect('affiliate:dashboard')
+    
+    # Check if bank details are complete
+    bank_details_complete = all([
+        affiliate.account_holder_name,
+        affiliate.bank_name,
+        affiliate.account_number,
+        affiliate.ifsc_code
+    ])
+    
+    if not bank_details_complete:
+        messages.warning(request, "Please complete your bank details before requesting a payout.")
+        return redirect('affiliate:bank_details')
+    
+    if request.method == 'POST':
+        # Create payment record
+        payment = AffiliatePayment.objects.create(
+            affiliate=affiliate,
+            amount=available_balance,
+            status='processing'
+        )
+        
+        messages.success(request, "Your payout request has been submitted successfully! We'll process it within 2-4 business days.")
+        return redirect('affiliate:payments')
+    
+    context = {
+        'affiliate': affiliate,
+        'available_balance': available_balance,
+        'active_tab': 'affiliate_payments'
+    }
+    
+    return render(request, 'affiliate/request_payout.html', context)

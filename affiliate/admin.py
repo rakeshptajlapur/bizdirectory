@@ -3,6 +3,8 @@ from django.contrib import messages
 from .models import AffiliateProfile, AffiliateReferral, AffiliatePayment
 import random
 import string
+import time
+from decimal import Decimal
 
 @admin.action(description="Approve selected affiliates")
 def approve_affiliates(modeladmin, request, queryset):
@@ -21,17 +23,20 @@ def approve_affiliates(modeladmin, request, queryset):
     
     messages.success(request, f"Successfully approved {count} affiliates.")
 
-@admin.action(description="Process selected payments")
+@admin.action(description="Mark selected payments as completed")
 def process_payments(modeladmin, request, queryset):
+    completed_count = 0
     for payment in queryset.filter(status='processing'):
         payment.status = 'completed'
-        payment.save()
         
-        # Update affiliate earnings
-        affiliate = payment.affiliate
-        affiliate.paid_earnings += payment.amount
-        affiliate.pending_earnings -= payment.amount
-        affiliate.save()
+        # Add transaction ID if not present
+        if not payment.transaction_id:
+            payment.transaction_id = f"TXN-{int(time.time())}-{payment.id}"
+        
+        payment.save()
+        completed_count += 1
+    
+    messages.success(request, f"Successfully processed {completed_count} payment(s).")
 
 @admin.action(description="Approve selected referrals")
 def approve_referrals(modeladmin, request, queryset):
@@ -54,7 +59,7 @@ class AffiliateProfileAdmin(admin.ModelAdmin):
 class AffiliateReferralAdmin(admin.ModelAdmin):
     list_display = ('affiliate', 'get_business_name', 'commission_amount', 'status', 'created_at')
     list_filter = ('status',)
-    actions = [approve_referrals, reject_referrals]
+    actions = [approve_referrals, reject_referrals] 
     
     def get_business_name(self, obj):
         return obj.subscription.business.name if obj.subscription.business else "Unknown Business"
