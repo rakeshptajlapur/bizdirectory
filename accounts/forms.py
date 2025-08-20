@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
 from .models import Profile
-from affiliate.models import AffiliateProfile  # Import from affiliate app instead
 from .signals import send_password_reset_email
 
 class UserRegisterForm(UserCreationForm):
@@ -28,6 +27,84 @@ class UserRegisterForm(UserCreationForm):
             if hasattr(user, 'profile'):
                 user.profile.user_type = user_type
                 user.profile.save()
+        
+        return user
+
+# Add the missing CustomUserCreationForm
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+    user_type = forms.ChoiceField(
+        choices=Profile.USER_TYPE_CHOICES,
+        initial='regular',
+        widget=forms.RadioSelect,
+        help_text="Choose your account type"
+    )
+    
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'user_type']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Add CSS classes and placeholders
+        self.fields['username'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Choose a username'
+        })
+        self.fields['email'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Enter your email address'
+        })
+        self.fields['first_name'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Enter your first name'
+        })
+        self.fields['last_name'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Enter your last name'
+        })
+        self.fields['password1'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Create a strong password'
+        })
+        self.fields['password2'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Confirm your password'
+        })
+    
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.is_active = False  # User needs to verify email first
+        
+        if commit:
+            user.save()
+            
+            # Create/update profile with user type
+            profile, created = Profile.objects.get_or_create(user=user)
+            profile.user_type = self.cleaned_data['user_type']
+            profile.save()
+            
+            # Create email verification record
+            from .models import EmailVerification
+            from django.utils import timezone
+            from datetime import timedelta
+            
+            verification, created = EmailVerification.objects.get_or_create(
+                user=user,
+                defaults={
+                    'otp_code': EmailVerification.generate_otp(),
+                    'expires_at': timezone.now() + timedelta(minutes=10)
+                }
+            )
+            
+            # Send verification email
+            from .signals import send_verification_email
+            send_verification_email.delay(user.id, verification.otp_code)
         
         return user
 
@@ -61,8 +138,6 @@ class ProfileUpdateForm(forms.ModelForm):
         
         return profile
 
-
-# No custom password reset form needed - we'll use Django's default
 class CustomPasswordResetForm(PasswordResetForm):
     """
     Custom password reset form that uses our existing Celery task

@@ -62,426 +62,653 @@
             margin-top: 1rem;
         }
     }
+    
+    /* Updated Login Gate Styles */
+    .login-gate-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.15); /* Much more transparent */
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+    
+    .login-gate-modal {
+        max-width: 450px; /* Reduced from 500px */
+        width: 90%;
+        max-height: 70vh; /* Limit height to 70% of viewport */
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        padding: 2rem 1.5rem; /* Reduced padding */
+        text-align: center;
+        position: relative;
+        animation: fadeInUp 0.6s ease;
+        overflow-y: auto; /* Allow scrolling if content is too tall */
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
+    .login-gate-icon {
+        width: 70px; /* Reduced from 80px */
+        height: 70px;
+        background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem; /* Reduced margin */
+        font-size: 1.8rem;
+        color: white;
+        box-shadow: 0 4px 20px rgba(13, 110, 253, 0.3);
+    }
+    
+    .login-gate-modal h2 {
+        font-size: 1.5rem; /* Slightly smaller */
+        margin-bottom: 0.75rem;
+    }
+    
+    .login-gate-modal .text-muted {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem; /* Reduced margin */
+    }
+    
+    .benefit-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0; /* Reduced padding */
+        border-bottom: 1px solid #f1f3f4;
+        font-size: 0.9rem; /* Slightly smaller text */
+    }
+    
+    .benefit-item:last-child {
+        border-bottom: none;
+    }
+    
+    .benefit-icon {
+        width: 28px; /* Reduced from 32px */
+        height: 28px;
+        background: rgba(13, 110, 253, 0.1);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.75rem;
+        color: #0d6efd;
+        font-size: 0.8rem;
+    }
+    
+    .benefit-item strong {
+        font-size: 0.85rem;
+    }
+    
+    .benefit-item .small {
+        font-size: 0.75rem;
+    }
+    
+    /* Button styling */
+    .login-gate-modal .btn {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+    }
+    
+    .login-gate-modal .btn-primary {
+        background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+        border: none;
+        box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .login-gate-modal .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+    }
+    
+    .login-gate-modal .small {
+        font-size: 0.75rem;
+    }
+    
+    /* Blur content when login gate is active */
+    .content-blurred {
+        filter: blur(3px);
+        pointer-events: none;
+        user-select: none;
+        opacity: 0.7; /* Add slight opacity to enhance blur effect */
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .login-gate-modal {
+            padding: 1.5rem 1rem;
+            max-height: 80vh; /* More height on mobile */
+            margin: 0.5rem;
+        }
+        
+        .login-gate-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .login-gate-modal h2 {
+            font-size: 1.3rem;
+        }
+        
+        .benefit-item {
+            padding: 0.6rem 0;
+        }
+        
+        .benefit-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 0.5rem;
+        }
+        
+        .login-gate-modal .d-grid.mb-3 {
+            margin-bottom: 1rem !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .login-gate-modal {
+            width: 95%;
+            padding: 1.25rem 0.75rem;
+        }
+        
+        .benefit-item {
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+        
+        .benefit-icon {
+            margin-bottom: 0.25rem;
+            margin-right: 0;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Business Card Header -->
-<div class="card shadow-sm border-0 mb-4">
-  <div class="row g-0">
-    <!-- Left side - Image with fixed aspect ratio -->
-    <div class="col-md-4">
-      <div style="height: 100%; min-height: 280px; position: relative;">
-        <img src="{{ business.get_primary_image_url }}" alt="{{ business.name }}" 
-             style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
-      </div>
-    </div>
-    
-    <!-- Right side - Business Details -->
-    <div class="col-md-8">
-      <div class="card-body p-4">
-        <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
-          <h1 class="card-title mb-0 h2">{{ business.name }}</h1>
-          
-          <div class="d-flex flex-wrap gap-2 mt-2 mt-sm-0">
-            {% if business.has_premium_features %}
-                {% if business.gst_verified %}
-                    <span class="badge bg-success-subtle text-success border border-success-subtle">
-                        <i class="bi bi-check-circle-fill me-1"></i>GST Verified
-                    </span>
-                {% endif %}
-                
-                {% if business.kyc_status == 'completed' %}
-                    <span class="badge bg-success-subtle text-success border border-success-subtle">
-                        <i class="bi bi-shield-check me-1"></i>KYC Completed
-                    </span>
-                {% elif business.kyc_status == 'pending' %}
-                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
-                        <i class="bi bi-clock-history me-1"></i>KYC Pending
-                    </span>
-                {% endif %}
-            {% endif %}
+<!-- Login Gate Overlay (only show for anonymous users) -->
+{% if not user.is_authenticated %}
+<div class="login-gate-overlay" id="loginGate">
+    <div class="login-gate-modal">
+        <div class="login-gate-icon">
+            <i class="bi bi-unlock"></i>
+        </div>
+        
+        <h2 class="fw-bold mb-3">Unlock Full Business Details</h2>
+        <p class="text-muted mb-3">Join thousands of users discovering trusted local businesses. Sign up for free to access:</p>
+        
+        <div class="text-start mb-3">
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div>
+                    <strong>Spam-free experience</strong>
+                    <div class="small text-muted">Verified reviews and authentic business information</div>
+                </div>
+            </div>
             
-            <a href="{% url 'directory:listings' %}?category={{ business.category.id }}" class="badge bg-primary">
-              <i class="bi bi-tag-fill me-1"></i>{{ business.category.name }}
-            </a>
-          </div>
-        </div>
-        
-        <!-- Rating summary -->
-        <div class="d-flex align-items-center mb-3">
-          <div class="stars me-2">
-            {% for i in "12345"|make_list %}
-              <i class="bi bi-star{% if forloop.counter <= business.avg_rating|default:0 %}-fill{% endif %} text-warning"></i>
-            {% endfor %}
-          </div>
-          <span class="ms-2 text-muted">{{ business.avg_rating|default:0|floatformat:1 }} ({{ business.approved_reviews_count }} reviews)</span>
-        </div>
-        
-        <p class="text-muted mb-3">{{ business.description|truncatewords:30 }}</p>
-        
-        <!-- Quick info -->
-        <div class="small mb-3">
-          <p class="mb-1"><i class="bi bi-geo-alt me-2"></i>{{ business.address|truncatechars:60 }}</p>
-          <p class="mb-1"><i class="bi bi-clock me-2"></i>
-            {% with today_hours=business.hours.all|dictsort:"day"|get_item:today_weekday %}
-              {% if today_hours %}
-                {% if today_hours.is_closed %}
-                  <span class="text-danger">Closed Today</span>
-                {% else %}
-                  Open today: {{ today_hours.open_time|time:"g:i A" }} - {{ today_hours.close_time|time:"g:i A" }}
-                {% endif %}
-              {% else %}
-                <span class="text-muted">Hours not available</span>
-              {% endif %}
-            {% endwith %}
-          </p>
-        </div>
-        
-        <!-- Quick contact buttons -->
-        <div class="d-flex flex-wrap gap-2">
-          {% if business.phone %}
-          <a href="#" class="btn btn-outline-primary btn-sm" onclick="alert('Contact owner for phone number')">
-            <i class="bi bi-telephone-fill me-1"></i>91XXXXXXXXXX
-          </a>
-          {% endif %}
-          
-          {% if business.website %}
-          <a href="{{ business.website }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-globe me-1"></i>Visit Website
-          </a>
-          {% endif %}
-          
-          <a href="#contact-form" class="btn btn-primary btn-sm">
-            <i class="bi bi-envelope-fill me-1"></i>Send Enquiry
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Image Gallery (thumbnails only) -->
-<div class="mb-4">
-  <div class="gallery-thumbnails d-flex overflow-auto py-2">
-    {% for image in business.images.all %}
-      <img src="{{ image.image.url }}" 
-           alt="{{ image.caption|default:business.name }}" 
-           class="gallery-thumb {% if image.is_primary %}active{% endif %} me-2"
-           style="height: 60px; width: 60px; object-fit: cover; cursor: pointer; border-radius: 4px; border: 2px solid {% if image.is_primary %}#0d6efd{% else %}transparent{% endif %};"
-           onclick="changeMainImage(this, '{{ image.image.url }}')">
-    {% endfor %}
-  </div>
-</div>
-
-<!-- Special Offer Banner -->
-{% if business.has_premium_features %}
-    <div class="offer-banner mb-5">
-        <div class="row">
-            <div class="col-lg-7 mb-3 mb-lg-0">
-                <h3 class="mb-2">Special Deal: 20% Off First Service</h3>
-                <p class="mb-0">Subscribe to get your exclusive deal code and stay updated with our latest offers.</p>
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="bi bi-chat-dots"></i>
+                </div>
+                <div>
+                    <strong>Direct business contact</strong>
+                    <div class="small text-muted">Send enquiries and get instant responses</div>
+                </div>
             </div>
-            <div class="col-lg-5">
-                <!-- Add message display here -->
-                <div id="couponMessages">
-                    {% if messages %}
-                        {% for message in messages %}
-                            {% if 'code' in message.message %}
-                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-2" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="bi bi-star"></i>
+                </div>
+                <div>
+                    <strong>Exclusive deals & offers</strong>
+                    <div class="small text-muted">Access special discounts and coupon codes</div>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="bi bi-bookmark"></i>
+                </div>
+                <div>
+                    <strong>Save & bookmark businesses</strong>
+                    <div class="small text-muted">Create your personal business directory</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-grid gap-2 mb-3">
+            <a href="{% url 'accounts:register' %}?next={{ request.get_full_path }}" class="btn btn-primary">
+                <i class="bi bi-person-plus me-2"></i>Sign Up Free
+            </a>
+            <a href="{% url 'accounts:login' %}?next={{ request.get_full_path }}" class="btn btn-outline-primary">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Already have an account? Login
+            </a>
+        </div>
+        
+        <p class="small text-muted mb-0">
+            <i class="bi bi-shield-lock me-1"></i>
+            100% secure. No spam. Unsubscribe anytime.
+        </p>
+    </div>
+</div>
+{% endif %}
+
+<!-- Main Content (will be blurred for anonymous users) -->
+<div class="main-content {% if not user.is_authenticated %}content-blurred{% endif %}">
+    <!-- Business Card Header -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="row g-0">
+            <!-- Left side - Image with fixed aspect ratio -->
+            <div class="col-md-4">
+                <div style="height: 100%; min-height: 280px; position: relative;">
+                    <img src="{{ business.get_primary_image_url }}" alt="{{ business.name }}" 
+                         style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                </div>
+            </div>
+            
+            <!-- Right side - Business Details -->
+            <div class="col-md-8">
+                <div class="card-body p-4">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+                        <h1 class="card-title mb-0 h2">{{ business.name }}</h1>
+                        
+                        <div class="d-flex flex-wrap gap-2 mt-2 mt-sm-0">
+                            {% if business.has_premium_features %}
+                                {% if business.gst_verified %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                        <i class="bi bi-check-circle-fill me-1"></i>GST Verified
+                                    </span>
+                                {% endif %}
+                                
+                                {% if business.kyc_status == 'completed' %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                        <i class="bi bi-shield-check me-1"></i>KYC Completed
+                                    </span>
+                                {% elif business.kyc_status == 'pending' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                                        <i class="bi bi-clock-history me-1"></i>KYC Pending
+                                    </span>
+                                {% endif %}
                             {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                
-                <form method="post" action="{% url 'directory:request_coupon' business.pk %}">
-                    {% csrf_token %}
-                    <div class="input-group">
-                        <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
-                        <button type="submit" class="btn">Get Deal</button>
+                            
+                            <a href="{% url 'directory:listings' %}?category={{ business.category.id }}" class="badge bg-primary">
+                                <i class="bi bi-tag-fill me-1"></i>{{ business.category.name }}
+                            </a>
+                        </div>
                     </div>
-                </form>
+                    
+                    <!-- Rating summary -->
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="stars me-2">
+                            {% for i in "12345"|make_list %}
+                                <i class="bi bi-star{% if forloop.counter <= business.avg_rating|default:0 %}-fill{% endif %} text-warning"></i>
+                            {% endfor %}
+                        </div>
+                        <span class="ms-2 text-muted">{{ business.avg_rating|default:0|floatformat:1 }} ({{ business.approved_reviews_count }} reviews)</span>
+                    </div>
+                    
+                    <p class="text-muted mb-3">{{ business.description|truncatewords:30 }}</p>
+                    
+                    <!-- Quick info -->
+                    <div class="small mb-3">
+                        <p class="mb-1"><i class="bi bi-geo-alt me-2"></i>{{ business.address|truncatechars:60 }}</p>
+                        <p class="mb-1"><i class="bi bi-clock me-2"></i>
+                            {% with today_hours=business.hours.all|dictsort:"day"|get_item:today_weekday %}
+                                {% if today_hours %}
+                                    {% if today_hours.is_closed %}
+                                        <span class="text-danger">Closed Today</span>
+                                    {% else %}
+                                        Open today: {{ today_hours.open_time|time:"g:i A" }} - {{ today_hours.close_time|time:"g:i A" }}
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">Hours not available</span>
+                                {% endif %}
+                            {% endwith %}
+                        </p>
+                    </div>
+                    
+                    <!-- Quick contact buttons (disabled for anonymous users) -->
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if business.phone %}
+                        <button class="btn btn-outline-primary btn-sm" {% if not user.is_authenticated %}disabled{% endif %}>
+                            <i class="bi bi-telephone-fill me-1"></i>{% if user.is_authenticated %}{{ business.phone }}{% else %}91XXXXXXXXXX{% endif %}
+                        </button>
+                        {% endif %}
+                        
+                        {% if business.website %}
+                        <a href="{% if user.is_authenticated %}{{ business.website }}{% else %}#{% endif %}" 
+                           target="{% if user.is_authenticated %}_blank{% else %}_self{% endif %}" 
+                           rel="noopener" 
+                           class="btn btn-outline-primary btn-sm {% if not user.is_authenticated %}disabled{% endif %}">
+                            <i class="bi bi-globe me-1"></i>Visit Website
+                        </a>
+                        {% endif %}
+                        
+                        <a href="{% if user.is_authenticated %}#contact-form{% else %}#{% endif %}" 
+                           class="btn btn-primary btn-sm {% if not user.is_authenticated %}disabled{% endif %}">
+                            <i class="bi bi-envelope-fill me-1"></i>Send Enquiry
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-{% endif %}
 
-<!-- Add this after the business header section, around line 150 -->
-{% if not business.has_premium_features and business.owner == request.user %}
-    <div class="alert alert-info mb-4">
-        <div class="d-flex align-items-center justify-content-between">
-            <div>
-                <h5 class="mb-1"><i class="bi bi-star me-2"></i>Upgrade to Premium</h5>
-                <p class="mb-0">Unlock premium features like reviews, enquiry form, and verification badges.</p>
-            </div>
-            <a href="{% url 'directory:subscription_plans' %}?for_business={{ business.id }}" class="btn btn-primary">
-                Upgrade Now
-            </a>
-        </div>
-    </div>
-{% endif %}
-
-<!-- Main Content and Sidebar -->
-<div class="row g-4 mb-5">
-    <!-- Main Content -->
-    <div class="col-lg-8">
-        <!-- About Section -->
-        <div class="card info-card mb-4">
-            <div class="card-body">
-                <h3 class="card-title border-bottom pb-2 mb-3">About</h3>
-                <div class="card-text">{{ business.description|linebreaks }}</div>
-            </div>
-        </div>
-        
-        <!-- Services Section with Description -->
-<div class="card info-card mb-4">
-    <div class="card-body">
-        <h3 class="card-title border-bottom pb-2 mb-3">Services Offered</h3>
-        <div class="row row-cols-1 row-cols-md-2 g-3">
-            {% for service in business.services.all %}
-                <div class="col">
-                    <div class="d-flex align-items-start">
-                        <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
-                            <i class="bi bi-check2-circle text-primary fs-4"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-1">{{ service.name }}</h5>
-                            <p class="text-muted small mb-0">{{ service.description }}</p>
-                        </div>
-                    </div>
-                </div>
-            {% empty %}
-                <p class="text-muted">No services listed.</p>
+    <!-- Image Gallery (thumbnails only) -->
+    <div class="mb-4">
+        <div class="gallery-thumbnails d-flex overflow-auto py-2">
+            {% for image in business.images.all %}
+                <img src="{{ image.image.url }}" 
+                     alt="{{ image.caption|default:business.name }}" 
+                     class="gallery-thumb {% if image.is_primary %}active{% endif %} me-2"
+                     style="height: 60px; width: 60px; object-fit: cover; cursor: pointer; border-radius: 4px; border: 2px solid {% if image.is_primary %}#0d6efd{% else %}transparent{% endif %};">
             {% endfor %}
         </div>
     </div>
-</div>
-        
-        <!-- Reviews Section -->
-        {% if business.has_premium_features %}
-            <div class="card info-card mb-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
-                        <h3 class="card-title mb-0">Customer Reviews</h3>
-                        <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#addReviewForm">
-                            <i class="bi bi-star-fill me-1"></i>Write a Review
-                        </button>
-                    </div>
-                    
-                    <!-- Add Review Form (Collapsed by default) -->
-                    <div class="collapse mb-4" id="addReviewForm">
-                        <div class="card card-body border-primary">
-                            <form method="post" action="{% url 'directory:add_review' business.pk %}">
-                                {% csrf_token %}
-                                <h4 class="mb-3">Write a Review</h4>
-                                
-                                <!-- Name and Email fields -->
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="reviewName" class="form-label">Your Name</label>
-                                        <input type="text" class="form-control" id="reviewName" name="name" 
-                                               value="{{ user_review.name|default:'' }}" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="reviewEmail" class="form-label">Your Email</label>
-                                        <input type="email" class="form-control" id="reviewEmail" name="email"
-                                               value="{{ user_review.email|default:'' }}" required>
-                                        <div class="form-text">Your email won't be displayed publicly</div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Rating stars -->
-                                <div class="mb-3">
-                                    <label class="form-label">Rating</label>
-                                    <div class="rating-select">
-                                        <div class="stars">
-                                            {% for i in '12345'|make_list %}
-                                                <i class="bi bi-star fs-4 review-star {% if user_review and user_review.rating >= forloop.counter %}active text-warning bi-star-fill{% endif %}" data-rating="{{ i }}"></i>
-                                            {% endfor %}
-                                        </div>
-                                        <input type="hidden" name="rating" id="ratingInput" value="{{ user_review.rating|default:0 }}">
-                                    </div>
-                                </div>
-                                
-                                <!-- Comment textarea -->
-                                <div class="mb-3">
-                                    <label for="reviewComment" class="form-label">Your Comment</label>
-                                    <textarea class="form-control" id="reviewComment" name="comment" rows="3" 
-                                              placeholder="Share your experience" required>{{ user_review.comment|default:'' }}</textarea>
-                                </div>
-                                
-                                <button type="submit" class="btn btn-primary">{{ user_review|yesno:"Update Review,Submit Review" }}</button>
-                                
-                                {% if user_review %}
-                                <div class="mt-2 small">
-                                    <span class="text-muted">Your review is {{ user_review.is_approved|yesno:"approved,pending approval" }}</span>
-                                </div>
-                                {% endif %}
-                            </form>
-                        </div>
-                    </div>
-                    
-                    <!-- Reviews List -->
-                    {% for review in business.reviews.all %}
-                        {% if review.is_approved or review.email == request.session.reviewer_email %}
-                            <div class="review-card p-3 mb-3 bg-light {% if not review.is_approved %}border border-warning{% endif %}">
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <h5 class="mb-1">
-                                            {{ review.name }}
-                                            {% if review.email == request.session.reviewer_email %}
-                                                <span class="badge bg-primary">You</span>
-                                            {% endif %}
-                                        </h5>
-                                        <div class="d-flex align-items-center">
-                                            <div class="stars me-2">
-                                                {% for i in "12345"|make_list %}
-                                                    <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %} text-warning"></i>
-                                                {% endfor %}
-                                            </div>
-                                            {% if not review.is_approved %}
-                                                <span class="badge bg-warning text-dark">Pending Approval</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
-                                </div>
-                                <p class="mt-2 mb-0">{{ review.comment }}</p>
-                                
-                                <!-- Review content -->
-                                {% if not review.is_approved and review.email == request.session.reviewer_email %}
-                                    <div class="alert alert-warning small mt-2 mb-0">
-                                        Your review is pending approval by the business owner.
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                    {% empty %}
-                        <div class="text-center py-4">
-                            <i class="bi bi-chat-square-text text-muted fs-1"></i>
-                            <p class="text-muted mt-2">No reviews yet. Be the first to review!</p>
-                        </div>
-                    {% endfor %}
+
+    <!-- Special Offer Banner (only for authenticated users) -->
+    {% if business.has_premium_features and user.is_authenticated %}
+        <div class="offer-banner mb-5">
+            <div class="row">
+                <div class="col-lg-7 mb-3 mb-lg-0">
+                    <h3 class="mb-2">Special Deal: 20% Off First Service</h3>
+                    <p class="mb-0">Subscribe to get your exclusive deal code and stay updated with our latest offers.</p>
                 </div>
-            </div>
-        {% endif %}
-    </div>
-    
-    <!-- Sidebar -->
-    <div class="col-lg-4">
-        <!-- Business Hours - Only show for premium plans -->
-        {% if business.has_premium_features %}
-            <div class="card info-card mb-4">
-                <div class="card-body">
-                    <h4 class="card-title border-bottom pb-2 mb-3">
-                        <i class="bi bi-clock me-2"></i>Business Hours
-                    </h4>
-                    <ul class="list-group list-group-flush">
-                        {% for day_hours in business.hours.all|dictsort:"day" %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center 
-                                    {% if day_hours.day == today_weekday %}bg-light fw-bold{% endif %}">
-                                {{ day_hours.get_day_display }}
-                                {% if day_hours.is_closed %}
-                                    <span class="text-danger">Closed</span>
-                                {% else %}
-                                    <span>{{ day_hours.open_time|time:"g:i A" }} - {{ day_hours.close_time|time:"g:i A" }}</span>
-                                {% endif %}
-                            </li>
-                        {% empty %}
-                            <li class="list-group-item text-center text-muted">No business hours listed</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        {% endif %}
-        
-        <!-- Location & Map - Show for all plans -->
-        <div class="card info-card mb-4">
-            <div class="card-body">
-                <h4 class="card-title border-bottom pb-2 mb-3">
-                    <i class="bi bi-geo-alt me-2"></i>Location
-                </h4>
-                <address class="mb-3">
-                    {{ business.address|linebreaks }}
-                    {{ business.city }}, {{ business.pincode }}
-                </address>
-                
-                
-                <a href="https://maps.google.com/?q={{ business.address|urlencode }},{{ business.city|urlencode }},{{ business.pincode }}" 
-                   class="btn btn-outline-primary w-100" target="_blank">
-                    <i class="bi bi-box-arrow-up-right me-1"></i>Open in Google Maps
-                </a>
-            </div>
-        </div>
-        
-        <!-- Contact Form -->
-        {% if business.has_premium_features %}
-            <div class="card info-card" id="contact-form">
-                <div class="card-body">
-                    <h4 class="card-title border-bottom pb-2 mb-3">
-                        <i class="bi bi-envelope me-2"></i>Send an Enquiry
-                    </h4>
-                    
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    
-                    <form method="post" action="{% url 'directory:send_enquiry' business.pk %}">
+                <div class="col-lg-5">
+                    <form method="post" action="{% url 'directory:request_coupon' business.pk %}">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Your Name</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                        <div class="input-group">
+                            <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+                            <button type="submit" class="btn">Get Deal</button>
                         </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone">
-                        </div>
-                        <div class="mb-3">
-                            <label for="message" class="form-label">Message</label>
-                            <textarea class="form-control" id="message" name="message" rows="4" placeholder="What would you like to enquire about?" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="bi bi-send me-1"></i>Send Message
-                        </button>
                     </form>
                 </div>
             </div>
-        {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content and Sidebar -->
+    <div class="row g-4 mb-5">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- About Section -->
+            <div class="card info-card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title border-bottom pb-2 mb-3">About</h3>
+                    <div class="card-text">{{ business.description|linebreaks }}</div>
+                </div>
+            </div>
+            
+            <!-- Services Section -->
+            <div class="card info-card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title border-bottom pb-2 mb-3">Services Offered</h3>
+                    <div class="row row-cols-1 row-cols-md-2 g-3">
+                        {% for service in business.services.all %}
+                            <div class="col">
+                                <div class="d-flex align-items-start">
+                                    <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
+                                        <i class="bi bi-check2-circle text-primary fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-1">{{ service.name }}</h5>
+                                        <p class="text-muted small mb-0">{{ service.description }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted">No services listed.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reviews Section (only for authenticated users) -->
+            {% if business.has_premium_features and user.is_authenticated %}
+                <div class="card info-card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
+                            <h3 class="card-title mb-0">Customer Reviews</h3>
+                            <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#addReviewForm">
+                                <i class="bi bi-star-fill me-1"></i>Write a Review
+                            </button>
+                        </div>
+                        
+                        <!-- Add Review Form (Collapsed by default) -->
+                        <div class="collapse mb-4" id="addReviewForm">
+                            <div class="card card-body border-primary">
+                                <form method="post" action="{% url 'directory:add_review' business.pk %}">
+                                    {% csrf_token %}
+                                    <h4 class="mb-3">Write a Review</h4>
+                                    
+                                    <!-- Name and Email fields -->
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="reviewName" class="form-label">Your Name</label>
+                                            <input type="text" class="form-control" id="reviewName" name="name" 
+                                                   value="{{ user_review.name|default:'' }}" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="reviewEmail" class="form-label">Your Email</label>
+                                            <input type="email" class="form-control" id="reviewEmail" name="email"
+                                                   value="{{ user_review.email|default:'' }}" required>
+                                            <div class="form-text">Your email won't be displayed publicly</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Rating stars -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Rating</label>
+                                        <div class="rating-select">
+                                            <div class="stars">
+                                                {% for i in '12345'|make_list %}
+                                                    <i class="bi bi-star fs-4 review-star {% if user_review and user_review.rating >= forloop.counter %}active text-warning bi-star-fill{% endif %}" data-rating="{{ i }}"></i>
+                                                {% endfor %}
+                                            </div>
+                                            <input type="hidden" name="rating" id="ratingInput" value="{{ user_review.rating|default:0 }}">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Comment textarea -->
+                                    <div class="mb-3">
+                                        <label for="reviewComment" class="form-label">Your Comment</label>
+                                        <textarea class="form-control" id="reviewComment" name="comment" rows="3" 
+                                                  placeholder="Share your experience" required>{{ user_review.comment|default:'' }}</textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">{{ user_review|yesno:"Update Review,Submit Review" }}</button>
+                                    
+                                    {% if user_review %}
+                                    <div class="mt-2 small">
+                                        <span class="text-muted">Your review is {{ user_review.is_approved|yesno:"approved,pending approval" }}</span>
+                                    </div>
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <!-- Reviews List -->
+                        {% for review in business.reviews.all %}
+                            {% if review.is_approved or review.email == request.session.reviewer_email %}
+                                <div class="review-card p-3 mb-3 bg-light {% if not review.is_approved %}border border-warning{% endif %}">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h5 class="mb-1">
+                                                {{ review.name }}
+                                                {% if review.email == request.session.reviewer_email %}
+                                                    <span class="badge bg-primary">You</span>
+                                                {% endif %}
+                                            </h5>
+                                            <div class="d-flex align-items-center">
+                                                <div class="stars me-2">
+                                                    {% for i in "12345"|make_list %}
+                                                        <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %} text-warning"></i>
+                                                    {% endfor %}
+                                                </div>
+                                                {% if not review.is_approved %}
+                                                    <span class="badge bg-warning text-dark">Pending Approval</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                                    </div>
+                                    <p class="mt-2 mb-0">{{ review.comment }}</p>
+                                    
+                                    <!-- Review content -->
+                                    {% if not review.is_approved and review.email == request.session.reviewer_email %}
+                                        <div class="alert alert-warning small mt-2 mb-0">
+                                            Your review is pending approval by the business owner.
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% empty %}
+                            <div class="text-center py-4">
+                                <i class="bi bi-chat-square-text text-muted fs-1"></i>
+                                <p class="text-muted mt-2">No reviews yet. Be the first to review!</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Business Hours (only for authenticated users) -->
+            {% if business.has_premium_features and user.is_authenticated %}
+                <div class="card info-card mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title border-bottom pb-2 mb-3">
+                            <i class="bi bi-clock me-2"></i>Business Hours
+                        </h4>
+                        <ul class="list-group list-group-flush">
+                            {% for day_hours in business.hours.all|dictsort:"day" %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center 
+                                        {% if day_hours.day == today_weekday %}bg-light fw-bold{% endif %}">
+                                    {{ day_hours.get_day_display }}
+                                    {% if day_hours.is_closed %}
+                                        <span class="text-danger">Closed</span>
+                                    {% else %}
+                                        <span>{{ day_hours.open_time|time:"g:i A" }} - {{ day_hours.close_time|time:"g:i A" }}</span>
+                                    {% endif %}
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item text-center text-muted">No business hours listed</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Location & Map -->
+            <div class="card info-card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title border-bottom pb-2 mb-3">
+                        <i class="bi bi-geo-alt me-2"></i>Location
+                    </h4>
+                    <address class="mb-3">
+                        {{ business.address|linebreaks }}
+                        {{ business.city }}, {{ business.pincode }}
+                    </address>
+                    
+                    {% if user.is_authenticated %}
+                        <a href="https://maps.google.com/?q={{ business.address|urlencode }},{{ business.city|urlencode }},{{ business.pincode }}" 
+                           class="btn btn-outline-primary w-100" target="_blank">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>Open in Google Maps
+                        </a>
+                    {% else %}
+                        <button class="btn btn-outline-primary w-100" disabled>
+                            <i class="bi bi-lock me-1"></i>Login to View Map
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Contact Form (only for authenticated users) -->
+            {% if business.has_premium_features and user.is_authenticated %}
+                <div class="card info-card" id="contact-form">
+                    <div class="card-body">
+                        <h4 class="card-title border-bottom pb-2 mb-3">
+                            <i class="bi bi-envelope me-2"></i>Send an Enquiry
+                        </h4>
+                        
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        <form method="post" action="{% url 'directory:send_enquiry' business.pk %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Your Name</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone">
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Message</label>
+                                <textarea class="form-control" id="message" name="message" rows="4" placeholder="What would you like to enquire about?" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-send me-1"></i>Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 
 <!-- Related Businesses -->
-<div class="mb-5">
+<div class="mb-5 {% if not user.is_authenticated %}content-blurred{% endif %}">
     <h3 class="border-bottom pb-2 mb-4">Similar Businesses</h3>
     
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        {% for related_business in related_businesses %}
+        {% for related_business in business.get_related_businesses %}
             <div class="col">
-                <div class="card h-100 shadow-sm business-card">
-                    <img src="{{ related_business.get_primary_image_url }}" class="card-img-top" alt="{{ related_business.name }}" style="height: 180px; object-fit: cover;">
+                <div class="card h-100 shadow-sm">
+                    <img src="{{ related_business.get_primary_image_url }}" class="card-img-top" alt="{{ related_business.name }}" style="height: 200px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="card-title">{{ related_business.name }}</h5>
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="stars me-2">
-                                {% for i in "12345"|make_list %}
-                                    <i class="bi bi-star{% if forloop.counter <= related_business.avg_rating|default:0 %}-fill{% endif %} text-warning"></i>
-                                {% endfor %}
-                            </div>
-                            <small class="text-muted">({{ related_business.reviews.filter.is_approved.count }})</small>
-                        </div>
-                        <p class="card-text small text-muted line-clamp-2">{{ related_business.description }}</p>
+                        <p class="card-text text-muted">{{ related_business.description|truncatewords:15 }}</p>
                         <a href="{% url 'directory:business_detail' related_business.pk %}" class="stretched-link"></a>
                     </div>
                 </div>
@@ -493,6 +720,11 @@
 
 {% block extra_js %}
 <script>
+    // Prevent scrolling when login gate is shown
+    {% if not user.is_authenticated %}
+    document.body.style.overflow = 'hidden';
+    {% endif %}
+    
     // Gallery image switcher
     function changeMainImage(thumb, imgSrc) {
         // Update main image

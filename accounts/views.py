@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib import messages
-from django.contrib.auth import login, authenticate, logout
+from django.urls import reverse, reverse_lazy
+from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import PasswordChangeView
-from django.urls import reverse_lazy
-from .forms import UserRegisterForm, ProfileUpdateForm
+from django.contrib.auth.forms import PasswordChangeForm  # Add this import
+from .forms import UserRegisterForm, ProfileUpdateForm, CustomUserCreationForm
 from directory.models import Business
 from django.contrib.auth.models import User
 from .signals import send_password_changed_email, send_profile_updated_email
@@ -14,77 +15,36 @@ from .models import EmailVerification
 from django.utils import timezone
 from datetime import timedelta
 
+class CustomLoginView(LoginView):
+    template_name = 'accounts/login.html'
+    
+    def get_success_url(self):
+        next_url = self.request.GET.get('next')
+        if next_url:
+            return next_url
+        return reverse('directory:home')
+
 def register(request):
     if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            # Check if email already exists
-            email = form.cleaned_data['email']
-            if User.objects.filter(email=email).exists():
-                messages.warning(request, 'An account with this email already exists. Please login instead.')
-                return redirect('accounts:login')
-                
-            try:
-                user = form.save(commit=False)
-                user.is_active = False  # Keep inactive until verified
-                user.save()
-                
-                # Generate OTP and send email
-                otp_code = EmailVerification.generate_otp()
-                EmailVerification.objects.create(
-                    user=user,
-                    otp_code=otp_code
-                )
-                
-                # Send verification email
-                send_verification_email.delay(user.id, otp_code)
-                
-                # Store email for verification
-                request.session['pending_verification_email'] = user.email
-                
-                messages.success(request, 'Registration successful! Please check your email for verification code.')
-                return redirect('accounts:verify_email')
-            except Exception as e:
-                # Log the error and show user-friendly message
-                print(f"Registration error: {str(e)}")
-                messages.error(request, 'Registration failed. Please try again.')
-    else:
-        form = UserRegisterForm()
-    
-    return render(request, 'accounts/register.html', {'form': form})
-
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        
-        # Try to authenticate with username
-        user = authenticate(request, username=username, password=password)
-        
-        # If authentication fails, try with email
-        if user is None:
-            try:
-                user_obj = User.objects.get(email=username)
-                user = authenticate(request, username=user_obj.username, password=password)
-            except User.DoesNotExist:
-                pass
-                
-        if user is not None:
-            login(request, user)
-            messages.success(request, f'Welcome back, {user.username}!')
+            user = form.save()
             
-            # Get the next parameter or redirect based on user type
-            next_url = request.GET.get('next')
-            if next_url:
-                return redirect(next_url)
-            elif hasattr(user, 'profile') and user.profile.is_business_owner:
-                return redirect('directory:dashboard_home')
-            else:
-                return redirect('directory:home')
-        else:
-            messages.error(request, 'Invalid username or password.')
+            # Store email in session for verification
+            request.session['pending_verification_email'] = user.email
+            
+            messages.success(request, 'Account created! Please check your email for verification code.')
+            return redirect('accounts:verify_email')
+    else:
+        form = CustomUserCreationForm()
     
-    return render(request, 'accounts/login.html')
+    context = {'form': form}
+    return render(request, 'accounts/register.html', context)
+
+# Add the missing login_view function
+def login_view(request):
+    """Use the class-based view for login"""
+    return CustomLoginView.as_view()(request)
 
 @login_required
 def logout_view(request):
