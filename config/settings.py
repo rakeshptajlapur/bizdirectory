@@ -275,3 +275,17 @@ if 'DYNO' in os.environ or 'PORT' in os.environ:
     # Production settings
     DEBUG = False
     ALLOWED_HOSTS.extend(['.ondigitalocean.app', '.appspec.app'])
+
+# Session settings for OTP verification
+SESSION_COOKIE_AGE = 1800  # 30 minutes
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_HTTPONLY = True
+
+# For OTP verification specifically
+OTP_VERIFICATION_TIMEOUT = 600  # 10 minutes in seconds
+
+# Add testserver for Django testing (don't disturb production hosts)
+if DEBUG:
+    if 'testserver' not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append('testserver')

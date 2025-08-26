@@ -147,26 +147,35 @@ class CustomPasswordResetForm(PasswordResetForm):
         """
         Override to use our Celery task instead of sending directly
         """
-        # Get user from the context
-        user_email = context.get('email', '')
+        # Get user email from the context
+        user_email = context.get('email', to_email)
+        
         try:
-            user = User.objects.get(email=user_email)
+            # Find user by email
+            user = User.objects.get(email=user_email, is_active=True)
+            
             # Extract token and uid from context for complete reset URL
-            protocol = context.get('protocol', 'http')
-            domain = context.get('domain', 'example.com')
+            protocol = context.get('protocol', 'https')
+            domain = context.get('domain', 'findnearbiz.com')
             uid = context.get('uid', '')
             token = context.get('token', '')
-            # Make sure the URL includes the complete path to the reset confirm view
-            # Use the accounts:password_reset_confirm URL as defined in urls.py
+            
+            # Create the complete reset URL
             reset_url = f"{protocol}://{domain}/accounts/reset/{uid}/{token}/"
             
             # Debug logging
-            print(f"DEBUG: Password reset URL: {reset_url}")
-            print(f"DEBUG: User ID: {user.id}, Email: {user.email}")
+            print(f"DEBUG: Password reset for {user.email}")
+            print(f"DEBUG: Reset URL: {reset_url}")
             
             # Use our existing Celery task
             send_password_reset_email.delay(user.id, reset_url)
+            
         except User.DoesNotExist:
-            # If user doesn't exist, don't send email (same as Django default)
+            # If user doesn't exist, don't send email (same as Django default behavior)
+            print(f"DEBUG: No active user found with email: {user_email}")
+            pass
+        except Exception as e:
+            # Log the error but don't raise it (to prevent 503 errors)
+            print(f"ERROR: Password reset failed for {user_email}: {str(e)}")
             pass
 

@@ -1,7 +1,7 @@
 {% extends 'directory/base.html' %}
 {% load static %}
 
-{% block title %}Verify Your Email | BizDirectory{% endblock %}
+{% block title %}Verify Your Email | FindNearBiz{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -37,6 +37,26 @@
         text-align: center;
         font-weight: bold;
     }
+    
+    .countdown-timer {
+        font-size: 1.1rem;
+        font-weight: bold;
+        padding: 10px;
+        border-radius: 8px;
+        margin: 10px 0;
+    }
+    
+    .timer-active {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+    }
+    
+    .timer-expired {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
 </style>
 {% endblock %}
 
@@ -52,7 +72,13 @@
                         </div>
                         
                         <h1 class="h3 mb-3">Verify Your Email</h1>
-                        <p class="text-muted mb-4">We've sent a 6-digit verification code to your email address. Enter it below to complete your registration.</p>
+                        <p class="text-muted mb-4">We've sent a 6-digit verification code to <strong>{{ email }}</strong></p>
+                        
+                        <!-- Countdown Timer -->
+                        <div id="countdown-timer" class="countdown-timer timer-active">
+                            <i class="bi bi-clock me-1"></i>
+                            <span id="timer-text">Time remaining: <span id="time-left">{{ remaining_time }}</span> seconds</span>
+                        </div>
                         
                         {% if messages %}
                             {% for message in messages %}
@@ -63,7 +89,7 @@
                             {% endfor %}
                         {% endif %}
                         
-                        <form method="post">
+                        <form method="post" id="otp-form">
                             {% csrf_token %}
                             <div class="mb-4">
                                 <label for="otp" class="form-label">Verification Code</label>
@@ -80,17 +106,20 @@
                             </div>
                             
                             <div class="d-grid mb-3">
-                                <button type="submit" class="btn btn-primary btn-lg">Verify Email</button>
+                                <button type="submit" class="btn btn-primary btn-lg" id="verify-btn">
+                                    <i class="bi bi-check-circle me-1"></i>Verify Email
+                                </button>
                             </div>
                         </form>
                         
                         <div class="text-center">
                             <p class="text-muted mb-2">Didn't receive the code?</p>
-                            <a href="{% url 'accounts:resend_otp' %}" class="btn btn-outline-secondary">Resend Code</a>
+                            <a href="{% url 'accounts:resend_otp' %}" class="btn btn-outline-secondary" id="resend-btn">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Resend Code
+                            </a>
                         </div>
                         
                         <hr class="my-4">
-                        
                         <div class="text-center">
                             <a href="{% url 'accounts:register' %}" class="text-decoration-none">Back to Registration</a>
                         </div>
@@ -104,14 +133,67 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const otpInput = document.getElementById('otp');
+    const countdownTimer = document.getElementById('countdown-timer');
+    const timeLeftSpan = document.getElementById('time-left');
+    const timerText = document.getElementById('timer-text');
+    const verifyBtn = document.getElementById('verify-btn');
+    const resendBtn = document.getElementById('resend-btn');
+    const form = document.getElementById('otp-form');
+    
+    let timeLeft = {{ remaining_time }};
+    
     otpInput.focus();
     
+    // Auto-submit when 6 digits entered
     otpInput.addEventListener('input', function(e) {
         this.value = this.value.replace(/[^0-9]/g, '');
-        if (this.value.length === 6) {
-            this.closest('form').submit();
+        if (this.value.length === 6 && timeLeft > 0) {
+            form.submit();
         }
     });
+    
+    // Countdown timer
+    function updateTimer() {
+        if (timeLeft <= 0) {
+            // Timer expired
+            countdownTimer.className = 'countdown-timer timer-expired';
+            timerText.innerHTML = '<i class="bi bi-exclamation-triangle me-1"></i>Verification code has expired';
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="bi bi-clock me-1"></i>Code Expired';
+            otpInput.disabled = true;
+            resendBtn.style.display = 'inline-block';
+            return;
+        }
+        
+        // Calculate minutes and seconds
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        const displayTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        timeLeftSpan.textContent = displayTime;
+        
+        // Warning when less than 2 minutes
+        if (timeLeft <= 120) {
+            countdownTimer.style.backgroundColor = '#fff3cd';
+            countdownTimer.style.color = '#664d03';
+            countdownTimer.style.borderColor = '#ffecb5';
+        }
+        
+        timeLeft--;
+    }
+    
+    // Start timer if there's time left
+    if (timeLeft > 0) {
+        updateTimer(); // Update immediately
+        const timerInterval = setInterval(function() {
+            updateTimer();
+            if (timeLeft < 0) {
+                clearInterval(timerInterval);
+            }
+        }, 1000);
+    } else {
+        updateTimer(); // Show expired state
+    }
 });
 </script>
 {% endblock %}

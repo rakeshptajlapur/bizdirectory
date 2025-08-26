@@ -153,36 +153,60 @@ def verify_email(request):
                 user.is_active = True
                 user.save()
                 
-                # Mark as verified
+                # Mark verification as completed
                 verification.is_verified = True
                 verification.save()
                 
-                # Auto-login user
+                # Clear the session
+                if 'pending_verification_email' in request.session:
+                    del request.session['pending_verification_email']
+                
+                # Log the user in
                 login(request, user)
                 
                 # Send welcome email
+                from .signals import send_welcome_email
                 send_welcome_email.delay(user.id)
                 
-                # Clear session
-                del request.session['pending_verification_email']
-                
-                messages.success(request, 'Email verified successfully! Welcome to BizDirectory.')
+                messages.success(request, 'Email verified successfully! Welcome to FindNearBiz!')
                 
                 # Redirect based on user type
-                if user.profile.is_business_owner:
+                if user.profile.user_type == 'business_owner':
                     return redirect('directory:subscription_plans')
                 else:
                     return redirect('directory:home')
             else:
-                messages.error(request, 'Invalid or expired verification code. Please try again.')
-                
+                if not verification.is_otp_valid():
+                    messages.error(request, 'Verification code has expired. Please request a new one.')
+                else:
+                    messages.error(request, 'Invalid verification code. Please try again.')
+                    
         except Exception as e:
-            # Log the error and show user-friendly message
-            print(f"Verification error: {str(e)}")
-            messages.error(request, 'Verification failed. Please try registering again.')
-            return redirect('accounts:register')
+            messages.error(request, f'Verification failed: {str(e)}')
     
-    return render(request, 'accounts/verify_email.html')
+    # For GET request, check if session is still valid
+    email = request.session.get('pending_verification_email')
+    if not email:
+        messages.error(request, 'No pending verification found. Please register again.')
+        return redirect('accounts:register')
+    
+    # Get user and verification info for template
+    try:
+        user = User.objects.filter(email=email, is_active=False).order_by('-date_joined').first()
+        if user and hasattr(user, 'email_verification'):
+            verification = user.email_verification
+            # Calculate remaining time
+            remaining_time = max(0, int((verification.expires_at - timezone.now()).total_seconds()))
+        else:
+            remaining_time = 0
+    except:
+        remaining_time = 0
+    
+    context = {
+        'email': email,
+        'remaining_time': remaining_time,
+    }
+    return render(request, 'accounts/verify_email.html', context)
 
 def resend_otp(request):
     """Resend OTP verification code"""
