@@ -1,2 +1,2 @@
 web: python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
-worker: celery -A config worker --loglevel=info --concurrency=1
+worker: celery -A config worker --loglevel=info --concurrency=2 --prefetch-multiplier=1 --max-tasks-per-child=1000

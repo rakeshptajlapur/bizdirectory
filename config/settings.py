@@ -198,6 +198,30 @@ ADMINS = [(None, email) for email in ADMIN_EMAILS if email]
 
 # Celery/Redis configuration from .env
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+
+# Celery Performance Optimization
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TIMEZONE = 'UTC'
+CELERY_ENABLE_UTC = True
+
+# Performance settings for faster email delivery
+CELERY_TASK_ROUTES = {
+    'accounts.signals.*': {'queue': 'emails'},
+    'directory.signals.*': {'queue': 'emails'},
+}
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_TASK_ACKS_LATE = True
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000
+
+# Email task priority
+CELERY_TASK_DEFAULT_PRIORITY = 5
+CELERY_WORKER_DISABLE_RATE_LIMITS = True
+
+# Connection pooling for faster email sending
+EMAIL_TIMEOUT = 10  # Faster timeout
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
