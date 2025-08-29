@@ -207,48 +207,35 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TIMEZONE = 'UTC'
 CELERY_ENABLE_UTC = True
 
-# Performance settings for faster email delivery
-CELERY_TASK_ROUTES = {
-    'accounts.signals.*': {'queue': 'emails'},
-    'directory.signals.*': {'queue': 'emails'},
-}
-CELERY_WORKER_PREFETCH_MULTIPLIER = 1
-CELERY_TASK_ACKS_LATE = True
-CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000
-
 # Email task priority
 CELERY_TASK_DEFAULT_PRIORITY = 5
 CELERY_WORKER_DISABLE_RATE_LIMITS = True
 
 # Connection pooling for faster email sending
-EMAIL_TIMEOUT = 10  # Faster timeout
-CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+EMAIL_TIMEOUT = 10
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-# Define REDIS_URL explicitly as a setting
-REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/1')
+# FIX: Use consistent result backend
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
-# Redis connection pooling settings
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/1'),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {"max_connections": 10},  # Limit max connections
-            "SOCKET_CONNECT_TIMEOUT": 5,  # seconds
-            "SOCKET_TIMEOUT": 5,  # seconds
-            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
-        }
-    }
+# FIX: Use consistent queue names
+CELERY_TASK_ROUTES = {
+    'accounts.signals.*': {'queue': 'emails'},
+    'directory.signals.*': {'queue': 'emails'},
 }
 
-# Celery connection pooling
-CELERY_BROKER_TRANSPORT_OPTIONS = {
-    'max_connections': 10,  # Limit max connections per process
-}
+# Performance settings
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_TASK_ACKS_LATE = True
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000
+
+# Connection timeout settings
+CELERY_BROKER_CONNECTION_TIMEOUT = 30
+CELERY_BROKER_CONNECTION_MAX_RETRIES = 3
+CELERY_BROKER_CONNECTION_RETRY = True
+CELERY_RESULT_EXPIRES = 3600
 
 # Security settings for production
 if not DEBUG:
@@ -277,13 +264,12 @@ if 'DYNO' in os.environ or 'PORT' in os.environ:
     ALLOWED_HOSTS.extend(['.ondigitalocean.app', '.appspec.app'])
 
 # Session settings for OTP verification
-SESSION_COOKIE_AGE = 1800  # 30 minutes
+SESSION_COOKIE_AGE = 7200  # 2 hours instead of 30 minutes
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_SAVE_EVERY_REQUEST = True
-SESSION_COOKIE_HTTPONLY = True
+SESSION_SAVE_EVERY_REQUEST = True  # Keep session alive with activity
 
-# For OTP verification specifically
-OTP_VERIFICATION_TIMEOUT = 600  # 10 minutes in seconds
+# OTP timeout - INCREASED 
+OTP_VERIFICATION_TIMEOUT = 1800  # 30 minutes instead of 10 minutes
 
 # Add testserver for Django testing (don't disturb production hosts)
 if DEBUG:

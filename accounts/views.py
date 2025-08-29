@@ -6,7 +6,7 @@ from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import PasswordChangeForm  # Add this import
-from .forms import UserRegisterForm, ProfileUpdateForm, CustomUserCreationForm
+from .forms import ProfileUpdateForm, CustomUserCreationForm  # Add CustomUserCreationForm
 from directory.models import Business
 from django.contrib.auth.models import User
 from .signals import send_password_changed_email, send_profile_updated_email
@@ -18,6 +18,20 @@ from datetime import timedelta
 class CustomLoginView(LoginView):
     template_name = 'accounts/login.html'
     
+    def form_valid(self, form):
+        user = form.get_user()
+        
+        # Check if user is active
+        if not user.is_active:
+            messages.error(self.request, 'Please verify your email before logging in.')
+            return redirect('accounts:verify_email')
+        
+        # Login the user
+        login(self.request, user)
+        messages.success(self.request, f'Welcome back, {user.first_name or user.username}!')
+        
+        return super().form_valid(form)
+    
     def get_success_url(self):
         next_url = self.request.GET.get('next')
         if next_url:
@@ -25,6 +39,7 @@ class CustomLoginView(LoginView):
         return reverse('directory:home')
 
 def register(request):
+    """User registration with email verification"""
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -35,11 +50,15 @@ def register(request):
             
             messages.success(request, 'Account created! Please check your email for verification code.')
             return redirect('accounts:verify_email')
+        else:
+            # Show specific form errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.title()}: {error}")
     else:
         form = CustomUserCreationForm()
     
-    context = {'form': form}
-    return render(request, 'accounts/register.html', context)
+    return render(request, 'accounts/register.html', {'form': form})
 
 # Add the missing login_view function
 def login_view(request):
@@ -133,42 +152,39 @@ def verify_email(request):
             return redirect('accounts:register')
         
         try:
-            # Check if this email already has an active account
-            existing_active = User.objects.filter(email=email, is_active=True).exists()
-            if existing_active:
-                messages.info(request, 'An active account with this email already exists. Please login instead.')
-                return redirect('accounts:login')
-                
-            # Handle the specific case for this error - get the most recent inactive account
-            user = User.objects.filter(email=email, is_active=False).order_by('-date_joined').first()
+            user = User.objects.filter(email=email, is_active=False).first()
             
             if not user:
-                messages.error(request, 'User not found. Please register again.')
+                messages.error(request, 'User not found or already verified.')
+                return redirect('accounts:login')
+                
+            if not hasattr(user, 'email_verification'):
+                messages.error(request, 'No verification record found.')
                 return redirect('accounts:register')
                 
             verification = user.email_verification
             
             if verification.otp_code == otp_entered and verification.is_otp_valid():
-                # Activate user
+                # SUCCESS: Activate user
                 user.is_active = True
                 user.save()
                 
-                # Mark verification as completed
                 verification.is_verified = True
                 verification.save()
                 
-                # Clear the session
+                # Clear session
                 if 'pending_verification_email' in request.session:
                     del request.session['pending_verification_email']
                 
-                # Log the user in
+                # Login user immediately
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
                 login(request, user)
                 
                 # Send welcome email
                 from .signals import send_welcome_email
                 send_welcome_email.delay(user.id)
                 
-                messages.success(request, 'Email verified successfully! Welcome to FindNearBiz!')
+                messages.success(request, f'Welcome to FindNearBiz, {user.first_name}!')
                 
                 # Redirect based on user type
                 if user.profile.user_type == 'business_owner':
@@ -177,36 +193,31 @@ def verify_email(request):
                     return redirect('directory:home')
             else:
                 if not verification.is_otp_valid():
-                    messages.error(request, 'Verification code has expired. Please request a new one.')
+                    messages.error(request, 'Verification code has expired.')
                 else:
-                    messages.error(request, 'Invalid verification code. Please try again.')
+                    messages.error(request, 'Invalid verification code.')
                     
         except Exception as e:
-            messages.error(request, f'Verification failed: {str(e)}')
+            messages.error(request, 'Verification failed. Please try again.')
     
-    # For GET request, check if session is still valid
+    # GET request - show verification form
     email = request.session.get('pending_verification_email')
     if not email:
-        messages.error(request, 'No pending verification found. Please register again.')
+        messages.error(request, 'No pending verification.')
         return redirect('accounts:register')
     
-    # Get user and verification info for template
     try:
-        user = User.objects.filter(email=email, is_active=False).order_by('-date_joined').first()
-        if user and hasattr(user, 'email_verification'):
-            verification = user.email_verification
-            # Calculate remaining time
-            remaining_time = max(0, int((verification.expires_at - timezone.now()).total_seconds()))
-        else:
-            remaining_time = 0
+        user = User.objects.get(email=email, is_active=False)
+        verification = user.email_verification
+        remaining_time = max(0, int((verification.expires_at - timezone.now()).total_seconds()))
+        
+        return render(request, 'accounts/verify_email.html', {
+            'email': email,
+            'remaining_time': remaining_time,
+        })
     except:
-        remaining_time = 0
-    
-    context = {
-        'email': email,
-        'remaining_time': remaining_time,
-    }
-    return render(request, 'accounts/verify_email.html', context)
+        messages.error(request, 'Verification session invalid.')
+        return redirect('accounts:register')
 
 def resend_otp(request):
     """Resend OTP verification code"""

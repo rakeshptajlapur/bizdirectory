@@ -35,7 +35,7 @@ class EmailVerification(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.expires_at:
-            self.expires_at = timezone.now() + timedelta(minutes=10)
+            self.expires_at = timezone.now() + timedelta(minutes=30)  # Changed from 10 to 30 minutes
         super().save(*args, **kwargs)
     
     def is_otp_valid(self):

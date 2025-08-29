@@ -9,18 +9,21 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # Auto-discover tasks in installed apps
 app.autodiscover_tasks()
 
-# Add these timeout settings
+# FIX: Update timeout settings for email tasks
 app.conf.update(
-    task_soft_time_limit=30,
-    task_time_limit=60,
+    task_soft_time_limit=60,      # Increased from 30
+    task_time_limit=120,          # Increased from 60
+    task_reject_on_worker_lost=True,
+    worker_hijack_root_logger=False,
 )
 
-# Reduce connection usage
+# FIX: Optimize connection settings
 app.conf.update(
-    worker_prefetch_multiplier=1,  # Fetch one task at a time
-    broker_pool_limit=10,  # Limit broker connections per worker
-    task_acks_late=True,    # Acknowledge after task completes
-    broker_connection_timeout=5,  # Timeout for broker connection
-    broker_connection_max_retries=0,  # Don't retry connections endlessly
-    broker_connection_retry=False,  # Don't retry connections automatically
+    worker_prefetch_multiplier=1,
+    broker_pool_limit=None,       # Remove connection limit
+    task_acks_late=True,
+    broker_connection_timeout=30,  # Increased timeout
+    broker_connection_max_retries=3,
+    broker_connection_retry=True,
+    result_expires=3600,  # Keep results for 1 hour
 )

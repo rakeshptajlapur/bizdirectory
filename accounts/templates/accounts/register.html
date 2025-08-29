@@ -137,10 +137,10 @@
                                 
                                 <div class="col-12">
                                     <label for="id_user_type" class="form-label">I am a:</label>
-                                    <select name="user_type" id="id_user_type" class="form-select">
-                                        <option value="regular">Regular User</option>
-                                        <option value="business_owner">Business Owner</option>
-                                    </select>
+                                    {{ form.user_type }}  <!-- This will render the radio buttons -->
+                                    {% if form.user_type.errors %}
+                                        <div class="text-danger small mt-1">{{ form.user_type.errors }}</div>
+                                    {% endif %}
                                 </div>
                                 
                                 <div class="col-12 mt-2">
