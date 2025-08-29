@@ -51,28 +51,39 @@ for host in ALLOWED_HOSTS:
 # Application definition
 
 INSTALLED_APPS = [
+    # ACCOUNTS MUST BE FIRST for template precedence
+    'accounts',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'directory',
-    'accounts.apps.AccountsConfig',  # Use the AppConfig instead of just 'accounts'
-    'affiliate.apps.AffiliateConfig',  # Add this line
+    'django.contrib.sites',
+    
+    # Third party - allauth AFTER accounts
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     'widget_tweaks',
-
+    'celery',
+    
+    # Local apps
+    'directory',
+    'affiliate',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',  # Required for messages
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # ADD THIS LINE
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -88,6 +99,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'debug': True,  # Enable template debugging
         },
     },
 ]
@@ -183,7 +195,12 @@ MESSAGE_TAGS = {
 }
 
 # Email backend and SMTP configuration
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# For development - use console backend to avoid SMTP issues
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
@@ -191,6 +208,10 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+
+# Allauth email settings
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[BizDirectory] '
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https' if not DEBUG else 'http'
 
 # Admin email addresses for notifications
 ADMIN_EMAILS = os.getenv('ADMIN_EMAILS', '').split(',')
@@ -275,3 +296,54 @@ OTP_VERIFICATION_TIMEOUT = 1800  # 30 minutes instead of 10 minutes
 if DEBUG:
     if 'testserver' not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append('testserver')
+
+# Allauth configuration
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# Site configuration for allauth (environment-based)
+SITE_DOMAIN = os.getenv('SITE_DOMAIN', '127.0.0.1:8000')
+SITE_NAME = os.getenv('SITE_NAME', 'BizDirectory Local')
+
+# Allauth settings - UPDATE THESE
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "optional"
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_LOGOUT_ON_GET = False
+
+# After signup, go to the dashboard (not the inactive page)
+ACCOUNT_SIGNUP_REDIRECT_URL = '/dashboard/'
+
+# After login, go to dashboard
+LOGIN_REDIRECT_URL = '/dashboard/'
+
+# When verification is needed, use your own template
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/accounts/login/'
+
+# Custom forms
+ACCOUNT_FORMS = {
+    'signup': 'accounts.forms_allauth.AllauthSignupForm',
+    'reset_password': 'accounts.forms_allauth.AllauthPasswordResetForm',
+}
+
+# Custom URLs - Required to point to our existing URLs
+ACCOUNT_LOGIN_URL = '/accounts/login/'
+ACCOUNT_LOGOUT_URL = '/accounts/logout/'
+ACCOUNT_SIGNUP_URL = '/accounts/signup/'
+
+# Force allauth to use your custom adapter with Celery
+ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
+
+# Force template directories  
+import os
+TEMPLATES[0]['DIRS'] = [
+    os.path.join(BASE_DIR, 'accounts', 'templates'),
+]

@@ -18,13 +18,30 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from allauth.account import views as allauth_views
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),
+    
+    # AllAuth URLs - Use these first for template precedence
+    path('accounts/login/', allauth_views.login, name='account_login'),
+    path('accounts/signup/', allauth_views.signup, name='account_signup'),
+    path('accounts/logout/', allauth_views.logout, name='account_logout'),
+    path('accounts/password/reset/', allauth_views.password_reset, name='account_reset_password'),
+    path('accounts/password/change/', allauth_views.password_change, name='account_change_password'),
+    
+    # AllAuth package URLs
+    path('accounts/', include('allauth.urls')),
+    
+    # Custom profile views - keep these
+    path('profile/', include('accounts.urls')),
+    
+    # Main app URLs
     path('', include('directory.urls')),
-    path('affiliate/', include('affiliate.urls')),  # Add this line
+    path('affiliate/', include('affiliate.urls')),
 ]
 
+# Serve media files in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

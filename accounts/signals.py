@@ -8,24 +8,46 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from django.core.mail import send_mail
 
-@shared_task(priority=9)  # Removed bind=True
-def send_verification_email(user_id, otp_code):
+@shared_task(priority=9)
+def send_verification_email(user_id, verification_code_or_url):
     try:
         user = User.objects.get(id=user_id)
+        
+        # Determine if we're sending an OTP or a verification URL
+        is_otp = len(verification_code_or_url) <= 10  # OTPs are usually 6 digits
         
         print(f"DEBUG: Sending verification email to {user.email}")
         
         subject = "Verify your email address - FindNearBiz"
-        message = f"""
+        
+        if is_otp:
+            # OTP-style verification
+            otp_code = verification_code_or_url
+            message = f"""
 Hi {user.first_name or user.username},
 
 Your verification code is: {otp_code}
 
-This code will expire in 10 minutes.
+This code will expire in 30 minutes.
 
 Best regards,
 FindNearBiz Team
-        """
+            """
+        else:
+            # URL-style verification
+            verify_url = verification_code_or_url
+            message = f"""
+Hi {user.first_name or user.username},
+
+Please verify your email address by clicking the link below:
+
+{verify_url}
+
+This link will expire in 30 minutes.
+
+Best regards,
+FindNearBiz Team
+            """
         
         result = send_mail(
             subject, 
