@@ -24,17 +24,10 @@ urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
     
-    # AllAuth URLs - Use these first for template precedence
-    path('accounts/login/', allauth_views.login, name='account_login'),
-    path('accounts/signup/', allauth_views.signup, name='account_signup'),
-    path('accounts/logout/', allauth_views.logout, name='account_logout'),
-    path('accounts/password/reset/', allauth_views.password_reset, name='account_reset_password'),
-    path('accounts/password/change/', allauth_views.password_change, name='account_change_password'),
-    
-    # AllAuth package URLs
+    # AllAuth URLs
     path('accounts/', include('allauth.urls')),
     
-    # Custom profile views - keep these
+    # Custom profile views
     path('profile/', include('accounts.urls')),
     
     # Main app URLs

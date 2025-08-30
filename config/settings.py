@@ -193,24 +193,28 @@ MESSAGE_TAGS = {
     messages.INFO: 'info',
 }
 
-# Email backend and SMTP configuration
-# For development - use console backend to avoid SMTP issues
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # FORCE SMTP
+EMAIL_HOST = 'smtp.findnearbiz.com'  # Your actual SMTP server
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'support@findnearbiz.com')
 
-# Allauth email settings
-ACCOUNT_EMAIL_SUBJECT_PREFIX = '[BizDirectory] '
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https' if not DEBUG else 'http'
+# Allauth configuration
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_UNIQUE_EMAIL = True
+
+# Specify custom forms in standard location
+ACCOUNT_FORMS = {
+    'signup': 'accounts.forms.AllauthSignupForm',
+}
 
 # Admin email addresses for notifications
 ADMIN_EMAILS = os.getenv('ADMIN_EMAILS', '').split(',')
@@ -297,7 +301,6 @@ if DEBUG:
         ALLOWED_HOSTS.append('testserver')
 
 # Allauth configuration - IMPORTANT
-ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_USERNAME_REQUIRED = True
@@ -316,8 +319,7 @@ ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/accounts/login/'
 
 # Custom forms
 ACCOUNT_FORMS = {
-    'signup': 'accounts.forms_allauth.AllauthSignupForm',
-    'reset_password': 'accounts.forms_allauth.AllauthPasswordResetForm',
+    'signup': 'accounts.forms.AllauthSignupForm',
 }
 
 # Custom URLs - Required to point to our existing URLs
@@ -326,7 +328,7 @@ ACCOUNT_LOGOUT_URL = '/accounts/logout/'
 ACCOUNT_SIGNUP_URL = '/accounts/signup/'
 
 # Force allauth to use your custom adapter with Celery
-ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
+# ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 
 # Force template directories  
 import os
@@ -365,3 +367,26 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SITE_ID = 1  # Required for allauth
+
+# Add these to your existing settings:
+
+# More verbose logging to debug email issues
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'accounts.adapter': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}

@@ -1,13 +1,13 @@
 # ALLAUTH IMPLEMENTATION CHECKLIST
 
 ## STEP 1: SIGNUP FLOW
-- [ ] Review signup template (account/signup.html)
-- [ ] Ensure form fields are properly configured 
-- [ ] Fix user activation in forms_allauth.py (users inactive until verified)
-- [ ] Create/fix verification_sent.html template
-- [ ] TEST: Verify signup form submission works
-- [ ] TEST: Confirm redirect to verification page
-- [ ] TEST: Check user is created as inactive
+- [done ] Review signup template (account/signup.html)
+- [done ] Ensure form fields are properly configured 
+- [done ] Fix user activation in forms_allauth.py (users inactive until verified)
+- [done ] Create/fix verification_sent.html template
+- [done ] TEST: Verify signup form submission works
+- [done ] TEST: Confirm redirect to verification page
+- [done ] TEST: Check user is created as inactive
 
 ## STEP 2: EMAIL VERIFICATION
 - [ ] Configure CustomAccountAdapter in adapter.py

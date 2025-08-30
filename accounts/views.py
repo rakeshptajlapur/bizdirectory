@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
+from .forms import ProfileUpdateForm
 
 @login_required
 def profile(request):
@@ -12,18 +13,10 @@ def profile(request):
         from .models import Profile
         Profile.objects.get_or_create(user=request.user, defaults={'user_type': 'regular'})
     
-    try:
-        from .forms_allauth import ProfileUpdateForm
-    except ImportError as e:
-        messages.error(request, "Profile form not available. Please contact support.")
-        return redirect('directory:dashboard_home')
-    
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, instance=request.user.profile)
         if form.is_valid():
             form.save()
-            from .signals import send_profile_updated_email
-            send_profile_updated_email.delay(request.user.id)
             messages.success(request, 'Your profile has been updated successfully.')
             return redirect('accounts:profile')
     else:
@@ -32,9 +25,8 @@ def profile(request):
     context = {
         'form': form,
         'active_tab': 'profile',
-        'user': request.user,  # Ensure user is in context
+        'user': request.user,
     }
-    
     return render(request, 'account/profile.html', context)
 
 @login_required
@@ -45,12 +37,11 @@ def upgrade_to_business(request):
         return redirect('directory:dashboard_home')
     
     if request.method == 'POST':
-        # Update user profile to business owner
         profile = request.user.profile
         profile.user_type = 'business_owner'
         profile.save()
         
-        messages.success(request, 'Congratulations! Your account has been upgraded to business owner. You can now add business listings.')
+        messages.success(request, 'Congratulations! Your account has been upgraded to business owner.')
         return redirect('directory:dashboard_home')
     
     context = {

@@ -9,45 +9,27 @@ from django.conf import settings
 from django.core.mail import send_mail
 
 @shared_task(priority=9)
-def send_verification_email(user_id, verification_code_or_url):
+def send_verification_email(user_id, verification_url):
+    """Send email verification link via Celery"""
+    print(f"TASK RUNNING: send_verification_email for user_id={user_id} with URL={verification_url}")
     try:
         user = User.objects.get(id=user_id)
         
-        # Determine if we're sending an OTP or a verification URL
-        is_otp = len(verification_code_or_url) <= 10  # OTPs are usually 6 digits
-        
-        print(f"DEBUG: Sending verification email to {user.email}")
+        print(f"DEBUG: Sending verification email to {user.email} with URL {verification_url}")
         
         subject = "Verify your email address - BizDirectory"
-        
-        if is_otp:
-            # OTP-style verification
-            otp_code = verification_code_or_url
-            message = f"""
-Hi {user.first_name or user.username},
+        message = f"""
+Hello {user.first_name or user.username},
 
-Your verification code is: {otp_code}
+Thank you for registering with BizDirectory! Please verify your email address by clicking the link below:
 
-This code will expire in 30 minutes.
+{verification_url}
+
+This link will expire in 24 hours.
 
 Best regards,
 BizDirectory Team
-            """
-        else:
-            # URL-style verification
-            verify_url = verification_code_or_url
-            message = f"""
-Hi {user.first_name or user.username},
-
-Please verify your email address by clicking the link below:
-
-{verify_url}
-
-This link will expire in 30 minutes.
-
-Best regards,
-BizDirectory Team
-            """
+        """
         
         result = send_mail(
             subject, 
@@ -57,7 +39,7 @@ BizDirectory Team
             fail_silently=False
         )
         
-        print(f"DEBUG: Email sent successfully. Result: {result}")
+        print(f"DEBUG: Verification email sent successfully. Result: {result}")
         return result
         
     except Exception as e:
