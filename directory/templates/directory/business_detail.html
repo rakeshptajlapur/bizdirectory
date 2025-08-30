@@ -258,25 +258,17 @@
         </div>
         
         <h2 class="fw-bold mb-3">Unlock Full Business Details</h2>
-        <p class="text-muted mb-3">Join thousands of users discovering trusted local businesses. Sign up for free to access:</p>
+        <p class="text-muted mb-3">Join thousands of users discovering trusted local businesses.</p>
         
         <div class="text-start mb-3">
-            <div class="benefit-item">
-                <div class="benefit-icon">
-                    <i class="bi bi-shield-check"></i>
-                </div>
-                <div>
-                    <strong>Spam-free experience</strong>
-                    <div class="small text-muted">Verified reviews and authentic business information</div>
-                </div>
-            </div>
+            
             
             <div class="benefit-item">
                 <div class="benefit-icon">
                     <i class="bi bi-chat-dots"></i>
                 </div>
                 <div>
-                    <strong>Direct business contact</strong>
+                    <strong>Spam Free & Direct Biz contact</strong>
                     <div class="small text-muted">Send enquiries and get instant responses</div>
                 </div>
             </div>
@@ -291,22 +283,14 @@
                 </div>
             </div>
             
-            <div class="benefit-item">
-                <div class="benefit-icon">
-                    <i class="bi bi-bookmark"></i>
-                </div>
-                <div>
-                    <strong>Save & bookmark businesses</strong>
-                    <div class="small text-muted">Create your personal business directory</div>
-                </div>
-            </div>
+            
         </div>
         
         <div class="d-grid gap-2 mb-3">
-            <a href="{% url 'accounts:register' %}?next={{ request.get_full_path }}" class="btn btn-primary">
+            <a href="{% url 'account_signup' %}?next={{ request.get_full_path }}" class="btn btn-primary">
                 <i class="bi bi-person-plus me-2"></i>Sign Up Free
             </a>
-            <a href="{% url 'accounts:login' %}?next={{ request.get_full_path }}" class="btn btn-outline-primary">
+            <a href="{% url 'account_login' %}?next={{ request.get_full_path }}" class="btn btn-outline-primary">
                 <i class="bi bi-box-arrow-in-right me-2"></i>Already have an account? Login
             </a>
         </div>
