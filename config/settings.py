@@ -60,18 +60,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
+    'django.contrib.sites',  # Required for allauth
     
-    # Third party - allauth AFTER accounts
+    # Allauth apps
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'widget_tweaks',
-    'celery',
     
-    # Local apps
+    # Other apps
     'directory',
     'affiliate',
+    # ...
 ]
 
 MIDDLEWARE = [
@@ -297,35 +296,22 @@ if DEBUG:
     if 'testserver' not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append('testserver')
 
-# Allauth configuration
-SITE_ID = 1
-
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
-
-# Site configuration for allauth (environment-based)
-SITE_DOMAIN = os.getenv('SITE_DOMAIN', '127.0.0.1:8000')
-SITE_NAME = os.getenv('SITE_NAME', 'BizDirectory Local')
-
-# Allauth settings - UPDATE THESE
+# Allauth configuration - IMPORTANT
+ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "optional"
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_LOGOUT_ON_GET = False
+ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
+ACCOUNT_EMAIL_SUBJECT_PREFIX = 'BizDirectory - '
 
-# After signup, go to the dashboard (not the inactive page)
-ACCOUNT_SIGNUP_REDIRECT_URL = '/dashboard/'
-
-# After login, go to dashboard
+# Login/signup redirect URLs
 LOGIN_REDIRECT_URL = '/dashboard/'
-
-# When verification is needed, use your own template
+ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/confirm-email/'
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/accounts/login/'
 
 # Custom forms
@@ -347,3 +333,35 @@ import os
 TEMPLATES[0]['DIRS'] = [
     os.path.join(BASE_DIR, 'accounts', 'templates'),
 ]
+
+# Add this to your INSTALLED_APPS if not already there
+INSTALLED_APPS = [
+    # Place accounts first for template precedence
+    'accounts',
+    
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',  # Required for allauth
+    
+    # Allauth apps
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    
+    # Other apps
+    'directory',
+    'affiliate',
+    # ...
+]
+
+# Add these settings for allauth
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SITE_ID = 1  # Required for allauth

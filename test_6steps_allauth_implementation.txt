@@ -1,0 +1,55 @@
+# ALLAUTH IMPLEMENTATION CHECKLIST
+
+## STEP 1: SIGNUP FLOW
+- [ ] Review signup template (account/signup.html)
+- [ ] Ensure form fields are properly configured 
+- [ ] Fix user activation in forms_allauth.py (users inactive until verified)
+- [ ] Create/fix verification_sent.html template
+- [ ] TEST: Verify signup form submission works
+- [ ] TEST: Confirm redirect to verification page
+- [ ] TEST: Check user is created as inactive
+
+## STEP 2: EMAIL VERIFICATION
+- [ ] Configure CustomAccountAdapter in adapter.py
+- [ ] Add ACCOUNT_ADAPTER setting to settings.py
+- [ ] Create email templates:
+- [ ] email_confirmation_message.txt
+- [ ] email_confirmation_subject.txt
+- [ ] Fix allauth email verification settings
+- [ ] TEST: Submit signup form and check for Celery task
+- [ ] TEST: Confirm verification email content is correct
+- [ ] TEST: Verify that clicking email link works
+
+## STEP 3: LOGIN FLOW
+- [ ] Fix login template field name (username → login)
+- [ ] Fix account_inactive.html template
+- [ ] Ensure proper login redirects in settings.py
+- [ ] TEST: Attempt login with unverified account
+- [ ] TEST: Verify proper inactive account message
+- [ ] TEST: Login with verified account and check redirect
+
+## STEP 4: PASSWORD RESET FLOW
+- [ ] Check password_reset.html template
+- [ ] Create/fix email templates:
+- [ ] password_reset_key_message.txt
+- [ ] password_reset_key_subject.txt
+- [ ] Configure adapter to use Celery for password reset emails
+- [ ] TEST: Submit password reset request 
+- [ ] TEST: Check for Celery email task
+- [ ] TEST: Verify reset link works
+
+## STEP 5: PROFILE MANAGEMENT
+- [ ] Fix profile.html template path in views_profile.py
+- [ ] Ensure forms_allauth.py has ProfileUpdateForm
+- [ ] Fix any context issues in profile view
+- [ ] TEST: Access profile page when logged in
+- [ ] TEST: Update profile and check for success message
+- [ ] TEST: Confirm profile update email is sent
+
+## STEP 6: COMPREHENSIVE TESTING
+- [ ] Run test_auth_flow.py script
+- [ ] Fix any remaining template issues
+- [ ] Test on mobile devices/viewports
+- [ ] Verify all email notifications work
+- [ ] Check login/logout/signup flow end-to-end
+- [ ] Test cross-browser compatibility

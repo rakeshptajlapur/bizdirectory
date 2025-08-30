@@ -18,7 +18,7 @@ def send_verification_email(user_id, verification_code_or_url):
         
         print(f"DEBUG: Sending verification email to {user.email}")
         
-        subject = "Verify your email address - FindNearBiz"
+        subject = "Verify your email address - BizDirectory"
         
         if is_otp:
             # OTP-style verification
@@ -31,7 +31,7 @@ Your verification code is: {otp_code}
 This code will expire in 30 minutes.
 
 Best regards,
-FindNearBiz Team
+BizDirectory Team
             """
         else:
             # URL-style verification
@@ -46,7 +46,7 @@ Please verify your email address by clicking the link below:
 This link will expire in 30 minutes.
 
 Best regards,
-FindNearBiz Team
+BizDirectory Team
             """
         
         result = send_mail(

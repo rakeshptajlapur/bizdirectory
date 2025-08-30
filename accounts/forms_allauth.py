@@ -16,7 +16,7 @@ class AllauthSignupForm(SignupForm):
         user = super().save(request)
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
-        user.is_active = False  # ← ADD THIS LINE - Keep inactive until email verified
+        user.is_active = False  # Keep users inactive until verified
         user.save()
         
         # Create profile as regular user
