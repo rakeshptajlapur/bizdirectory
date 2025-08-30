@@ -5,19 +5,34 @@ from .models import Profile
 from django.contrib.auth.models import User
 
 class AllauthSignupForm(SignupForm):
-    first_name = forms.CharField(max_length=30, required=True, 
-                               widget=forms.TextInput(attrs={'class': 'form-control'}))
-    last_name = forms.CharField(max_length=30, required=False, 
-                              widget=forms.TextInput(attrs={'class': 'form-control'}))
+    name = forms.CharField(max_length=30, required=True,
+                         widget=forms.TextInput(attrs={'class': 'form-control'}))
+    
+    # Remove username field from the form
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'username' in self.fields:
+            del self.fields['username']  # Remove username field
     
     def save(self, request):
-        # First create the user using the parent's save method
+        # Generate username from email
+        email = self.cleaned_data['email']
+        username = email.split('@')[0]
+        # Add numeric suffix if username exists
+        base_username = username
+        counter = 1
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}{counter}"
+            counter += 1
+        
+        # Add username back to cleaned_data
+        self.cleaned_data['username'] = username
+        
+        # Create the user with parent's save method
         user = super().save(request)
         
-        # Then update with our custom fields
-        user.first_name = self.cleaned_data['first_name']
-        user.last_name = self.cleaned_data['last_name'] 
-        # No need to set is_active=False, allauth does this automatically with mandatory verification
+        # Save the name as first_name
+        user.first_name = self.cleaned_data['name']
         user.save()
         
         # Create profile
