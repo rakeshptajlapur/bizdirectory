@@ -213,6 +213,14 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# File upload settings
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+FILE_UPLOAD_PERMISSIONS = 0o644
+
+# Security settings for file uploads
+SECURE_FILE_UPLOAD = True
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -237,111 +245,12 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'support@findnearbiz.com')
 
 # Allauth configuration
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'first_name', 'last_name', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_UNIQUE_EMAIL = True
-
-# Specify custom forms in standard location
-ACCOUNT_FORMS = {
-    'signup': 'accounts.forms.AllauthSignupForm',
-}
-
-# Admin email addresses for notifications
-ADMIN_EMAILS = os.getenv('ADMIN_EMAILS', '').split(',')
-ADMINS = [(None, email) for email in ADMIN_EMAILS if email]
-
-# Celery/Redis configuration from .env
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
-CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
-
-# Celery Performance Optimization
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TIMEZONE = 'UTC'
-CELERY_ENABLE_UTC = True
-
-# Email task priority
-CELERY_TASK_DEFAULT_PRIORITY = 5
-CELERY_WORKER_DISABLE_RATE_LIMITS = True
-
-# Connection pooling for faster email sending
-EMAIL_TIMEOUT = 10
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
-# FIX: Use consistent result backend
-CELERY_RESULT_BACKEND = CELERY_BROKER_URL
-
-# FIX: Use consistent queue names
-CELERY_TASK_ROUTES = {
-    'accounts.signals.*': {'queue': 'emails'},
-    'directory.signals.*': {'queue': 'emails'},
-}
-
-# Performance settings
-CELERY_WORKER_PREFETCH_MULTIPLIER = 1
-CELERY_TASK_ACKS_LATE = True
-CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000
-
-# Connection timeout settings
-CELERY_BROKER_CONNECTION_TIMEOUT = 30
-CELERY_BROKER_CONNECTION_MAX_RETRIES = 3
-CELERY_BROKER_CONNECTION_RETRY = True
-CELERY_RESULT_EXPIRES = 3600
-
-# Security settings for production ONLY
-if not DEBUG and ('DYNO' in os.environ or 'PORT' in os.environ):
-    # HTTPS settings for production only
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-
-# Static files configuration for App Platform
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = '/static/'
-
-# Don't require database for collectstatic
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# For DigitalOcean App Platform
-if 'DYNO' in os.environ or 'PORT' in os.environ:
-    # Production settings
-    DEBUG = False
-    ALLOWED_HOSTS.extend(['.ondigitalocean.app', '.appspec.app'])
-
-# Session settings for OTP verification
-SESSION_COOKIE_AGE = 7200  # 2 hours instead of 30 minutes
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_SAVE_EVERY_REQUEST = True  # Keep session alive with activity
-
-# OTP timeout - INCREASED 
-OTP_VERIFICATION_TIMEOUT = 1800  # 30 minutes instead of 10 minutes
-
-# Add testserver for Django testing (don't disturb production hosts)
-if DEBUG:
-    if 'testserver' not in ALLOWED_HOSTS:
-        ALLOWED_HOSTS.append('testserver')
-
-# Allauth configuration - IMPORTANT
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = "email"  # Use email for login instead of username
-ACCOUNT_USERNAME_REQUIRED = False  # Since we're generating it from email
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_LOGOUT_ON_GET = False
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = 'BizDirectory - '
 
@@ -349,13 +258,14 @@ ACCOUNT_EMAIL_SUBJECT_PREFIX = 'BizDirectory - '
 LOGIN_REDIRECT_URL = '/dashboard/'
 ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/confirm-email/'
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/accounts/login/'
+ACCOUNT_LOGOUT_ON_GET = False
 
 # Custom forms
 ACCOUNT_FORMS = {
     'signup': 'accounts.forms.AllauthSignupForm',
 }
 
-# Custom URLs - Required to point to our existing URLs
+# Custom URLs
 ACCOUNT_LOGIN_URL = '/accounts/login/'
 ACCOUNT_LOGOUT_URL = '/accounts/logout/'
 ACCOUNT_SIGNUP_URL = '/accounts/signup/'

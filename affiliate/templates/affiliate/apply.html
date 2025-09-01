@@ -5,31 +5,23 @@
 {% block dashboard_content %}
 <div class="row mb-4">
     <div class="col">
-        <h1 class="h3">Affiliate Application</h1>
-        <p class="text-muted">Join our affiliate program and earn commissions</p>
+        <h1 class="h3">Become an Affiliate Partner</h1>
+        <p class="text-muted">Join our affiliate program and earn 20% commission on every premium subscription referral</p>
     </div>
 </div>
 
 <div class="row">
     <div class="col-lg-8">
         <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                
-                <form method="post" enctype="multipart/form-data">
+            <div class="card-body">
+                <!-- FIXED: Added proper enctype for file uploads -->
+                <form method="post" enctype="multipart/form-data" id="affiliateApplicationForm">
                     {% csrf_token %}
                     
                     <!-- Promotion Strategy -->
                     <div class="mb-4">
                         <label for="{{ form.promotion_strategy.id_for_label }}" class="form-label">{{ form.promotion_strategy.label }}</label>
-                        {{ form.promotion_strategy|add_class:"form-control" }}
+                        {{ form.promotion_strategy }}
                         <div class="form-text">
                             Explain how you plan to promote BizDirectory. Include details about your audience, marketing channels, and promotion strategies.
                         </div>
@@ -50,7 +42,7 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="{{ form.aadhar_card.id_for_label }}" class="form-label">Aadhar Card <span class="text-danger">*</span></label>
-                                    {{ form.aadhar_card|add_class:"form-control" }}
+                                    {{ form.aadhar_card }}
                                     <div class="form-text">Upload a clear, color scan or photo of your Aadhar card (front and back). Maximum file size: 5MB.</div>
                                     {% if form.aadhar_card.errors %}
                                         <div class="text-danger">
@@ -66,7 +58,7 @@
                                 
                                 <div class="col-md-6">
                                     <label for="{{ form.pan_card.id_for_label }}" class="form-label">PAN Card <span class="text-danger">*</span></label>
-                                    {{ form.pan_card|add_class:"form-control" }}
+                                    {{ form.pan_card }}
                                     <div class="form-text">Upload a clear, color scan or photo of your PAN card. Maximum file size: 5MB.</div>
                                     {% if form.pan_card.errors %}
                                         <div class="text-danger">
@@ -96,7 +88,10 @@
                     </div>
                     
                     <div class="mb-4">
-                        <button type="submit" class="btn btn-primary">Submit Application</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" style="display: none;"></span>
+                            Submit Application
+                        </button>
                         <a href="{% url 'affiliate:dashboard' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
                     </div>
                 </form>
@@ -104,7 +99,9 @@
         </div>
     </div>
     
+    <!-- Sidebar with requirements and tips -->
     <div class="col-lg-4">
+        <!-- Application Requirements Card -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
                 <h5 class="card-title border-bottom pb-2">Application Requirements</h5>
@@ -119,33 +116,30 @@
                     </li>
                     <li class="mb-3">
                         <i class="bi bi-check-circle text-success me-2"></i>
-                        Detailed promotion strategy
+                        Clear promotion strategy
                     </li>
                     <li class="mb-3">
                         <i class="bi bi-check-circle text-success me-2"></i>
-                        Agreement to terms & conditions
+                        Active social media or website
                     </li>
                 </ul>
             </div>
         </div>
         
+        <!-- Promotion Tips Card -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
-                <h5 class="card-title border-bottom pb-2">Application Tips</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-3">
+                <h5 class="card-title border-bottom pb-2">Promotion Tips</h5>
+                <ul class="list-unstyled small">
+                    <li class="mb-2">
                         <i class="bi bi-lightbulb text-warning me-2"></i>
-                        Be specific about your promotion methods
+                        Mention your target audience
                     </li>
-                    <li class="mb-3">
+                    <li class="mb-2">
                         <i class="bi bi-lightbulb text-warning me-2"></i>
-                        Mention if you have experience with business directories
+                        Describe your content strategy
                     </li>
-                    <li class="mb-3">
-                        <i class="bi bi-lightbulb text-warning me-2"></i>
-                        Describe your target audience or existing network
-                    </li>
-                    <li class="mb-3">
+                    <li class="mb-2">
                         <i class="bi bi-lightbulb text-warning me-2"></i>
                         Include any marketing channels you'll use
                     </li>
@@ -153,16 +147,28 @@
             </div>
         </div>
         
+        <!-- File Upload Guidelines -->
         <div class="card border-0 shadow-sm">
             <div class="card-body">
-                <h5 class="card-title border-bottom pb-2">Next Steps</h5>
-                <ol class="ps-3">
-                    <li class="mb-2">Submit your application with documents</li>
-                    <li class="mb-2">Wait for admin approval (24-48 hours)</li>
-                    <li class="mb-2">Add your bank details for payouts</li>
-                    <li class="mb-2">Receive your unique affiliate code</li>
-                    <li>Start earning commissions!</li>
-                </ol>
+                <h5 class="card-title border-bottom pb-2">File Upload Guidelines</h5>
+                <ul class="list-unstyled small">
+                    <li class="mb-2">
+                        <i class="bi bi-file-earmark text-primary me-2"></i>
+                        Accepted formats: JPG, PNG, PDF
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-cloud-arrow-up text-primary me-2"></i>
+                        Maximum file size: 5MB
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-eye text-primary me-2"></i>
+                        Ensure documents are clear and legible
+                    </li>
+                    <li>
+                        <i class="bi bi-shield-check text-primary me-2"></i>
+                        Documents must be valid and unexpired
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -178,15 +184,15 @@
             </div>
             <div class="modal-body">
                 <h6>1. Commission Structure</h6>
-                <p>Affiliates earn 20% commission on all premium subscriptions purchased using their unique affiliate code.</p>
+                <p>Affiliates earn 20% commission on each premium subscription purchased using their referral code. Commission is calculated on the subscription amount excluding taxes.</p>
                 
                 <h6>2. Payment Terms</h6>
-                <p>Commissions are accumulated until they reach the minimum payout threshold of ₹5,000. Payments are processed within 30 days of reaching the threshold.</p>
+                <p>Commissions are paid monthly with a minimum payout threshold of ₹5,000. Payments are processed within 30 days of the end of each month.</p>
                 
-                <h6>3. Commission Duration</h6>
-                <p>Commissions are paid on the initial subscription purchase only, not on renewals.</p>
+                <h6>3. Referral Tracking</h6>
+                <p>Referrals are tracked through unique affiliate codes. Commission is credited only when the referred business upgrades to a premium plan within 90 days of registration.</p>
                 
-                <h6>4. Prohibited Activities</h6>
+                <h6>4. Prohibited Practices</h6>
                 <p>Affiliates must not engage in spamming, false advertising, or any deceptive practices. Violation will result in termination from the program and forfeiture of unpaid commissions.</p>
                 
                 <h6>5. Program Changes</h6>
@@ -206,10 +212,14 @@
 </div>
 
 <script>
-// File upload validation
+// Enhanced file upload validation and form handling
 document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('affiliateApplicationForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const spinner = submitBtn.querySelector('.spinner-border');
     const fileInputs = document.querySelectorAll('input[type="file"]');
     
+    // File upload validation
     fileInputs.forEach(input => {
         input.addEventListener('change', function() {
             const file = this.files[0];
@@ -228,8 +238,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.value = '';
                     return;
                 }
+                
+                // Show success indicator
+                const feedback = this.parentElement.querySelector('.file-feedback');
+                if (feedback) {
+                    feedback.remove();
+                }
+                
+                const successDiv = document.createElement('div');
+                successDiv.className = 'file-feedback mt-1 text-success small';
+                successDiv.innerHTML = '<i class="bi bi-check-circle me-1"></i> File selected: ' + file.name;
+                this.parentElement.appendChild(successDiv);
             }
         });
+    });
+    
+    // Form submission handling
+    form.addEventListener('submit', function(e) {
+        submitBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        
+        // Re-enable after 5 seconds to prevent permanent disable
+        setTimeout(function() {
+            submitBtn.disabled = false;
+            spinner.style.display = 'none';
+        }, 5000);
     });
 });
 </script>

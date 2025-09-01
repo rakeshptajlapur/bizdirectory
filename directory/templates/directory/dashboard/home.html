@@ -4,133 +4,106 @@
 {% block dashboard_content %}
 <div class="row mb-4">
     <div class="col">
-        <h1 class="h3 mb-0">Dashboard</h1>
-        <p class="text-muted">Welcome back, {{ user.get_full_name|default:user.username }}!</p>
+        <h1 class="h3">Welcome, {{ user.get_full_name|default:user.username }}!</h1>
+        <p class="text-muted">
+            {% if user.profile.is_business_owner %}
+                Manage your business listings and grow your online presence
+            {% else %}
+                Explore opportunities to grow with BizDirectory
+            {% endif %}
+        </p>
     </div>
 </div>
 
-<div class="row g-4 mb-4">
-    <!-- Stats Cards -->
-    <div class="col-md-4">
-        <a href="{% url 'directory:dashboard_listings' %}" class="text-decoration-none">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-3 bg-primary bg-opacity-10 p-3 me-3" style="width: 60px; height: 60px; display: flex; justify-content: center; align-items: center;">
-                            <i class="bi bi-building fs-4 text-primary"></i>
+{% if user.profile.is_business_owner %}
+    <!-- Existing business owner dashboard content -->
+    <!-- Your current business owner dashboard code here -->
+{% else %}
+    <!-- Dashboard for Regular Users -->
+    <div class="row g-4">
+        <!-- Affiliate Opportunity Card -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                            <i class="bi bi-people text-primary fs-4"></i>
                         </div>
-                        <div>
-                            <h3 class="mb-0">{{ businesses.count }}</h3>
-                            <p class="text-muted mb-0">Businesses</p>
-                        </div>
+                        <h5 class="card-title mb-0">Become an Affiliate</h5>
                     </div>
+                    <p class="text-muted mb-3">Earn 20% commission by referring businesses to BizDirectory. Start earning today!</p>
+                    <ul class="list-unstyled small mb-4">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Earn 20% on every referral</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Monthly payouts</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Easy to get started</li>
+                    </ul>
+                    {% if user.affiliate_profile %}
+                        {% if user.affiliate_profile.status == 'approved' %}
+                            <a href="{% url 'affiliate:dashboard' %}" class="btn btn-success">View Affiliate Dashboard</a>
+                        {% elif user.affiliate_profile.status == 'pending' %}
+                            <div class="alert alert-warning small">Your application is under review</div>
+                        {% else %}
+                            <a href="{% url 'affiliate:apply' %}" class="btn btn-primary">Reapply as Affiliate</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'affiliate:apply' %}" class="btn btn-primary">Apply Now</a>
+                    {% endif %}
                 </div>
             </div>
-        </a>
-    </div>
-    
-    <div class="col-md-4">
-        <a href="{% url 'directory:dashboard_enquiries' %}" class="text-decoration-none">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-3 bg-success bg-opacity-10 p-3 me-3" style="width: 60px; height: 60px; display: flex; justify-content: center; align-items: center;">
-                            <i class="bi bi-envelope fs-4 text-success"></i>
+        </div>
+        
+        <!-- Business Account Upgrade Card -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                            <i class="bi bi-arrow-up-circle text-success fs-4"></i>
                         </div>
-                        <div>
-                            <h3 class="mb-0">{{ enquiries_count }}</h3>
-                            <p class="text-muted mb-0">Enquiries</p>
-                        </div>
+                        <h5 class="card-title mb-0">Upgrade to Business</h5>
                     </div>
+                    <p class="text-muted mb-3">List your business, manage customers, and grow your online presence.</p>
+                    <ul class="list-unstyled small mb-4">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Create business listings</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Manage customer reviews</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Track business analytics</li>
+                    </ul>
+                    <a href="{% url 'accounts:upgrade_to_business' %}" class="btn btn-success">Upgrade Account</a>
                 </div>
             </div>
-        </a>
-    </div>
-    
-    <div class="col-md-4">
-        <a href="{% url 'directory:dashboard_reviews' %}" class="text-decoration-none">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-3 bg-warning bg-opacity-10 p-3 me-3" style="width: 60px; height: 60px; display: flex; justify-content: center; align-items: center;">
-                            <i class="bi bi-star fs-4 text-warning"></i>
+        </div>
+        
+        <!-- Profile Completion Card -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                            <i class="bi bi-person-gear text-info fs-4"></i>
                         </div>
-                        <div>
-                            <h3 class="mb-0">{{ avg_rating|floatformat:1 }}</h3>
-                            <p class="text-muted mb-0">Average Rating</p>
-                        </div>
+                        <h5 class="card-title mb-0">Complete Profile</h5>
                     </div>
+                    <p class="text-muted mb-3">Update your profile information and security settings.</p>
+                    <a href="{% url 'accounts:profile' %}" class="btn btn-outline-info">Edit Profile</a>
                 </div>
             </div>
-        </a>
-    </div>
-</div>
-
-<div class="row g-4">
-    <!-- Recent Enquiries -->
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-transparent border-0">
-                <h5 class="mb-0">Recent Enquiries</h5>
-            </div>
-            <div class="card-body p-0">
-                <div class="list-group list-group-flush">
-                    {% for enquiry in recent_enquiries %}
-                        <div class="list-group-item">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">{{ enquiry.name }}</h6>
-                                <small class="text-muted">{{ enquiry.created_at|date:"M d" }}</small>
-                            </div>
-                            <p class="mb-1 text-truncate">{{ enquiry.message }}</p>
-                            <small class="text-muted">For: {{ enquiry.business.name }}</small>
+        </div>
+        
+        <!-- Security Card -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                            <i class="bi bi-shield-lock text-warning fs-4"></i>
                         </div>
-                    {% empty %}
-                        <div class="list-group-item text-center py-4">
-                            <i class="bi bi-inbox text-muted fs-2"></i>
-                            <p class="text-muted mt-2 mb-0">No enquiries yet</p>
-                        </div>
-                    {% endfor %}
+                        <h5 class="card-title mb-0">Account Security</h5>
+                    </div>
+                    <p class="text-muted mb-3">Manage your password and account security settings.</p>
+                    <a href="{% url 'account_change_password' %}" class="btn btn-outline-warning">Change Password</a>
                 </div>
-            </div>
-            <div class="card-footer bg-transparent">
-                <a href="{% url 'directory:dashboard_enquiries' %}" class="btn btn-sm btn-outline-primary">View All</a>
             </div>
         </div>
     </div>
-    
-    <!-- Recent Reviews -->
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-transparent border-0">
-                <h5 class="mb-0">Recent Reviews</h5>
-            </div>
-            <div class="card-body p-0">
-                <div class="list-group list-group-flush">
-                    {% for review in recent_reviews %}
-                        <div class="list-group-item">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h6 class="mb-1">{{ review.name }}</h6>
-                                <div>
-                                    {% for i in "12345"|make_list %}
-                                        <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %} text-warning"></i>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            <p class="mb-1 text-truncate">{{ review.comment }}</p>
-                            <small class="text-muted">For: {{ review.business.name }}</small>
-                        </div>
-                    {% empty %}
-                        <div class="list-group-item text-center py-4">
-                            <i class="bi bi-star text-muted fs-2"></i>
-                            <p class="text-muted mt-2 mb-0">No reviews yet</p>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="card-footer bg-transparent">
-                <a href="{% url 'directory:dashboard_reviews' %}" class="btn btn-sm btn-outline-primary">View All</a>
-            </div>
-        </div>
-    </div>
-</div>
+{% endif %}
 {% endblock %}

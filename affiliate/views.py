@@ -87,7 +87,7 @@ def affiliate_dashboard(request):
 
 @login_required
 def apply_affiliate(request):
-    """Apply to become an affiliate with proper error handling"""
+    """Apply to become an affiliate with proper file upload handling"""
     # Check if already an affiliate
     try:
         affiliate = AffiliateProfile.objects.get(user=request.user)
@@ -99,34 +99,81 @@ def apply_affiliate(request):
             return redirect('affiliate:dashboard')
     except AffiliateProfile.DoesNotExist:
         affiliate = None
-    
+
     if request.method == 'POST':
         try:
             form = AffiliateApplicationForm(request.POST, request.FILES, instance=affiliate)
+            
+            # Debug: Print form data
+            print("POST data:", request.POST)
+            print("FILES data:", request.FILES)
+            print("Form is valid:", form.is_valid())
+            
             if form.is_valid():
                 affiliate = form.save(commit=False)
                 affiliate.user = request.user
                 affiliate.status = 'pending'
+                
+                # Handle file uploads manually if needed
+                aadhar_file = request.FILES.get('aadhar_card')
+                pan_file = request.FILES.get('pan_card')
+                
+                if aadhar_file:
+                    # Validate file
+                    if not validate_upload_file(aadhar_file):
+                        messages.error(request, "Invalid Aadhar card file. Please upload JPG, PNG, or PDF under 5MB.")
+                        return render(request, 'affiliate/apply.html', {'form': form, 'affiliate': affiliate})
+                    affiliate.aadhar_card = aadhar_file
+                
+                if pan_file:
+                    # Validate file
+                    if not validate_upload_file(pan_file):
+                        messages.error(request, "Invalid PAN card file. Please upload JPG, PNG, or PDF under 5MB.")
+                        return render(request, 'affiliate/apply.html', {'form': form, 'affiliate': affiliate})
+                    affiliate.pan_card = pan_file
+                
                 affiliate.save()
                 
                 messages.success(request, "Your affiliate application has been submitted for review.")
                 return redirect('affiliate:dashboard')
             else:
+                print("Form errors:", form.errors)
                 for field, errors in form.errors.items():
                     for error in errors:
                         messages.error(request, f"{field}: {error}")
         except Exception as e:
             print(f"Error in apply_affiliate: {e}")
+            import traceback
+            print(traceback.format_exc())
             messages.error(request, "An error occurred while submitting your application. Please try again.")
     else:
         form = AffiliateApplicationForm(instance=affiliate)
-    
+
     context = {
         'form': form,
         'affiliate': affiliate,
         'active_tab': 'affiliate_apply'
     }
     return render(request, 'affiliate/apply.html', context)
+
+def validate_upload_file(file):
+    """Validate uploaded file size and type"""
+    # Check file size (5MB max)
+    if file.size > 5 * 1024 * 1024:
+        return False
+    
+    # Check file type
+    allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
+    if file.content_type not in allowed_types:
+        return False
+    
+    # Check file extension
+    allowed_extensions = ['.jpg', '.jpeg', '.png', '.pdf']
+    file_extension = os.path.splitext(file.name)[1].lower()
+    if file_extension not in allowed_extensions:
+        return False
+    
+    return True
 
 @login_required
 def update_bank_details(request):

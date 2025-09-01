@@ -5,6 +5,7 @@ import random
 import string
 import time
 from decimal import Decimal
+from django.db.models import Sum
 
 @admin.action(description="Approve selected affiliates")
 def approve_affiliates(modeladmin, request, queryset):
@@ -50,23 +51,46 @@ def reject_referrals(modeladmin, request, queryset):
 
 @admin.register(AffiliateProfile)
 class AffiliateProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'status', 'affiliate_code', 'total_earnings', 'pending_earnings')
-    list_filter = ('status',)
+    # FIXED: Only show fields that actually exist in the model
+    list_display = ('user', 'status', 'affiliate_code', 'created_at')
+    list_filter = ('status', 'created_at')
     search_fields = ('user__email', 'user__username', 'affiliate_code')
     actions = [approve_affiliates]
+    readonly_fields = ('created_at', 'updated_at')
+    
+    fieldsets = (
+        ('User Information', {
+            'fields': ('user', 'status', 'affiliate_code')
+        }),
+        ('Application Details', {
+            'fields': ('promotion_strategy',)
+        }),
+        ('KYC Documents', {
+            'fields': ('aadhar_card', 'pan_card')
+        }),
+        ('Bank Details', {
+            'fields': ('account_holder_name', 'bank_name', 'account_number', 'ifsc_code')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
 
 @admin.register(AffiliateReferral)
 class AffiliateReferralAdmin(admin.ModelAdmin):
     list_display = ('affiliate', 'get_business_name', 'commission_amount', 'status', 'created_at')
-    list_filter = ('status',)
+    list_filter = ('status', 'created_at')
     actions = [approve_referrals, reject_referrals] 
     
     def get_business_name(self, obj):
-        return obj.subscription.business.name if obj.subscription.business else "Unknown Business"
+        if obj.subscription and obj.subscription.business:
+            return obj.subscription.business.name
+        return "Unknown Business"
     get_business_name.short_description = "Business"
     
 @admin.register(AffiliatePayment)
 class AffiliatePaymentAdmin(admin.ModelAdmin):
     list_display = ('affiliate', 'amount', 'status', 'payment_date')
-    list_filter = ('status',)
+    list_filter = ('status', 'payment_date')
     actions = [process_payments]

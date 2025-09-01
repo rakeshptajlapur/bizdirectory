@@ -1,28 +1,19 @@
 {% extends 'directory/dashboard/base.html' %}
 {% load static %}
-{% load widget_tweaks %}  <!-- Add this line -->
+{% load widget_tweaks %}
 
 {% block dashboard_content %}
 <div class="row mb-4">
     <div class="col">
         <h1 class="h3">Bank Details</h1>
-        <p class="text-muted">Add your bank account information for affiliate payments</p>
+        <p class="text-muted">Add your bank account details for commission payouts</p>
     </div>
 </div>
 
 <div class="row">
     <div class="col-lg-8">
         <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                
+            <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
                     
@@ -59,7 +50,7 @@
                     <div class="mb-4">
                         <label for="{{ form.ifsc_code.id_for_label }}" class="form-label">IFSC Code</label>
                         {{ form.ifsc_code|add_class:"form-control" }}
-                        <div class="form-text">The 11-digit IFSC code of your bank branch</div>
+                        <div class="form-text">Enter the 11-character IFSC code (e.g., SBIN0001234)</div>
                         {% if form.ifsc_code.errors %}
                             <div class="text-danger">
                                 {{ form.ifsc_code.errors }}
@@ -87,7 +78,19 @@
                 <h5 class="card-title border-bottom pb-2">
                     <i class="bi bi-shield-lock me-2 text-primary"></i>Secure Banking
                 </h5>
-                <p class="text-muted">Your banking information is securely stored and encrypted. We follow strict security protocols to protect your financial data.</p>
+                <p class="text-muted">Your banking information is securely stored and encrypted.</p>
+                
+                <div class="alert alert-warning">
+                    <h6><i class="bi bi-info-circle me-2"></i>IFSC Code Format</h6>
+                    <p class="mb-2">IFSC codes are 11 characters long:</p>
+                    <ul class="mb-0 small">
+                        <li>First 4 letters: Bank code</li>
+                        <li>5th character: Always 0</li>
+                        <li>Last 6 characters: Branch code</li>
+                    </ul>
+                    <p class="mb-0 mt-2"><strong>Example:</strong> SBIN0001234</p>
+                </div>
+                
                 <ul class="list-unstyled mb-0">
                     <li class="mb-2">
                         <i class="bi bi-lock text-success me-2"></i>End-to-end encryption
