@@ -447,6 +447,64 @@
         }
     });
     
+    // Business name validation
+    const nameInput = document.querySelector('input[name="name"]');
+    nameInput.addEventListener('input', function() {
+        if (this.value.length < 3) {
+            this.setCustomValidity('Business name must be at least 3 characters');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+    
+    // City validation
+    const cityInput = document.querySelector('input[name="city"]');
+    cityInput.addEventListener('input', function() {
+        if (this.value.length < 2) {
+            this.setCustomValidity('City name must be at least 2 characters');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+    
+    // Pincode validation
+    const pincodeInput = document.querySelector('input[name="pincode"]');
+    pincodeInput.addEventListener('input', function() {
+        const pincodeRegex = /^[0-9]{6}$/;
+        if (!pincodeRegex.test(this.value)) {
+            this.setCustomValidity('Please enter a valid 6-digit pincode');
+            this.classList.add('is-invalid');
+        } else {
+            this.setCustomValidity('');
+            this.classList.remove('is-invalid');
+        }
+    });
+    
+    // Website validation (optional field)
+    const websiteInput = document.querySelector('input[name="website"]');
+    websiteInput.addEventListener('input', function() {
+        if (this.value) {
+            const urlRegex = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+            if (!urlRegex.test(this.value)) {
+                this.setCustomValidity('Please enter a valid website URL (e.g., https://example.com)');
+            } else {
+                this.setCustomValidity('');
+            }
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+    
+    // Registration number validation
+    const regNumInput = document.querySelector('input[name="registration_number"]');
+    regNumInput.addEventListener('input', function() {
+        if (this.value.length < 5 || this.value.length > 30) {
+            this.setCustomValidity('Registration number must be between 5 and 30 characters');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+    
     // Don't prevent form submission with custom validation
     document.querySelector('form').addEventListener('submit', function(event) {
         console.log('Form submitted');

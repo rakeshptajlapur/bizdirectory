@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     # Other apps
     'directory',
     'affiliate',
+    'storages',  # Add this line
     # ...
 ]
 
@@ -356,6 +357,7 @@ INSTALLED_APPS = [
     # Other apps
     'directory',
     'affiliate',
+    'storages',  # Add this line
     # ...
 ]
 
@@ -389,3 +391,23 @@ LOGGING = {
         },
     },
 }
+
+# Media Files Configuration - Add this section
+# Media files (user uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Use different storage backends for development and production
+if not DEBUG:  # Production settings
+    # DigitalOcean Spaces Configuration
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_ACCESS_KEY_ID = os.environ.get('SPACES_ACCESS_KEY')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('SPACES_SECRET_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.environ.get('SPACES_BUCKET_NAME')
+    AWS_S3_ENDPOINT_URL = os.environ.get('SPACES_ENDPOINT_URL')
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    AWS_LOCATION = 'media'
+    AWS_DEFAULT_ACL = 'public-read'
+    MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/{AWS_LOCATION}/'

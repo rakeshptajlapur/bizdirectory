@@ -767,23 +767,54 @@
     // Enquiry form validation
     const enquiryForm = document.querySelector('form[action*="send_enquiry"]');
     if (enquiryForm) {
+        const nameInput = enquiryForm.querySelector('input[name="name"]');
         const emailInput = enquiryForm.querySelector('input[name="email"]');
+        const phoneInput = enquiryForm.querySelector('input[name="phone"]');
         const messageInput = enquiryForm.querySelector('textarea[name="message"]');
         
+        // Name validation
+        nameInput.addEventListener('input', function() {
+            if (this.value.length < 2) {
+                this.setCustomValidity('Name should be at least 2 characters');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('is-invalid');
+            }
+        });
+        
+        // Email validation
         emailInput.addEventListener('input', function() {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(this.value)) {
                 this.setCustomValidity('Please enter a valid email address');
+                this.classList.add('is-invalid');
             } else {
                 this.setCustomValidity('');
+                this.classList.remove('is-invalid');
             }
         });
         
+        // Phone validation (optional field)
+        phoneInput.addEventListener('input', function() {
+            const phoneRegex = /^[0-9]{10}$/;
+            if (this.value && !phoneRegex.test(this.value)) {
+                this.setCustomValidity('Please enter a valid 10-digit phone number');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('is-invalid');
+            }
+        });
+        
+        // Message validation
         messageInput.addEventListener('input', function() {
             if (this.value.length < 10) {
                 this.setCustomValidity('Message should be at least 10 characters long');
+                this.classList.add('is-invalid');
             } else {
                 this.setCustomValidity('');
+                this.classList.remove('is-invalid');
             }
         });
     }
