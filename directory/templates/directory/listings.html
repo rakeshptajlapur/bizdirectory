@@ -13,6 +13,28 @@
         overflow: hidden;
     }
     
+    /* Mobile responsive hero section */
+    @media (max-width: 768px) {
+        .listings-hero {
+            min-height: 120px !important;
+            padding: 1.5rem 0 !important;
+        }
+        
+        .listings-hero h1 {
+            font-size: 1.5rem !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        .listings-hero .input-group {
+            max-width: 100% !important;
+        }
+        
+        .listings-hero .btn-lg {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+    
     /* Video background styles */
     .video-background {
         position: absolute;
@@ -45,6 +67,199 @@
         z-index: -1;
     }
     
+    /* Mobile Filter Overlay */
+    .mobile-filter-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        display: none;
+    }
+    
+    .mobile-filter-container {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        width: 85%;
+        max-width: 350px;
+        height: 100%;
+        background: white;
+        z-index: 1050;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .mobile-filter-container.show {
+        left: 0;
+    }
+    
+    .mobile-filter-header {
+        position: sticky;
+        top: 0;
+        background: white;
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+        z-index: 10;
+    }
+    
+    /* Mobile sticky filter button */
+    .mobile-filter-btn {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        z-index: 1030;
+        border-radius: 50px;
+        padding: 12px 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        font-weight: 500;
+    }
+    
+    /* Desktop business cards - horizontal layout */
+    @media (min-width: 769px) {
+        .desktop-business-card {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .desktop-business-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+        }
+        
+        .desktop-business-card .row {
+            margin: 0;
+        }
+        
+        .desktop-business-card .card-body {
+            padding: 1rem;
+        }
+        
+        .desktop-business-card h5.card-title {
+            font-size: 1.25rem;
+            line-height: 1.3;
+            margin-bottom: 0.75rem;
+        }
+        
+        .desktop-business-card .badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .desktop-business-card .stars i {
+            font-size: 1rem;
+        }
+        
+        .desktop-business-card .col-3 img {
+            height: 200px;
+            object-fit: cover;
+        }
+    }
+    
+    /* Mobile business cards - vertical layout like homepage */
+    @media (max-width: 768px) {
+        .mobile-business-card {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+        }
+        
+        .mobile-business-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+        }
+        
+        .mobile-business-card .card-img-top {
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .mobile-business-card .card-body {
+            padding: 0.75rem;
+        }
+        
+        .mobile-business-card h5.card-title {
+            font-size: 0.95rem;
+            line-height: 1.3;
+            margin-bottom: 0.5rem;
+        }
+        
+        .mobile-business-card .badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.4rem;
+        }
+        
+        .mobile-business-card .small {
+            font-size: 0.7rem;
+        }
+        
+        .mobile-business-card .stars i {
+            font-size: 0.8rem;
+        }
+        
+        .mobile-business-card .card-footer {
+            padding: 0.5rem 0.75rem;
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        /* Service count badge styling */
+        .mobile-business-card .card-footer .badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        /* Owner info styling */
+        .mobile-business-card .card-footer .small {
+            font-size: 0.65rem;
+            line-height: 1.2;
+        }
+        
+        /* Hide desktop filters on mobile */
+        .desktop-filters {
+            display: none;
+        }
+        
+        /* Results count styling */
+        .results-header {
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+        
+        /* Pagination adjustments */
+        .pagination {
+            margin: 0;
+        }
+        
+        .page-link {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+        }
+    }
+    
+    /* Show desktop filters on larger screens */
+    @media (min-width: 769px) {
+        .mobile-filter-btn,
+        .mobile-filter-overlay,
+        .mobile-filter-container {
+            display: none !important;
+        }
+        
+        .mobile-business-card {
+            display: none !important;
+        }
+    }
+    
+    /* Hide mobile cards on desktop */
+    @media (max-width: 768px) {
+        .desktop-business-card {
+            display: none !important;
+        }
+    }
+    
     /* Auto-suggestion styling */
     .search-autocomplete {
         border-radius: 0 0 1rem 1rem;
@@ -58,7 +273,7 @@
     }
     
     .search-suggestion-item {
-        padding: 1rem 1.25rem; /* Increased from 0.75rem 1rem */
+        padding: 1rem 1.25rem;
         cursor: pointer;
         white-space: nowrap;
         overflow: hidden;
@@ -66,7 +281,7 @@
     }
     
     .search-suggestion-item:hover {
-        background-color: #e9ecef; /* Changed from #f8f9fa to a darker grey */
+        background-color: #e9ecef;
     }
     
     .ui-state-active .search-suggestion-item {
@@ -75,35 +290,12 @@
         color: #212529 !important;
     }
     
-    /* Existing styles */
-    .listings-hero h1 {
-        font-size: 1.8rem;
-        margin-bottom: 1rem !important;
-    }
-    
-    .listings-hero .input-group {
-        max-width: 600px;
-        margin: 0 auto;
-    }
-    
-    /* More specific selectors to override jQuery UI's default styles */
-    .ui-menu .ui-menu-item-wrapper {
-        padding: 1rem 1.25rem !important; /* Enforce larger padding */
-    }
-    
-    .ui-menu .ui-menu-item-wrapper.ui-state-active {
-        margin: 0 !important;
-        background-color: #e9ecef !important; /* Light grey on active/hover */
-        border: none !important;
-        color: #212529 !important; /* Dark text */
-    }
-    
-    .ui-menu .ui-menu-item {
-        border-bottom: 1px solid #f0f0f0; /* Add subtle separators */
-    }
-    
-    .ui-menu .ui-menu-item:last-child {
-        border-bottom: none; /* Remove border from last item */
+    /* Mobile search adjustments */
+    @media (max-width: 576px) {
+        .search-suggestion-item {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
     }
 </style>
 {% endblock %}
@@ -118,19 +310,22 @@
     </div>
     <div class="hero-overlay"></div>
     
-    <div class="container position-relative py-5">
+    <div class="container position-relative py-3 py-md-5">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <h1 class="text-center text-white mb-4">Find Local Businesses</h1>
+            <div class="col-12 col-lg-8">
+                <h1 class="text-center text-white mb-3 mb-md-4">Find Local Businesses</h1>
                 
-                <!-- Search Form with Auto-suggestion -->
-                <form id="search-form" action="{% url 'directory:listings' %}" method="get" class="mb-4">
-                    <div class="input-group">
-                        <input type="text" id="search-input" name="query" class="form-control form-control-lg" 
-                               placeholder="Search businesses, services..." value="{{ request.GET.query|default:'' }}"
+                <!-- Mobile-Responsive Search Form -->
+                <form id="search-form" action="{% url 'directory:listings' %}" method="get" class="mb-3 mb-md-4">
+                    <div class="input-group input-group-lg">
+                        <input type="text" id="search-input" name="query" 
+                               class="form-control" 
+                               placeholder="Search businesses, services..." 
+                               value="{{ request.GET.query|default:'' }}"
                                autocomplete="off">
-                        <button class="btn btn-primary btn-lg" type="submit">
-                            <i class="bi bi-search"></i> Search
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search d-md-none"></i>
+                            <span class="d-none d-md-inline">Search</span>
                         </button>
                     </div>
                 </form>
@@ -141,9 +336,128 @@
 {% endblock %}
 
 {% block content %}
+<!-- Mobile Filter Button (only visible on mobile) -->
+<button class="btn btn-primary mobile-filter-btn d-md-none" id="mobileFilterBtn">
+    <i class="bi bi-funnel me-2"></i>Filters
+    {% if current_filters %}
+        <span class="badge bg-light text-primary ms-2">{{ current_filters|length }}</span>
+    {% endif %}
+</button>
+
+<!-- Mobile Filter Overlay -->
+<div class="mobile-filter-overlay" id="mobileFilterOverlay"></div>
+
+<!-- Mobile Filter Container -->
+<div class="mobile-filter-container" id="mobileFilterContainer">
+    <div class="mobile-filter-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Filters</h5>
+            <button class="btn btn-sm btn-outline-secondary" id="closeMobileFilter">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+    <div class="p-3">
+        <!-- Mobile Filter Content -->
+        <form id="mobile-filter-form" action="{% url 'directory:listings' %}" method="get">
+            {% if current_filters.query %}
+            <input type="hidden" name="query" value="{{ current_filters.query }}">
+            {% endif %}
+            
+            <!-- Category filter -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">Categories</label>
+                <div class="input-group input-group-sm mb-2">
+                    <input type="text" class="form-control" id="mobileCategorySearch" placeholder="Search categories...">
+                    <button class="btn btn-outline-secondary" type="button">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+                
+                <div class="overflow-auto" style="max-height: 200px;">
+                    {% for category in categories|slice:":10" %}
+                    <div class="form-check category-item">
+                        <input class="form-check-input mobile-filter-change" type="radio" name="category" 
+                               id="mobile-category-{{ category.id }}" value="{{ category.id }}"
+                               {% if current_filters.category|add:"0" == category.id %}checked{% endif %}>
+                        <label class="form-check-label" for="mobile-category-{{ category.id }}">
+                            {{ category.name }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Rating filter -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">Rating</label>
+                {% for i in '54321'|make_list %}
+                <div class="form-check">
+                    <input class="form-check-input mobile-filter-change" type="radio" name="rating" 
+                           id="mobile-rating-{{ i }}" value="{{ i }}"
+                           {% if current_filters.rating == i %}checked{% endif %}>
+                    <label class="form-check-label" for="mobile-rating-{{ i }}">
+                        {% with rating_int=i|add:"0" %}
+                        {% for j in '12345'|make_list %}
+                        <i class="bi bi-star{% if forloop.counter <= rating_int %}-fill{% endif %} text-warning"></i>
+                        {% endfor %}
+                        {% endwith %}
+                        & Up
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Trust & Safety filter -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">Trust & Safety</label>
+                <div class="form-check">
+                    <input class="form-check-input mobile-filter-change" type="radio" name="trust" 
+                           id="mobile-trust-gst" value="gst"
+                           {% if current_filters.trust == 'gst' %}checked{% endif %}>
+                    <label class="form-check-label" for="mobile-trust-gst">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                            <i class="bi bi-check-circle-fill"></i> GST Verified
+                        </span>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input mobile-filter-change" type="radio" name="trust" 
+                           id="mobile-trust-kyc" value="kyc"
+                           {% if current_filters.trust == 'kyc' %}checked{% endif %}>
+                    <label class="form-check-label" for="mobile-trust-kyc">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                            <i class="bi bi-shield-check"></i> KYC Completed
+                        </span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Pincode filter -->
+            <div class="mb-4">
+                <label for="mobile-pincode-filter" class="form-label fw-bold">Pincode</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="mobile-pincode-filter" name="pincode"
+                           placeholder="Enter pincode" value="{{ current_filters.pincode|default:'' }}"
+                           maxlength="6" pattern="\d*">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="bi bi-funnel"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Apply and Reset buttons -->
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                <a href="{% url 'directory:listings' %}" class="btn btn-outline-secondary">Clear All</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="row">
-    <!-- Filters Sidebar -->
-    <div class="col-lg-3">
+    <!-- Desktop Filters Sidebar -->
+    <div class="col-lg-3 desktop-filters">
         <div class="card mb-4 sticky-top" style="top: 90px; z-index: 1;">
             <div class="card-header bg-light">
                 <h5 class="mb-0">Filters</h5>
@@ -295,11 +609,11 @@
     </div>
 
     <!-- Listings content -->
-    <div class="col-lg-9">
+    <div class="col-12 col-lg-9">
         <!-- Active filters display -->
         {% if current_filters %}
-        <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
-            <span class="text-muted">Active filters:</span>
+        <div class="d-flex flex-wrap gap-2 mb-3 align-items-center results-header">
+            <span class="text-muted small">Active filters:</span>
             {% for key, value in current_filters.items %}
                 {% if key == 'category' %}
                     {% for cat in categories %}
@@ -336,49 +650,52 @@
         {% endif %}
         
         <!-- Results count -->
-        <p class="text-muted mb-4">Showing {{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ paginator.count }} businesses</p>
+        <p class="text-muted mb-3 mb-md-4 results-header">
+            Showing {{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ paginator.count }} businesses
+        </p>
         
-        <!-- Business listings with single column layout -->
-        <div class="row">
+        <!-- Desktop Business Listings (Horizontal Cards) -->
+        <div class="d-none d-md-block">
             {% for business in page_obj %}
-            <div class="col-12 mb-4">
-                <div class="card h-100 shadow-sm business-card">
+            <div class="mb-4">
+                <div class="card h-100 shadow-sm desktop-business-card" onclick="window.location.href='{% url 'directory:business_detail' business.pk %}'">
                     <div class="row g-0 h-100">
-                        <!-- Left side - Image with fixed aspect ratio and category overlay -->
-                        <div class="col-4 col-md-3 position-relative">
-                            <img src="{{ business.get_primary_image_url }}" class="img-fluid h-100 w-100" alt="{{ business.name }}" style="object-fit: cover;">
+                        <!-- Image column -->
+                        <div class="col-3 position-relative">
+                            <img src="{{ business.get_primary_image_url }}" 
+                                 class="img-fluid h-100 w-100" 
+                                 alt="{{ business.name }}" 
+                                 style="object-fit: cover;">
                             <span class="position-absolute top-0 start-0 m-2 badge category-badge">
                                 {{ business.category.name }}
                             </span>
                         </div>
                         
-                        <!-- Right side - Content -->
-                        <div class="col-8 col-md-9">
+                        <!-- Content column -->
+                        <div class="col-9">
                             <div class="card-body d-flex flex-column h-100">
-                                <!-- Business name and rating -->
+                                <!-- Business name -->
                                 <h5 class="card-title mb-2">{{ business.name }}</h5>
                                 
                                 <!-- Trust & Safety Tags -->
-                                <div class="d-flex flex-wrap gap-1 mb-2">
+                                <div class="d-flex flex-wrap gap-2 mb-2">
                                     {% if business.gst_verified %}
-                                    <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.7rem;">
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
                                         <i class="bi bi-check-circle-fill me-1"></i>GST Verified
                                     </span>
                                     {% endif %}
                                     
                                     {% if business.kyc_status == 'completed' %}
-                                    <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.7rem;">
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
                                         <i class="bi bi-shield-check me-1"></i>KYC Completed
-                                    </span>
-                                    {% elif business.kyc_status == 'pending' %}
-                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 0.7rem;">
-                                        <i class="bi bi-clock-history me-1"></i>KYC Pending
                                     </span>
                                     {% endif %}
                                 </div>
                                 
-                                <!-- Description - New addition -->
-                                <p class="small text-muted mb-2 line-clamp-2">{{ business.description }}</p>
+                                <!-- Description -->
+                                <p class="text-muted mb-2 line-clamp-2">
+                                    {{ business.description }}
+                                </p>
                                 
                                 <!-- Star rating -->
                                 <div class="d-flex align-items-center mb-2">
@@ -390,35 +707,38 @@
                                     <span class="text-muted small">({{ business.approved_reviews_count }})</span>
                                 </div>
                                 
-                                <!-- Service Tags - Increased to 5 -->
-                                <div class="d-flex flex-wrap gap-1 mb-2">
+                                <!-- Service Tags -->
+                                <div class="d-flex flex-wrap gap-1 mb-auto">
                                     {% for service in business.services.all|slice:":5" %}
-                                        <span class="badge rounded-pill border border-secondary text-secondary bg-white">{{ service.name }}</span>
-                                    {% empty %}
-                                        <span class="text-muted small">No services listed</span>
+                                    <span class="badge bg-light text-dark border">{{ service.name }}</span>
                                     {% endfor %}
+                                    {% if business.services.count > 5 %}
+                                    <span class="badge bg-secondary">+{{ business.services.count|add:"-5" }} more</span>
+                                    {% endif %}
                                 </div>
                                 
-                                <!-- Spacer to push footer to bottom -->
-                                <div class="mt-auto"></div>
-                                
-                                <!-- Owner and location info on one line -->
-                                <div class="mt-2 border-top pt-2">
-                                    <p class="small text-muted mb-0">
-                                        <i class="bi bi-person-circle me-1"></i> Owner: <span class="text-capitalize">{{ business.owner.get_full_name|default:business.owner.username|title }}</span>
-                                        <span class="mx-2">|</span>
-                                        <i class="bi bi-geo-alt me-1"></i> {{ business.city }} - {{ business.pincode }}
-                                    </p>
+                                <!-- Owner and Location Info -->
+                                <div class="mt-2 pt-2 border-top">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <small class="text-muted">
+                                                <i class="bi bi-person me-1"></i>{{ business.owner.get_full_name|default:business.owner.username }}
+                                            </small>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted">
+                                                <i class="bi bi-geo-alt me-1"></i>{{ business.city }}, {{ business.pincode }}
+                                            </small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <a href="{% url 'directory:business_detail' business.pk %}" class="stretched-link" aria-label="View {{ business.name }}"></a>
                         </div>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <div class="col-12 text-center py-5">
+            <div class="text-center py-5">
                 <div class="py-5">
                     <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
                     <h3 class="mt-3">No businesses found</h3>
@@ -429,37 +749,113 @@
             {% endfor %}
         </div>
         
-        <!-- Pagination -->
+        <!-- Mobile Business Listings (Vertical Cards like Homepage) -->
+        <div class="d-md-none">
+            <div class="row g-3">
+                {% for business in page_obj %}
+                <div class="col-6">
+                    <div class="card h-100 shadow-sm mobile-business-card" onclick="window.location.href='{% url 'directory:business_detail' business.pk %}'">
+                        <div class="position-relative">
+                            <img src="{{ business.get_primary_image_url }}" class="card-img-top" alt="{{ business.name }}">
+                            <span class="position-absolute top-0 start-0 m-1 badge category-badge">
+                                {{ business.category.name }}
+                            </span>
+                        </div>
+                        
+                        <div class="card-body">
+                            <!-- Trust & Safety Tags -->
+                            <div class="d-flex flex-wrap gap-1 mb-2">
+                                {% if business.gst_verified %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                </span>
+                                {% endif %}
+                                
+                                {% if business.kyc_status == 'completed' %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                    <i class="bi bi-shield-check"></i>
+                                </span>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Business name -->
+                            <h5 class="card-title mb-2">{{ business.name }}</h5>
+                            
+                            <!-- Star rating -->
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="stars me-2">
+                                    {% for i in "12345"|make_list %}
+                                        <i class="bi bi-star{% if forloop.counter <= business.avg_rating|default:0 %}-fill{% endif %} text-warning"></i>
+                                    {% endfor %}
+                                </div>
+                                <small class="text-muted">({{ business.approved_reviews_count }})</small>
+                            </div>
+                        </div>
+
+                        <!-- Service Count and Owner Info in Footer -->
+                        <div class="card-footer">
+                            <!-- Service count -->
+                            <div class="mb-2">
+                                {% if business.services.count > 0 %}
+                                    <span class="badge bg-light text-dark border">{{ business.services.count }}+ services</span>
+                                {% else %}
+                                    <span class="text-muted small">No services listed</span>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Owner and Location info -->
+                            <p class="small text-muted mb-0">
+                                Owner: <span class="text-capitalize">{{ business.owner.get_full_name|default:business.owner.username|title }}</span> 
+                                <span class="mx-1">|</span>
+                                <i class="bi bi-geo-alt me-1"></i>{{ business.city }}, {{ business.pincode }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="py-5">
+                        <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
+                        <h3 class="mt-3">No businesses found</h3>
+                        <p class="text-muted">Try adjusting your filters or search terms</p>
+                        <a href="{% url 'directory:listings' %}" class="btn btn-outline-primary mt-3">Clear all filters</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Mobile-Responsive Pagination -->
         {% if page_obj.paginator.num_pages > 1 %}
-        <nav aria-label="Page navigation" class="mt-5">
-            <ul class="pagination justify-content-center">
+        <nav aria-label="Page navigation" class="mt-4 mt-md-5">
+            <ul class="pagination justify-content-center flex-wrap">
                 {% if page_obj.has_previous %}
                 <li class="page-item">
                     <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page=1" aria-label="First">
-                        <span aria-hidden="true">&laquo;&laquo;</span>
+                        <span class="d-none d-md-inline">&laquo;&laquo;</span>
+                        <span class="d-md-none">First</span>
                     </a>
                 </li>
                 <li class="page-item">
                     <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page={{ page_obj.previous_page_number }}" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
+                        <span class="d-none d-md-inline">&laquo;</span>
+                        <span class="d-md-none">Prev</span>
                     </a>
-                </li>
-                {% else %}
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;&laquo;</a>
-                </li>
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;</a>
                 </li>
                 {% endif %}
                 
+                <!-- Show fewer page numbers on mobile -->
                 {% for i in page_obj.paginator.page_range %}
                     {% if i == page_obj.number %}
                     <li class="page-item active" aria-current="page">
                         <span class="page-link">{{ i }}</span>
                     </li>
                     {% elif i > page_obj.number|add:"-3" and i < page_obj.number|add:"3" %}
-                    <li class="page-item">
+                    <li class="page-item d-none d-md-inline-block">
+                        <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page={{ i }}">{{ i }}</a>
+                    </li>
+                    {% elif i > page_obj.number|add:"-2" and i < page_obj.number|add:"2" %}
+                    <li class="page-item d-md-none">
                         <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page={{ i }}">{{ i }}</a>
                     </li>
                     {% endif %}
@@ -468,20 +864,15 @@
                 {% if page_obj.has_next %}
                 <li class="page-item">
                     <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page={{ page_obj.next_page_number }}" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
+                        <span class="d-none d-md-inline">&raquo;</span>
+                        <span class="d-md-none">Next</span>
                     </a>
                 </li>
                 <li class="page-item">
                     <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page={{ page_obj.paginator.num_pages }}" aria-label="Last">
-                        <span aria-hidden="true">&raquo;&raquo;</span>
+                        <span class="d-none d-md-inline">&raquo;&raquo;</span>
+                        <span class="d-md-none">Last</span>
                     </a>
-                </li>
-                {% else %}
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;</a>
-                </li>
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;&raquo;</a>
                 </li>
                 {% endif %}
             </ul>
@@ -494,6 +885,44 @@
 {% block extra_js %}
 <script>
     $(document).ready(function() {
+        // Mobile filter functionality
+        $('#mobileFilterBtn').on('click', function() {
+            $('#mobileFilterOverlay').fadeIn(300);
+            $('#mobileFilterContainer').addClass('show');
+            $('body').css('overflow', 'hidden');
+        });
+        
+        $('#closeMobileFilter, #mobileFilterOverlay').on('click', function() {
+            closeMobileFilter();
+        });
+        
+        function closeMobileFilter() {
+            $('#mobileFilterOverlay').fadeOut(300);
+            $('#mobileFilterContainer').removeClass('show');
+            $('body').css('overflow', 'auto');
+        }
+        
+        // Mobile filter changes
+        $('.mobile-filter-change').on('change', function() {
+            // Auto-submit on mobile for better UX
+            setTimeout(function() {
+                $('#mobile-filter-form').submit();
+            }, 300);
+        });
+        
+        // Mobile category search
+        $('#mobileCategorySearch').on('input', function() {
+            const searchTerm = $(this).val().toLowerCase();
+            $('.category-item').each(function() {
+                const categoryName = $(this).find('label').text().toLowerCase();
+                if (categoryName.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+        
         // Auto-suggestions for search box
         $("#search-input").autocomplete({
             source: function(request, response) {
@@ -518,7 +947,6 @@
                 return false;
             }
         }).data("ui-autocomplete")._renderItem = function(ul, item) {
-            // Highlight the matching text
             const searchTerm = this.term.trim();
             const regex = new RegExp("(" + searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + ")", "gi");
             const highlightedText = item.label.replace(regex, '<strong class="text-primary">$1</strong>');
@@ -529,7 +957,7 @@
                 .appendTo(ul);
         };
 
-        // Existing filters code
+        // Desktop filters (existing code)
         $('.filter-change').on('change', function() {
             $('#filter-form').submit();
         });
@@ -547,38 +975,12 @@
             window.location.href = window.location.pathname + (searchParams.toString() ? '?' + searchParams.toString() : '');
         });
         
-        $('#pincode-filter').on('input', function() {
+        // Prevent non-numeric input in pincode fields
+        $('#pincode-filter, #mobile-pincode-filter').on('input', function() {
             $(this).val($(this).val().replace(/[^0-9]/g, ''));
         });
         
-        // Show/Hide more categories
-        let showMoreCategories = true;
-        $('#showMoreCategories').on('click', function() {
-            $('#moreCategoriesContainer').removeClass('d-none');
-            $(this).addClass('d-none');
-            $('#showLessCategories').removeClass('d-none');
-        });
-        
-        $('#showLessCategories').on('click', function() {
-            $('#moreCategoriesContainer').addClass('d-none');
-            $(this).addClass('d-none');
-            $('#showMoreCategories').removeClass('d-none');
-        });
-        
-        // Category filter UI improvements
-        $("#showMoreCategories").click(function() {
-            $("#moreCategoriesContainer").removeClass("d-none");
-            $(this).addClass("d-none");
-            $("#showLessCategories").removeClass("d-none");
-        });
-
-        $("#showLessCategories").click(function() {
-            $("#moreCategoriesContainer").addClass("d-none");
-            $(this).addClass("d-none");
-            $("#showMoreCategories").removeClass("d-none");
-        });
-
-        // Category search functionality
+        // Desktop category search and expand/collapse
         $("#categorySearch").on("input", function() {
             const searchTerm = $(this).val().toLowerCase();
             $(".category-item").each(function() {
@@ -590,17 +992,28 @@
                 }
             });
             
-            // Show all containers when searching
             if (searchTerm.length > 0) {
                 $("#moreCategoriesContainer").removeClass("d-none");
                 $("#showMoreCategories").addClass("d-none");
                 $("#showLessCategories").removeClass("d-none");
             } else {
-                // Reset to default state when search is cleared
                 $("#moreCategoriesContainer").addClass("d-none");
                 $("#showMoreCategories").removeClass("d-none");
                 $("#showLessCategories").addClass("d-none");
             }
+        });
+        
+        // Show/Hide more categories
+        $("#showMoreCategories").click(function() {
+            $("#moreCategoriesContainer").removeClass("d-none");
+            $(this).addClass("d-none");
+            $("#showLessCategories").removeClass("d-none");
+        });
+
+        $("#showLessCategories").click(function() {
+            $("#moreCategoriesContainer").addClass("d-none");
+            $(this).addClass("d-none");
+            $("#showMoreCategories").removeClass("d-none");
         });
     });
 </script>
