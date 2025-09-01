@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -5,6 +6,8 @@ from django.db.models import Sum, Q
 from decimal import Decimal
 from .models import AffiliateProfile, AffiliateReferral, AffiliatePayment
 from .forms import AffiliateApplicationForm, BankDetailsForm, KYCDocumentsForm
+
+logger = logging.getLogger(__name__)
 
 @login_required
 def affiliate_dashboard(request):
@@ -101,51 +104,15 @@ def apply_affiliate(request):
         affiliate = None
 
     if request.method == 'POST':
-        try:
-            form = AffiliateApplicationForm(request.POST, request.FILES, instance=affiliate)
+        form = AffiliateApplicationForm(request.POST, request.FILES, instance=affiliate)
+        if form.is_valid():
+            affiliate = form.save(commit=False)
+            affiliate.user = request.user
+            affiliate.status = 'pending'
+            affiliate.save()
             
-            # Debug: Print form data
-            print("POST data:", request.POST)
-            print("FILES data:", request.FILES)
-            print("Form is valid:", form.is_valid())
-            
-            if form.is_valid():
-                affiliate = form.save(commit=False)
-                affiliate.user = request.user
-                affiliate.status = 'pending'
-                
-                # Handle file uploads manually if needed
-                aadhar_file = request.FILES.get('aadhar_card')
-                pan_file = request.FILES.get('pan_card')
-                
-                if aadhar_file:
-                    # Validate file
-                    if not validate_upload_file(aadhar_file):
-                        messages.error(request, "Invalid Aadhar card file. Please upload JPG, PNG, or PDF under 5MB.")
-                        return render(request, 'affiliate/apply.html', {'form': form, 'affiliate': affiliate})
-                    affiliate.aadhar_card = aadhar_file
-                
-                if pan_file:
-                    # Validate file
-                    if not validate_upload_file(pan_file):
-                        messages.error(request, "Invalid PAN card file. Please upload JPG, PNG, or PDF under 5MB.")
-                        return render(request, 'affiliate/apply.html', {'form': form, 'affiliate': affiliate})
-                    affiliate.pan_card = pan_file
-                
-                affiliate.save()
-                
-                messages.success(request, "Your affiliate application has been submitted for review.")
-                return redirect('affiliate:dashboard')
-            else:
-                print("Form errors:", form.errors)
-                for field, errors in form.errors.items():
-                    for error in errors:
-                        messages.error(request, f"{field}: {error}")
-        except Exception as e:
-            print(f"Error in apply_affiliate: {e}")
-            import traceback
-            print(traceback.format_exc())
-            messages.error(request, "An error occurred while submitting your application. Please try again.")
+            messages.success(request, "Your affiliate application with KYC documents has been submitted for review.")
+            return redirect('affiliate:dashboard')
     else:
         form = AffiliateApplicationForm(instance=affiliate)
 
@@ -219,19 +186,11 @@ def upload_kyc_documents(request):
         return redirect('affiliate:apply')
     
     if request.method == 'POST':
-        try:
-            form = KYCDocumentsForm(request.POST, request.FILES, instance=affiliate)
-            if form.is_valid():
-                form.save()
-                messages.success(request, "KYC documents uploaded successfully.")
-                return redirect('affiliate:dashboard')
-            else:
-                for field, errors in form.errors.items():
-                    for error in errors:
-                        messages.error(request, f"{field}: {error}")
-        except Exception as e:
-            print(f"Error uploading KYC documents: {e}")
-            messages.error(request, "An error occurred while uploading documents.")
+        form = KYCDocumentsForm(request.POST, request.FILES, instance=affiliate)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "KYC documents uploaded successfully.")
+            return redirect('affiliate:dashboard')
     else:
         form = KYCDocumentsForm(instance=affiliate)
     
