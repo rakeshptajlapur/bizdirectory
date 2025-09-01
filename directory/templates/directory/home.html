@@ -17,42 +17,103 @@
     <div class="container position-relative">
         <div class="row justify-content-center">
             <div class="col-lg-10">
+                <!-- Mobile-first search card design -->
                 <div class="search-card">
-                    <h1 class="text-center mb-4">Find The Best Local Businesses</h1>
-                    <form method="get" action="{% url 'directory:listings' %}" class="row g-3">
-                        <div class="col-md-4">
-                            <label for="searchQuery" class="form-label">What are you looking for?</label>
-                            <input type="text" class="form-control" id="searchQuery" name="query" 
-                                   placeholder="Search businesses..." value="{{ search_query }}">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="categorySelect" class="form-label">Category</label>
-                            <select class="form-select" id="categorySelect" name="category">
-                                <option value="">All Categories</option>
-                                {% for category in categories %}
-                                <option value="{{ category.id }}" 
-                                        {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
-                                    {{ category.name }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="pincodeInput" class="form-label">Pincode</label>
-                            <input type="text" class="form-control" id="pincodeInput" name="pincode" 
-                                   placeholder="Enter Pincode" value="{{ selected_pincode }}">
-                        </div>
-                        <div class="col-md-2 d-flex flex-column justify-content-end position-relative">
-                            <button type="submit" class="btn btn-primary w-100">Search</button>
-                            {% if search_query or selected_category or selected_pincode %}
-                            <div class="position-absolute" style="top: 100%; width: 100%; text-align: center; margin-top: 5px;">
-                                <a href="{% url 'directory:home' %}" class="clear-filter small">
-                                    <i class="bi bi-x-circle-fill"></i> Clear filters
-                                </a>
+                    <div class="text-center mb-4">
+                        <h1 class="hero-title">Find The Best Local Businesses</h1>
+                        <p class="hero-subtitle d-none d-md-block">Discover trusted businesses in your area with verified reviews</p>
+                    </div>
+                    
+                    <!-- Desktop search form (full version) -->
+                    <form method="get" action="{% url 'directory:listings' %}" class="search-form d-none d-md-block">
+                        <!-- Search input with icon -->
+                        <div class="search-input-group mb-3">
+                            <div class="input-with-icon">
+                                <i class="bi bi-search search-icon"></i>
+                                <input type="text" class="form-control search-input" 
+                                       id="searchQuery" name="query" 
+                                       placeholder="Search businesses, services..." 
+                                       autocomplete="off">
                             </div>
-                            {% endif %}
+                        </div>
+                        
+                        <!-- Category and Pincode for desktop -->
+                        <div class="row g-2 mb-4">
+                            <div class="col-7">
+                                <div class="input-with-icon">
+                                    <i class="bi bi-tag category-icon"></i>
+                                    <select class="form-select category-select" name="category">
+                                        <option value="">All Categories</option>
+                                        {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="input-with-icon">
+                                    <i class="bi bi-geo-alt location-icon"></i>
+                                    <input type="text" class="form-control pincode-input" 
+                                           name="pincode" placeholder="Pincode" maxlength="6">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Search button for desktop -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-search">
+                                <i class="bi bi-search me-2"></i>Find Businesses
+                            </button>
                         </div>
                     </form>
+                    
+                    <!-- Mobile search form (simplified version) -->
+                    <div class="d-md-none">
+                        <form method="get" action="{% url 'directory:listings' %}" class="search-form-mobile">
+                            <!-- Simple search input only -->
+                            <div class="search-input-group mb-3">
+                                <div class="input-with-icon">
+                                    <i class="bi bi-search search-icon"></i>
+                                    <input type="text" class="form-control search-input" 
+                                           id="mobileSearchQuery" name="query" 
+                                           placeholder="Search businesses, services..." 
+                                           autocomplete="off">
+                                </div>
+                            </div>
+                            
+                            <!-- Search button for mobile -->
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary btn-search">
+                                    <i class="bi bi-search me-2"></i>Find Businesses
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Advanced search link for mobile -->
+                        <div class="text-center">
+                            <a href="{% url 'directory:listings' %}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-funnel me-2"></i>Advanced Search & Filters
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick stats (mobile-friendly) -->
+                    <div class="quick-stats d-none d-sm-flex">
+                        <div class="stat-item">
+                            <strong>5000+</strong>
+                            <span>Businesses</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <strong>50+</strong>
+                            <span>Categories</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <strong>4.8★</strong>
+                            <span>Average Rating</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -111,31 +172,32 @@
             {% for business in category_businesses %}
             <div class="carousel-item">
                 <div class="card h-100 shadow-sm business-card">
-                    <!-- Card image -->
-                    <img src="{{ business.get_primary_image_url }}" class="card-img-top" alt="{{ business.name }}" height="150" style="object-fit: cover;">
+                    <!-- Card image with category badge -->
+                    <div class="position-relative">
+                        <img src="{{ business.get_primary_image_url }}" class="card-img-top" alt="{{ business.name }}" height="150" style="object-fit: cover;">
+                        <span class="position-absolute top-0 start-0 m-2 badge category-badge">
+                            {{ business.category.name }}
+                        </span>
+                    </div>
                     
                     <div class="card-body py-2">
-                        <!-- Business name and rating -->
-                        <h5 class="card-title fs-6 mb-1">{{ business.name }}</h5>
-                        
-                        <!-- Trust & Safety Tags - add after business name -->
+                        <!-- Trust & Safety Tags -->
                         <div class="d-flex flex-wrap gap-1 mb-2">
-                            {% if business.gst_number and business.gst_verified %}
-                            <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.7rem;">
-                                <i class="bi bi-check-circle-fill me-1"></i>GST Verified
+                            {% if business.gst_verified %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.65rem;">
+                                <i class="bi bi-check-circle-fill"></i>
                             </span>
                             {% endif %}
                             
                             {% if business.kyc_status == 'completed' %}
-                            <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.7rem;">
-                                <i class="bi bi-shield-check me-1"></i>KYC Completed
-                            </span>
-                            {% elif business.kyc_status == 'pending' %}
-                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 0.7rem;">
-                                <i class="bi bi-clock-history me-1"></i>KYC Pending
+                            <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.65rem;">
+                                <i class="bi bi-shield-check"></i>
                             </span>
                             {% endif %}
                         </div>
+                        
+                        <!-- Business name -->
+                        <h5 class="card-title fs-6 mb-1">{{ business.name }}</h5>
                         
                         <!-- Star rating -->
                         <div class="d-flex align-items-center mb-2">
@@ -146,27 +208,24 @@
                             </div>
                             <small class="text-muted">({{ business.approved_reviews_count }})</small>
                         </div>
-
-                     
                     </div>
 
-                    <!-- Service Tags - update your service tags section -->
-                    <div class="card-body py-2 border-top">
-                        <div class="d-flex flex-nowrap overflow-hidden gap-1">
-                            {% for service in business.services.all|slice:":2" %}
-                                <span class="badge rounded-pill border border-secondary text-secondary bg-white">{{ service.name }}</span>
-                            {% empty %}
-                                <span class="text-muted small">No services listed</span>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                    <!-- Location info in footer - replace your current footer section -->
+                    <!-- Service count and owner info in footer -->
                     <div class="card-footer bg-light py-2">
+                        <!-- Service count -->
+                        <div class="mb-1">
+                            {% if business.services.count > 0 %}
+                                <span class="badge bg-light text-dark border">{{ business.services.count }}+ services</span>
+                            {% else %}
+                                <span class="text-muted small">No services listed</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Owner and location info -->
                         <p class="small text-muted mb-0">
                              Owner: <span class="text-capitalize">{{ business.owner.get_full_name|default:business.owner.username|title }}</span> 
                             <span class="mx-1">|</span>
-                            <i class="bi bi-geo-alt me-1"></i> Pincode: {{ business.pincode }}
+                            <i class="bi bi-geo-alt me-1"></i>{{ business.city }}, {{ business.pincode }}
                         </p>
                     </div>
 
@@ -223,7 +282,7 @@
 {% block extra_js %}
 <script>
 $(document).ready(function() {
-    // Search query autocomplete
+    // Desktop search query autocomplete
     $("#searchQuery").autocomplete({
         source: function(request, response) {
             $.ajax({
@@ -241,8 +300,26 @@ $(document).ready(function() {
         }
     });
     
-    // Pincode autocomplete
-    $("#pincodeInput").autocomplete({
+    // Mobile search query autocomplete
+    $("#mobileSearchQuery").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "{% url 'directory:search_suggestions' %}",
+                data: { term: request.term },
+                dataType: "json",
+                success: function(data) {
+                    response(data);
+                }
+            });
+        },
+        minLength: 2,
+        classes: {
+            "ui-autocomplete": "custom-autocomplete shadow-sm"
+        }
+    });
+    
+    // Pincode autocomplete (desktop only)
+    $(".pincode-input").autocomplete({
         source: function(request, response) {
             $.ajax({
                 url: "{% url 'directory:pincode_suggestions' %}",
@@ -266,93 +343,292 @@ $(document).ready(function() {
         $(this).parent().removeClass("shadow-sm");
     });
 });
+
+// Keep your existing carousel code here...
 </script>
 
 <style>
 .custom-autocomplete {
     z-index: 2000;
-    max-height: 300px;
-    overflow-y: auto;
-    padding: 5px 0;
-    border: 1px solid #ddd;
-    background-color: white;
-    border-radius: 4px;
+    border-radius: 12px !important;
+    border: 1px solid #e9ecef !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
-.ui-menu-item {
-    padding: 8px 15px !important;
+.custom-autocomplete .ui-menu-item {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.custom-autocomplete .ui-menu-item:last-child {
+    border-bottom: none;
+}
+
+.custom-autocomplete .ui-state-active {
+    background: #f8f9fa !important;
     border: none !important;
-    border-radius: 0 !important;
+    color: #0d6efd !important;
 }
+</style>
+{% endblock %}
 
-.ui-state-active, .ui-menu-item:hover {
-    background-color: #e9ecef !important; /* Slightly darker grey background */
-    border: none !important;
-    margin: 0 !important;
-    color: #212529 !important; /* Dark text color */
-}
-
-/* Fix for text visibility on hover */
-.ui-menu .ui-menu-item-wrapper.ui-state-active {
-    color: #0d6efd !important; /* Blue text on hover */
-    font-weight: 500 !important;
-}
-
-/* Make sure the text stays visible */
-.ui-autocomplete .ui-menu-item:hover .ui-menu-item-wrapper {
-    color: #0d6efd !important; /* Blue text on hover */
-}
-
-/* Scroll indicator styles */
-.scroll-indicator-container {
-    height: 3px;
-    background-color: #f0f0f0;
-    margin-top: 10px;
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.scroll-indicator {
-    height: 100%;
-    background-color: #0d6efd;
-    width: 30%;
-    border-radius: 3px;
-    transition: transform 0.3s ease-out;
-}
-
-/* Show horizontal scrollability */
-.business-carousel {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
-    position: relative;
-}
-
-.business-carousel::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-}
-
-/* Add subtle indicators on sides when there's more content */
-.business-carousel::after {
-    content: '→';
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255,255,255,0.8);
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    border-radius: 50%;
-    color: #0d6efd;
-    font-weight: bold;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    opacity: 0.8;
-}
-
-/* Hide the right arrow when at the end */
-.business-carousel.at-end::after {
-    display: none;
-}
+{% block extra_css %}
+<style>
+    /* Enhanced Hero Section */
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .hero-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+    }
+    
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1;
+    }
+    
+    .container.position-relative {
+        z-index: 2;
+    }
+    
+    /* Modern search card */
+    .search-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    /* Typography */
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+    }
+    
+    .hero-subtitle {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+    
+    /* Search form styling */
+    .search-form,
+    .search-form-mobile {
+        margin-top: 2rem;
+    }
+    
+    .input-with-icon {
+        position: relative;
+    }
+    
+    .input-with-icon i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        z-index: 3;
+        font-size: 1.1rem;
+    }
+    
+    .search-input,
+    .category-select,
+    .pincode-input {
+        padding: 1rem 1rem 1rem 3rem !important;
+        border: 2px solid #e9ecef;
+        border-radius: 16px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+    
+    .search-input:focus,
+    .category-select:focus,
+    .pincode-input:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    .btn-search {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 16px;
+        background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+        border: none;
+        box-shadow: 0 8px 25px rgba(13, 110, 253, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-search:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 35px rgba(13, 110, 253, 0.4);
+        background: linear-gradient(45deg, #0b5ed7, #0aa2c0);
+    }
+    
+    /* Advanced search link styling */
+    .btn-outline-primary.btn-sm {
+        padding: 0.6rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 500;
+        border: 2px solid #0d6efd;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-primary.btn-sm:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+    }
+    
+    /* Quick stats */
+    .quick-stats {
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .stat-item {
+        text-align: center;
+        color: #2c3e50;
+    }
+    
+    .stat-item strong {
+        display: block;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #0d6efd;
+    }
+    
+    .stat-item span {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .stat-divider {
+        width: 1px;
+        height: 30px;
+        background: #e9ecef;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .hero-section {
+            min-height: 90vh;
+            padding: 2rem 0;
+        }
+        
+        .search-card {
+            padding: 2rem 1.5rem;
+            margin: 1rem;
+            border-radius: 20px;
+        }
+        
+        .hero-title {
+            font-size: 2rem;
+            line-height: 1.3;
+        }
+        
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+        
+        .search-input {
+            padding: 0.875rem 0.875rem 0.875rem 2.75rem !important;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+        
+        .input-with-icon i {
+            left: 0.875rem;
+            font-size: 1rem;
+        }
+        
+        .btn-search {
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 12px;
+        }
+        
+        .search-form-mobile {
+            margin-top: 1.5rem;
+        }
+        
+        .quick-stats {
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+        }
+        
+        .stat-item strong {
+            font-size: 1.1rem;
+        }
+        
+        .stat-item span {
+            font-size: 0.8rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .hero-title {
+            font-size: 1.75rem;
+        }
+        
+        .search-card {
+            padding: 1.5rem 1rem;
+            margin: 0.5rem;
+        }
+        
+        .search-form-mobile {
+            margin-top: 1.5rem;
+        }
+    }
+    
+    /* Autocomplete styling to match */
+    .ui-autocomplete {
+        border-radius: 12px !important;
+        border: 2px solid #e9ecef !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+        margin-top: 4px !important;
+    }
+    
+    .ui-menu-item-wrapper {
+        padding: 0.875rem 1rem !important;
+        border-radius: 8px !important;
+        margin: 4px !important;
+    }
+    
+    .ui-state-active .ui-menu-item-wrapper {
+        background: #f8f9fa !important;
+        border: 1px solid #0d6efd !important;
+        color: #0d6efd !important;
+    }
 </style>
 {% endblock %}
