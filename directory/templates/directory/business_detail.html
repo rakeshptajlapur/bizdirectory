@@ -763,5 +763,44 @@
             </div>
         `;
     }
+    
+    // Enquiry form validation
+    const enquiryForm = document.querySelector('form[action*="send_enquiry"]');
+    if (enquiryForm) {
+        const emailInput = enquiryForm.querySelector('input[name="email"]');
+        const messageInput = enquiryForm.querySelector('textarea[name="message"]');
+        
+        emailInput.addEventListener('input', function() {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(this.value)) {
+                this.setCustomValidity('Please enter a valid email address');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+        
+        messageInput.addEventListener('input', function() {
+            if (this.value.length < 10) {
+                this.setCustomValidity('Message should be at least 10 characters long');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+
+    // Coupon form validation
+    const couponForm = document.querySelector('form[action*="request_coupon"]');
+    if (couponForm) {
+        const emailInput = couponForm.querySelector('input[name="email"]');
+        
+        emailInput.addEventListener('input', function() {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(this.value)) {
+                this.setCustomValidity('Please enter a valid email address');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
 </script>
 {% endblock %}
