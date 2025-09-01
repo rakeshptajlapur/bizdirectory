@@ -31,6 +31,31 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-9x5vlq=rqgfc)xe&g!6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
+# Force HTTP for local development
+if DEBUG:
+    # Completely disable all HTTPS/SSL for local development
+    SECURE_SSL_REDIRECT = False
+    SECURE_HSTS_SECONDS = 0
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
+    SECURE_CONTENT_TYPE_NOSNIFF = False
+    SECURE_BROWSER_XSS_FILTER = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    USE_TLS = False
+    
+    # Force HTTP URLs
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+    
+    # Local CSRF trusted origins - HTTP only
+    CSRF_TRUSTED_ORIGINS = [
+        'http://127.0.0.1:8000',
+        'http://localhost:8000',
+    ]
+    
+    # Override any production settings
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
+
 # Improved ALLOWED_HOSTS handling
 allowed_hosts_str = os.getenv('ALLOWED_HOSTS', '')
 ALLOWED_HOSTS = [host for host in allowed_hosts_str.split(',') if host.strip()]
@@ -39,14 +64,21 @@ ALLOWED_HOSTS = [host for host in allowed_hosts_str.split(',') if host.strip()]
 # CSRF Trusted Origins - domains that can submit forms to your site
 CSRF_TRUSTED_ORIGINS = []
 
-# Add all allowed hosts with https:// prefix to CSRF_TRUSTED_ORIGINS
-for host in ALLOWED_HOSTS:
-    if host and not host.startswith('.') and not host.startswith('*'):
-        CSRF_TRUSTED_ORIGINS.append(f'https://{host}')
-        CSRF_TRUSTED_ORIGINS.append(f'http://{host}')
-    elif host and host.startswith('.'):
-        CSRF_TRUSTED_ORIGINS.append(f'https://*{host}')
-        CSRF_TRUSTED_ORIGINS.append(f'http://*{host}')
+if DEBUG:
+    # Local development - HTTP only
+    CSRF_TRUSTED_ORIGINS = [
+        'http://127.0.0.1:8000',
+        'http://localhost:8000',
+    ]
+else:
+    # Production - HTTPS
+    # Add all allowed hosts with https:// prefix to CSRF_TRUSTED_ORIGINS
+    for host in ALLOWED_HOSTS:
+        if host and not host.startswith('.') and not host.startswith('*'):
+            CSRF_TRUSTED_ORIGINS.append(f'https://{host}')
+        elif host and host.startswith('.'):
+            CSRF_TRUSTED_ORIGINS.append(f'https://*{host}')
+            CSRF_TRUSTED_ORIGINS.append(f'http://*{host}')
 
 # Application definition
 
@@ -74,7 +106,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    # Comment out SecurityMiddleware for local development
+    # 'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -82,7 +115,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'allauth.account.middleware.AccountMiddleware',  # ADD THIS LINE
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -261,16 +294,16 @@ CELERY_BROKER_CONNECTION_MAX_RETRIES = 3
 CELERY_BROKER_CONNECTION_RETRY = True
 CELERY_RESULT_EXPIRES = 3600
 
-# Security settings for production
-if not DEBUG:
-    # HTTPS settings
+# Security settings for production ONLY
+if not DEBUG and ('DYNO' in os.environ or 'PORT' in os.environ):
+    # HTTPS settings for production only
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
@@ -389,3 +422,12 @@ LOGGING = {
         },
     },
 }
+
+# Check your current config/settings.py - make sure these are NOT present:
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# AWS_ACCESS_KEY_ID = ...
+# AWS_SECRET_ACCESS_KEY = ...
+
+# Make sure you have standard Django file handling:
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
