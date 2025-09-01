@@ -399,27 +399,23 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Use different storage backends for development and production
 if not DEBUG:  # Production settings
-    # DigitalOcean Spaces Configuration
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    AWS_ACCESS_KEY_ID = os.environ.get('SPACES_ACCESS_KEY')
-    AWS_SECRET_ACCESS_KEY = os.environ.get('SPACES_SECRET_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.environ.get('SPACES_BUCKET_NAME')
-    AWS_S3_ENDPOINT_URL = os.environ.get('SPACES_ENDPOINT_URL')
-    AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400',
-    }
+    AWS_ACCESS_KEY_ID = os.environ.get('R2_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('R2_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.environ.get('R2_STORAGE_BUCKET_NAME', 'findnearbiz')
+    AWS_S3_ENDPOINT_URL = f"https://{os.environ.get('R2_ACCOUNT_ID')}.r2.cloudflarestorage.com"
+    AWS_S3_CUSTOM_DOMAIN = os.environ.get('R2_CUSTOM_DOMAIN', f'{os.environ.get("R2_ACCOUNT_ID")}.r2.cloudflarestorage.com')
     AWS_LOCATION = 'media'
+    AWS_S3_REGION_NAME = 'auto'  # R2 doesn't need a specific region
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
+    AWS_S3_ADDRESSING_STYLE = 'virtual'
     AWS_DEFAULT_ACL = 'public-read'
-    
-    # FIX: Match the URL format that production is using
-    # Remove this line causing the issue:
-    # AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT_URL.split('//')[1]}"
-    
-    # Instead use:
-    MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/{AWS_LOCATION}/"
-
-# Add these settings for proper S3 compatibility
-AWS_S3_REGION_NAME = 'blr1'  # Your Spaces region
-AWS_S3_SIGNATURE_VERSION = 's3v4'
-AWS_S3_ADDRESSING_STYLE = 'path'  # Important: Use 'path' style for DO Spaces
-AWS_QUERYSTRING_AUTH = False  # Don't add auth parameters to URLs
+    AWS_QUERYSTRING_AUTH = False
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+else:
+    # Local development settings
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
