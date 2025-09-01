@@ -102,6 +102,7 @@ INSTALLED_APPS = [
     # Other apps
     'directory',
     'affiliate',
+    'widget_tweaks',  # Keep this - it's already installed and working
     # ...
 ]
 
@@ -389,6 +390,7 @@ INSTALLED_APPS = [
     # Other apps
     'directory',
     'affiliate',
+    'widget_tweaks',  # Keep this - it's already installed and working
     # ...
 ]
 
