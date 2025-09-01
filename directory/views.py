@@ -13,9 +13,12 @@ from django.conf import settings
 from .forms import BusinessForm
 from datetime import timedelta
 import os
+import logging
+
 # Fix missing imports
 from .models import Business, Category, Service, BusinessImage, BusinessHours, Review, Enquiry, CouponRequest, SubscriptionPlan, UserSubscription
 
+logger = logging.getLogger(__name__)
 
 def home(request):
     search_query = request.GET.get('query', '')
@@ -630,28 +633,61 @@ def business_form(request, business_id=None):
             
             business.save()
             
-            # Handle primary image
+            # Add logging for primary image
             primary_image = request.FILES.get('primary_image')
             if primary_image:
-                # Remove existing primary image
-                BusinessImage.objects.filter(business=business, is_primary=True).delete()
-                # Add new primary image
-                BusinessImage.objects.create(
-                    business=business,
-                    image=primary_image,
-                    is_primary=True,
-                    caption=f"{business.name} - Main Image"
-                )
+                logger.info(f"Primary image upload: business={business.id}, file={primary_image.name}, size={primary_image.size}B, type={primary_image.content_type}")
+                try:
+                    # Remove existing primary image
+                    BusinessImage.objects.filter(business=business, is_primary=True).delete()
+                    # Add new primary image
+                    BusinessImage.objects.create(
+                        business=business,
+                        image=primary_image,
+                        is_primary=True,
+                        caption=f"{business.name} - Main Image"
+                    )
+                    logger.info(f"Primary image saved successfully: business={business.id}")
+                except Exception as e:
+                    logger.error(f"Primary image save failed: business={business.id}, error={str(e)}", exc_info=True)
             
-            # Handle gallery images
+            # Add logging for gallery images
             gallery_images = request.FILES.getlist('gallery_images')
-            for img in gallery_images:
-                BusinessImage.objects.create(
-                    business=business,
-                    image=img,
-                    is_primary=False,
-                    caption=f"{business.name} - Gallery Image"
-                )
+            for i, img in enumerate(gallery_images):
+                logger.info(f"Gallery image upload #{i+1}: business={business.id}, file={img.name}, size={img.size}B, type={img.content_type}")
+                try:
+                    BusinessImage.objects.create(
+                        business=business,
+                        image=img,
+                        is_primary=False,
+                        caption=f"{business.name} - Gallery Image"
+                    )
+                    logger.info(f"Gallery image #{i+1} saved successfully: business={business.id}")
+                except Exception as e:
+                    logger.error(f"Gallery image #{i+1} save failed: business={business.id}, error={str(e)}", exc_info=True)
+            
+            # Add logging for registration document
+            registration_document = request.FILES.get('registration_document')
+            if registration_document:
+                logger.info(f"Registration document upload: business={business.id}, file={registration_document.name}, size={registration_document.size}B, type={registration_document.content_type}")
+                try:
+                    business.registration_document = registration_document
+                    business.kyc_status = 'pending'
+                    logger.info(f"Registration document saved successfully: business={business.id}")
+                except Exception as e:
+                    logger.error(f"Registration document save failed: business={business.id}, error={str(e)}", exc_info=True)
+            
+            # Add logging for GST document
+            gst_document = request.FILES.get('gst_document')
+            if gst_document:
+                logger.info(f"GST document upload: business={business.id}, file={gst_document.name}, size={gst_document.size}B, type={gst_document.content_type}")
+                try:
+                    business.gst_document = gst_document
+                    if business.gst_number:
+                        business.gst_verified = False
+                    logger.info(f"GST document saved successfully: business={business.id}")
+                except Exception as e:
+                    logger.error(f"GST document save failed: business={business.id}, error={str(e)}", exc_info=True)
             
             # Handle business hours
             days_of_week = range(1, 8)  # 1-7 (Monday to Sunday)
@@ -694,24 +730,6 @@ def business_form(request, business_id=None):
                         name=name.strip(),
                         description=description.strip()
                     )
-            
-            # Handle registration document
-            registration_document = request.FILES.get('registration_document')
-            if registration_document:
-                business.registration_document = registration_document
-                business.kyc_status = 'pending'
-            
-            # Handle GST document
-            gst_document = request.FILES.get('gst_document')
-            if gst_document:
-                # Simply assign to the model field and let Django handle the rest
-                business.gst_document = gst_document
-                
-                # Update business GST verification status
-                if business.gst_number:
-                    business.gst_verified = False  # Reset to pending verification
-            
-            business.save()
             
             # Link subscription to business if adding new business
             if not is_edit and 'pending_subscription_id' in request.session:

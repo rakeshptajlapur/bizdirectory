@@ -1,9 +1,12 @@
+import logging
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .models import AffiliateProfile, AffiliateReferral, AffiliatePayment
 from .forms import AffiliateApplicationForm, BankDetailsForm, KYCDocumentsForm
+
+logger = logging.getLogger(__name__)
 
 @login_required
 def affiliate_dashboard(request):
@@ -79,11 +82,21 @@ def apply_affiliate(request):
     if request.method == 'POST':
         form = AffiliateApplicationForm(request.POST, request.FILES, instance=affiliate)
         if form.is_valid():
+            # Log file uploads before saving
+            aadhar_card = request.FILES.get('aadhar_card')
+            if aadhar_card:
+                logger.info(f"Affiliate Aadhar card upload attempt: user={request.user.id}, file={aadhar_card.name}, size={aadhar_card.size}B, type={aadhar_card.content_type}")
+                
+            pan_card = request.FILES.get('pan_card')
+            if pan_card:
+                logger.info(f"Affiliate PAN card upload attempt: user={request.user.id}, file={pan_card.name}, size={pan_card.size}B, type={pan_card.content_type}")
+            
             affiliate = form.save(commit=False)
             affiliate.user = request.user
             affiliate.status = 'pending'
             affiliate.save()
             
+            logger.info(f"Affiliate application submitted with documents: user={request.user.id}, aadhar={bool(aadhar_card)}, pan={bool(pan_card)}")
             messages.success(request, "Your affiliate application with KYC documents has been submitted for review.")
             return redirect('affiliate:dashboard')
     else:
@@ -132,7 +145,17 @@ def upload_kyc_documents(request):
     if request.method == 'POST':
         form = KYCDocumentsForm(request.POST, request.FILES, instance=affiliate)
         if form.is_valid():
+            # Log file uploads before saving
+            aadhar_card = request.FILES.get('aadhar_card')
+            if aadhar_card:
+                logger.info(f"Affiliate Aadhar card upload attempt: user={request.user.id}, file={aadhar_card.name}, size={aadhar_card.size}B, type={aadhar_card.content_type}")
+                
+            pan_card = request.FILES.get('pan_card')
+            if pan_card:
+                logger.info(f"Affiliate PAN card upload attempt: user={request.user.id}, file={pan_card.name}, size={pan_card.size}B, type={pan_card.content_type}")
+            
             form.save()
+            logger.info(f"Affiliate KYC documents uploaded: user={request.user.id}, aadhar={bool(aadhar_card)}, pan={bool(pan_card)}")
             messages.success(request, "KYC documents uploaded successfully.")
             return redirect('affiliate:dashboard')
     else:
