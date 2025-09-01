@@ -5,29 +5,22 @@
 {% block extra_css %}
 
 <style>
-    .list-group .list-group .list-group-item.active {
-        background-color: #f8f9fa !important;
-        border-color: transparent !important;
-        color: #0d6efd !important;
-        border-bottom: 2px solid #0d6efd !important;
-        font-weight: 500;
-    }
-    
-    /* Dashboard Layout Improvements */
+    /* Dashboard Container */
     .dashboard-container {
-        min-height: calc(100vh - 180px); /* Adjust based on your header/footer height */
-    }
-    
-    .dashboard-sidebar {
-        position: sticky;
-        top: 100px; /* Adjust based on your navbar height */
-        max-height: calc(100vh - 120px);
-        overflow-y: auto;
-        z-index: 999; /* Reduced from 1020 to 999 to stay below header */
+        min-height: 100vh;
     }
     
     .dashboard-content {
-        min-height: calc(100vh - 180px);
+        min-height: 80vh;
+    }
+    
+    /* Enhanced Sidebar */
+    .dashboard-sidebar {
+        position: sticky;
+        top: 80px;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        z-index: 999;
     }
     
     /* Custom scrollbar for sidebar */
@@ -49,6 +42,73 @@
         background: #a8a8a8;
     }
     
+    /* FIXED: Improved sidebar hover effects without movement */
+    .list-group-item {
+        transition: background-color 0.2s ease, color 0.2s ease, border-left 0.2s ease;
+        border-left: 4px solid transparent;
+        position: relative;
+    }
+    
+    /* Regular menu items hover */
+    .list-group-item:hover:not(.active) {
+        background-color: #f8f9fa !important;
+        border-left: 4px solid #007bff;
+        color: #007bff !important;
+    }
+    
+    /* FIXED: Active menu item styles */
+    .list-group-item.active {
+        background-color: #007bff !important;
+        color: white !important;
+        border-left: 4px solid #0056b3;
+    }
+    
+    /* FIXED: Active menu item hover - keep text visible */
+    .list-group-item.active:hover {
+        background-color: #0056b3 !important;
+        color: white !important;
+        border-left: 4px solid #004085;
+    }
+    
+    .list-group-item i {
+        width: 20px;
+        text-align: center;
+        margin-right: 0.5rem;
+        transition: color 0.2s ease;
+    }
+    
+    /* Submenu styles without flickering */
+    .submenu {
+        background-color: #f8f9fa;
+        border-left: 4px solid #dee2e6;
+        padding-left: 2rem;
+        transition: all 0.2s ease;
+    }
+    
+    .submenu:hover:not(.active) {
+        background-color: #e9ecef;
+        border-left: 4px solid #28a745;
+        color: #28a745;
+    }
+    
+    .submenu.active {
+        background-color: #28a745;
+        color: white;
+        border-left: 4px solid #1e7e34;
+    }
+    
+    /* FIXED: Active submenu hover */
+    .submenu.active:hover {
+        background-color: #1e7e34;
+        color: white;
+        border-left: 4px solid #155724;
+    }
+    
+    /* Collapse animation fix */
+    .collapse {
+        transition: height 0.3s ease;
+    }
+    
     /* Mobile Warning Modal */
     .mobile-warning-modal {
         position: fixed;
@@ -57,7 +117,7 @@
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.7);
-        z-index: 9999; /* Highest z-index for modal overlay */
+        z-index: 9999;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -73,7 +133,7 @@
         text-align: center;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         animation: slideInUp 0.4s ease;
-        z-index: 10000; /* Above the modal overlay */
+        z-index: 10000;
     }
     
     @keyframes slideInUp {
@@ -114,7 +174,7 @@
             top: auto;
             max-height: none;
             margin-bottom: 2rem;
-            z-index: auto; /* Reset z-index on mobile */
+            z-index: auto;
         }
         
         .dashboard-container {
@@ -148,18 +208,83 @@
         }
     }
 
-    /* Improve sidebar collapse animation */
+    /* FIXED: Improved affiliate submenu without flickering */
     #affiliateSubmenu {
-        transition: all 0.3s ease;
+        transition: height 0.3s ease;
+        overflow: hidden;
     }
 
-    .list-group-item {
-        transition: all 0.2s ease;
+    #affiliateSubmenu .list-group-item {
+        background-color: rgba(0, 123, 255, 0.05);
+        border-left: 4px solid rgba(0, 123, 255, 0.2);
+        margin-left: 0;
+        padding-left: 3rem;
+        font-size: 0.9rem;
+        transition: background-color 0.2s ease, border-left 0.2s ease;
     }
 
-    .list-group-item:hover {
-        background-color: #f8f9fa;
-        transform: translateX(2px);
+    /* Regular affiliate submenu hover */
+    #affiliateSubmenu .list-group-item:hover:not(.active) {
+        background-color: rgba(0, 123, 255, 0.1);
+        border-left: 4px solid #007bff;
+        color: #007bff;
+    }
+
+    /* FIXED: Active affiliate submenu item */
+    #affiliateSubmenu .list-group-item.active {
+        background-color: #007bff;
+        color: white;
+        border-left: 4px solid #0056b3;
+    }
+
+    /* FIXED: Active affiliate submenu hover */
+    #affiliateSubmenu .list-group-item.active:hover {
+        background-color: #0056b3;
+        color: white;
+        border-left: 4px solid #004085;
+    }
+
+    /* Prevent any horizontal scrolling in sidebar */
+    .dashboard-sidebar {
+        overflow-x: hidden;
+    }
+
+    /* Ensure smooth icon transitions */
+    .list-group-item i.bi-chevron-down,
+    .list-group-item i.bi-chevron-right {
+        transition: transform 0.3s ease;
+        margin-left: auto;
+        margin-right: 0;
+    }
+
+    /* Rotate chevron when expanded */
+    .list-group-item[aria-expanded="true"] i.bi-chevron-down {
+        transform: rotate(180deg);
+    }
+
+    /* ADDITIONAL FIX: Ensure icon colors are proper */
+    .list-group-item:hover:not(.active) i {
+        color: #007bff;
+    }
+
+    .list-group-item.active i {
+        color: white;
+    }
+
+    .list-group-item.active:hover i {
+        color: white;
+    }
+
+    #affiliateSubmenu .list-group-item:hover:not(.active) i {
+        color: #007bff;
+    }
+
+    #affiliateSubmenu .list-group-item.active i {
+        color: white;
+    }
+
+    #affiliateSubmenu .list-group-item.active:hover i {
+        color: white;
     }
 </style>
 {% endblock %}
