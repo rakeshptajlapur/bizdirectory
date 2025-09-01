@@ -410,4 +410,16 @@ if not DEBUG:  # Production settings
     }
     AWS_LOCATION = 'media'
     AWS_DEFAULT_ACL = 'public-read'
-    MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/{AWS_LOCATION}/'
+    
+    # FIX: Match the URL format that production is using
+    # Remove this line causing the issue:
+    # AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT_URL.split('//')[1]}"
+    
+    # Instead use:
+    MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/{AWS_LOCATION}/"
+
+# Add these settings for proper S3 compatibility
+AWS_S3_REGION_NAME = 'blr1'  # Your Spaces region
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_S3_ADDRESSING_STYLE = 'path'  # Important: Use 'path' style for DO Spaces
+AWS_QUERYSTRING_AUTH = False  # Don't add auth parameters to URLs
