@@ -6,6 +6,7 @@
     <title>{% block title %}Business Directory{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         /* ... your existing styles ... */
         
@@ -446,7 +447,183 @@
             text-overflow: ellipsis;
         }
 
+        /* Enhanced Typography for Header Only */
+        .navbar-brand {
+            font-family: 'Poppins', sans-serif !important;
+            font-weight: 800 !important;
+            font-size: 1.75rem !important;
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            transition: all 0.3s ease !important;
+            letter-spacing: -0.02em !important;
+        }
         
+        .navbar-brand:hover {
+            transform: scale(1.05) !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+        
+        .navbar .nav-link {
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .navbar .nav-link:hover {
+            transform: translateY(-2px) !important;
+            color: #0d6efd !important;
+        }
+        
+        .navbar .dropdown-menu {
+            border-radius: 12px !important;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+            border: none !important;
+        }
+        
+        .navbar .dropdown-item {
+            font-family: 'Inter', sans-serif !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .navbar .dropdown-item:hover {
+            background: linear-gradient(45deg, rgba(13, 110, 253, 0.1), rgba(13, 202, 240, 0.05)) !important;
+            color: #0d6efd !important;
+            transform: translateX(5px) !important;
+        }
+        
+        /* Mobile Navigation Overlay */
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-nav-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .mobile-nav-container {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 350px;
+            max-width: 85vw;
+            height: 100%;
+            background: white;
+            z-index: 9999;
+            transition: right 0.4s ease;
+            overflow-y: auto;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .mobile-nav-container.show {
+            right: 0;
+        }
+        
+        .mobile-nav-header {
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+            color: white;
+            padding: 2rem 1.5rem 1.5rem;
+            position: relative;
+        }
+        
+        .mobile-nav-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .mobile-nav-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        .mobile-nav-links {
+            padding: 1.5rem 0;
+        }
+        
+        .mobile-nav-link {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-nav-link:hover {
+            color: #0d6efd;
+            background: rgba(13, 110, 253, 0.05);
+            padding-left: 2rem;
+            text-decoration: none;
+        }
+        
+        .mobile-nav-buttons {
+            padding: 1.5rem;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .mobile-nav-buttons .btn {
+            width: 100%;
+            margin-bottom: 0.75rem;
+            border-radius: 12px;
+            padding: 0.75rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .mobile-nav-toggle {
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+            cursor: pointer;
+        }
+        
+        .mobile-nav-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+        }
+        
+        /* Hide mobile nav elements on desktop */
+        @media (min-width: 992px) {
+            .mobile-nav-toggle,
+            .mobile-nav-overlay,
+            .mobile-nav-container {
+                display: none !important;
+            }
+        }
+        
+        /* Your existing styles continue below - DON'T CHANGE ANYTHING ELSE */
     </style>
     {% block extra_css %}
     <style>
@@ -568,8 +745,8 @@
             <a class="navbar-brand fw-bold" href="{% url 'directory:home' %}">
                 <i class="bi bi-building"></i> BizDirectory
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <button class="mobile-nav-toggle d-lg-none" type="button" id="mobileNavToggle">
+                <i class="bi bi-list"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
@@ -619,6 +796,67 @@
             </div>
         </div>
     </nav>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
+    <!-- Mobile Navigation Container -->
+    <div class="mobile-nav-container" id="mobileNavContainer">
+        <!-- Mobile Nav Header -->
+        <div class="mobile-nav-header">
+            <button class="mobile-nav-close" id="mobileNavClose">
+                <i class="bi bi-x"></i>
+            </button>
+            <h5 class="mb-0" style="font-family: 'Poppins', sans-serif; font-weight: 800;">
+                <i class="bi bi-building me-2"></i>BizDirectory
+            </h5>
+            <p class="mb-0 small opacity-75">Your Local Business Hub</p>
+        </div>
+        
+        <!-- Mobile Nav Links -->
+        <div class="mobile-nav-links">
+            <a href="{% url 'directory:home' %}" class="mobile-nav-link">
+                <i class="bi bi-house me-2"></i>Home
+            </a>
+            <a href="{% url 'directory:listings' %}" class="mobile-nav-link">
+                <i class="bi bi-grid me-2"></i>All Listings
+            </a>
+            <a href="{% url 'directory:add_business' %}" class="mobile-nav-link">
+                <i class="bi bi-plus-circle me-2"></i>Add Business
+            </a>
+            
+            {% if user.is_authenticated %}
+                <a href="{% url 'directory:dashboard_home' %}" class="mobile-nav-link">
+                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                </a>
+                <a href="{% url 'accounts:profile' %}" class="mobile-nav-link">
+                    <i class="bi bi-person me-2"></i>Profile Settings
+                </a>
+            {% endif %}
+        </div>
+        
+        <!-- Mobile Nav Buttons -->
+        <div class="mobile-nav-buttons">
+            {% if user.is_authenticated %}
+                <div class="text-center mb-3">
+                    <small class="text-muted">Welcome back, {{ user.get_full_name|default:user.username }}!</small>
+                </div>
+                <form method="post" action="{% url 'account_logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'account_login' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                </a>
+                <a href="{% url 'account_signup' %}" class="btn btn-primary">
+                    <i class="bi bi-person-plus me-2"></i>Sign Up Free
+                </a>
+            {% endif %}
+        </div>
+    </div>
 
     {% block hero %}{% endblock %}
 
@@ -732,32 +970,124 @@
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script>
-                    
-            // Setup each carousel (keep your existing carousel code)
-                $('.business-category-section').each(function() {
-                    const $carousel = $(this).find('.business-carousel');
-                    const $prevBtn = $(this).find('.carousel-control-prev');
-                    const $nextBtn = $(this).find('.carousel-control-next');
-                    
-                    const itemWidth = $carousel.find('.carousel-item:first').outerWidth(true);
-                    const visibleItems = Math.floor($carousel.width() / itemWidth);
-                    
-                    // Next button click
-                    $nextBtn.on('click', function() {
-                        $carousel.animate({
-                            scrollLeft: '+=' + (itemWidth * visibleItems)
-                        }, 300);
-                    });
-                    
-                    // Previous button click
-                    $prevBtn.on('click', function() {
-                        $carousel.animate({
-                            scrollLeft: '-=' + (itemWidth * visibleItems)
-                        }, 300);
-                    });
-                });
+// Fixed Mobile navigation functionality - No server errors
+document.addEventListener('DOMContentLoaded', function() {
+    // Get elements with proper error handling
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+    const mobileNavContainer = document.getElementById('mobileNavContainer');
+    const mobileNavClose = document.getElementById('mobileNavClose');
+    
+    // Only proceed if elements exist
+    if (!mobileNavToggle || !mobileNavOverlay || !mobileNavContainer || !mobileNavClose) {
+        console.log('Mobile nav elements not found - skipping mobile nav setup');
+        return;
+    }
+    
+    // Function to open mobile nav
+    function openMobileNav() {
+        try {
+            mobileNavOverlay.classList.add('show');
+            mobileNavContainer.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        } catch (error) {
+            console.log('Error opening mobile nav:', error);
+        }
+    }
+    
+    // Function to close mobile nav
+    function closeMobileNav() {
+        try {
+            mobileNavOverlay.classList.remove('show');
+            mobileNavContainer.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        } catch (error) {
+            console.log('Error closing mobile nav:', error);
+        }
+    }
+    
+    // Add event listeners with error handling
+    try {
+        mobileNavToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            openMobileNav();
+        });
+        
+        mobileNavClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeMobileNav();
+        });
+        
+        mobileNavOverlay.addEventListener('click', function(e) {
+            if (e.target === mobileNavOverlay) {
+                closeMobileNav();
+            }
+        });
+        
+        // Close mobile nav when clicking on navigation links
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        mobileNavLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                closeMobileNav();
             });
         });
+        
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' || e.keyCode === 27) {
+                closeMobileNav();
+            }
+        });
+        
+        console.log('Mobile navigation initialized successfully');
+        
+    } catch (error) {
+        console.log('Error setting up mobile nav event listeners:', error);
+    }
+});
+
+// Enhanced navbar scroll effect (existing code - keep this)
+window.addEventListener('scroll', function() {
+    const navbar = document.getElementById('mainNavbar');
+    if (navbar) {
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    }
+});
+
+// Keep your existing carousel code here...
+$(document).ready(function() {
+    // Your existing jQuery code for carousels etc.
+    $('.business-category-section').each(function() {
+        const $carousel = $(this).find('.business-carousel');
+        const $prevBtn = $(this).find('.carousel-control-prev');
+        const $nextBtn = $(this).find('.carousel-control-next');
+        
+        if ($carousel.length && $carousel.find('.carousel-item').length > 0) {
+            const itemWidth = $carousel.find('.carousel-item:first').outerWidth(true);
+            const visibleItems = Math.floor($carousel.width() / itemWidth);
+            
+            // Next button click
+            $nextBtn.on('click', function() {
+                $carousel.animate({
+                    scrollLeft: '+=' + (itemWidth * visibleItems)
+                }, 300);
+            });
+            
+            // Previous button click
+            $prevBtn.on('click', function() {
+                $carousel.animate({
+                    scrollLeft: '-=' + (itemWidth * visibleItems)
+                }, 300);
+            });
+        }
+    });
+});
     </script>
     {% block extra_js %}
     <script>
