@@ -5,147 +5,177 @@
 <div class="row mb-4">
     <div class="col">
         <h1 class="h3">My Leads</h1>
-        <p class="text-muted">All your customer data in one place</p>
+        <p class="text-muted">All customer interactions and potential leads</p>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'directory:add_business' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Add New Listing
+        </a>
     </div>
 </div>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-header bg-white">
-        <div class="row g-3">
-            <div class="col-md-4">
-                <input type="text" class="form-control" id="searchInput" placeholder="Search leads...">
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" id="sourceFilter">
-                    <option value="">All Sources</option>
-                    <option value="enquiry">Enquiries</option>
-                    <option value="review">Reviews</option>
-                    <option value="coupon">Coupon Requests</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" id="businessFilter">
-                    <option value="">All Businesses</option>
-                    {% for business in businesses %}
-                        <option value="{{ business.id }}">{{ business.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-outline-secondary w-100" id="resetFilters">
-                    <i class="bi bi-x-circle me-1"></i>Reset
-                </button>
+<!-- Lead Statistics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-3 me-3 rounded-3">
+                        <i class="bi bi-envelope text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0">{{ enquiries_count }}</h3>
+                        <p class="text-muted mb-0 small">Total Enquiries</p>
+                        {% if unread_enquiries_count > 0 %}
+                            <span class="badge bg-danger small">{{ unread_enquiries_count }} new</span>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="card-body">
-        {% if leads %}
-            <div class="table-responsive">
-                <table class="table table-hover" id="leadsTable">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Contact</th>
-                            <th scope="col">Source</th>
-                            <th scope="col">Business</th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for lead in leads %}
-                            <tr data-business-id="{{ lead.business.id }}">
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ lead.name }}</td>
-                                <td>
-                                    <div><a href="mailto:{{ lead.email }}">{{ lead.email }}</a></div>
-                                    {% if lead.phone %}
-                                        <div class="mt-1"><a href="tel:{{ lead.phone }}">{{ lead.phone }}</a></div>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if lead.source == 'enquiry' %}
-                                        <span class="badge bg-primary">Enquiry</span>
-                                    {% elif lead.source == 'review' %}
-                                        <span class="badge bg-warning text-dark">Review</span>
-                                    {% elif lead.source == 'coupon' %}
-                                        <span class="badge bg-success">Coupon Request</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ lead.business.name }}</td>
-                                <td>{{ lead.created_at|date:"M d, Y" }}</td>
-                                <td>
-                                    {% if lead.source == 'enquiry' %}
-                                        {% if lead.is_responded %}
-                                            <span class="badge bg-success">Responded</span>
-                                        {% else %}
-                                            <span class="badge bg-danger">Pending</span>
-                                        {% endif %}
-                                    {% elif lead.source == 'review' %}
-                                        {% if lead.is_approved %}
-                                            <span class="badge bg-success">Approved</span>
-                                        {% else %}
-                                            <span class="badge bg-danger">Pending</span>
-                                        {% endif %}
-                                    {% elif lead.source == 'coupon' %}
-                                        <span class="badge bg-info">Code: {{ lead.coupon_code }}</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="bg-info bg-opacity-10 p-3 me-3 rounded-3">
+                        <i class="bi bi-ticket text-info fs-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0">{{ coupon_requests_count }}</h3>
+                        <p class="text-muted mb-0 small">Coupon Requests</p>
+                    </div>
+                </div>
             </div>
-        {% else %}
-            <div class="text-center py-5">
-                <i class="bi bi-people text-muted fs-1"></i>
-                <p class="text-muted mt-3">No leads found. As you receive enquiries and reviews, they'll appear here.</p>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="bg-warning bg-opacity-10 p-3 me-3 rounded-3">
+                        <i class="bi bi-star text-warning fs-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0">{{ reviews_count }}</h3>
+                        <p class="text-muted mb-0 small">Customer Reviews</p>
+                        {% if pending_reviews_count > 0 %}
+                            <span class="badge bg-warning small">{{ pending_reviews_count }} pending</span>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-        {% endif %}
+        </div>
     </div>
 </div>
 
-{% block extra_js %}
-<script>
-    $(document).ready(function() {
-        // Filter functionality
-        $("#searchInput, #sourceFilter, #businessFilter").on("change keyup", function() {
-            filterTable();
-        });
-        
-        // Reset filters
-        $("#resetFilters").click(function() {
-            $("#searchInput").val("");
-            $("#sourceFilter").val("");
-            $("#businessFilter").val("");
-            filterTable();
-        });
-        
-        function filterTable() {
-            const searchTerm = $("#searchInput").val().toLowerCase();
-            const sourceFilter = $("#sourceFilter").val();
-            const businessFilter = $("#businessFilter").val();
+<!-- Leads Tabs -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-transparent">
+        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#enquiries-tab">
+                    <i class="bi bi-envelope me-2"></i>Enquiries ({{ enquiries_count }})
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#coupons-tab">
+                    <i class="bi bi-ticket me-2"></i>Coupon Requests ({{ coupon_requests_count }})
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reviews-tab">
+                    <i class="bi bi-star me-2"></i>Reviews ({{ reviews_count }})
+                </button>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="card-body">
+        <div class="tab-content">
+            <!-- Enquiries Tab -->
+            <div class="tab-pane fade show active" id="enquiries-tab">
+                {% if enquiries %}
+                    {% for enquiry in enquiries %}
+                        <div class="border-bottom pb-3 mb-3 {% if not enquiry.is_responded %}border-start border-3 border-primary ps-3{% endif %}">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="mb-1">{{ enquiry.name }} - {{ enquiry.business.name }}</h6>
+                                    <small class="text-muted">{{ enquiry.email }} • {{ enquiry.created_at|timesince }} ago</small>
+                                </div>
+                                {% if not enquiry.is_responded %}
+                                    <span class="badge bg-primary">New</span>
+                                {% else %}
+                                    <span class="badge bg-success">Responded</span>
+                                {% endif %}
+                            </div>
+                            <p class="text-muted mb-0">{{ enquiry.message }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox text-muted fs-2"></i>
+                        <p class="text-muted mt-2 mb-0">No enquiries yet</p>
+                    </div>
+                {% endif %}
+            </div>
             
-            $("#leadsTable tbody tr").each(function() {
-                const name = $(this).find("td:nth-child(2)").text().toLowerCase();
-                const contact = $(this).find("td:nth-child(3)").text().toLowerCase();
-                const source = $(this).find("td:nth-child(4) .badge").text().toLowerCase();
-                const business = $(this).find("td:nth-child(5)").text();
-                const businessId = $(this).data("business-id");
-                
-                const matchesSearch = name.includes(searchTerm) || contact.includes(searchTerm);
-                const matchesSource = sourceFilter === "" || source.includes(sourceFilter.toLowerCase());
-                const matchesBusiness = businessFilter === "" || businessId == businessFilter;
-                
-                if (matchesSearch && matchesSource && matchesBusiness) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        }
-    });
-</script>
-{% endblock %}
+            <!-- Coupon Requests Tab -->
+            <div class="tab-pane fade" id="coupons-tab">
+                {% if coupon_requests %}
+                    {% for request in coupon_requests %}
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="mb-1">{{ request.email }} - {{ request.business.name }}</h6>
+                                    <small class="text-muted">{{ request.created_at|timesince }} ago</small>
+                                </div>
+                                <span class="badge bg-info">Coupon Request</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-ticket text-muted fs-2"></i>
+                        <p class="text-muted mt-2 mb-0">No coupon requests yet</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Reviews Tab -->
+            <div class="tab-pane fade" id="reviews-tab">
+                {% if reviews %}
+                    {% for review in reviews %}
+                        <div class="border-bottom pb-3 mb-3 {% if not review.is_approved %}border-start border-3 border-warning ps-3{% endif %}">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="mb-1">{{ review.name }} - {{ review.business.name }}</h6>
+                                    <div class="stars mb-1">
+                                        {% for i in "12345"|make_list %}
+                                            <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %} text-warning small"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <small class="text-muted">{{ review.created_at|timesince }} ago</small>
+                                </div>
+                                {% if not review.is_approved %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% else %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% endif %}
+                            </div>
+                            <p class="text-muted mb-0">{{ review.comment }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-star text-muted fs-2"></i>
+                        <p class="text-muted mt-2 mb-0">No reviews yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

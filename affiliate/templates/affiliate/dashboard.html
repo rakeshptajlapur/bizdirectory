@@ -7,6 +7,13 @@
         <h1 class="h3">Affiliate Dashboard</h1>
         <p class="text-muted">Track your referrals and earnings</p>
     </div>
+    {% if user.profile.is_business_owner %}
+    <div class="col-auto">
+        <a href="{% url 'directory:add_business' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Add New Listing
+        </a>
+    </div>
+    {% endif %}
 </div>
 
 {% if not affiliate %}

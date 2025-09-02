@@ -286,6 +286,23 @@
     #affiliateSubmenu .list-group-item.active:hover i {
         color: white;
     }
+
+    /* Responsive Add Listing Button */
+    @media (max-width: 767.98px) {
+        .row.mb-4 {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .row.mb-4 .col-auto {
+            align-self: flex-start;
+        }
+        
+        .row.mb-4 .col-auto .btn {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -340,6 +357,43 @@
                             <i class="bi bi-shield-lock me-2"></i> Security
                         </a>
                         
+                        
+                        
+                        {% if user.profile.is_business_owner %}
+                            <!-- Business Owner Only Features -->
+                            <a href="{% url 'directory:dashboard_listings' %}" class="list-group-item list-group-item-action {% if active_tab == 'listings' %}active{% endif %}">
+                                <i class="bi bi-building me-2"></i> My Listings
+                            </a>
+                            <a href="{% url 'directory:add_business' %}" class="list-group-item list-group-item-action {% if active_tab == 'add_business' %}active{% endif %}">
+                                <i class="bi bi-plus-circle me-2"></i> Add Listing
+                            </a>
+                            <a href="{% url 'directory:dashboard_reviews' %}" class="list-group-item list-group-item-action {% if active_tab == 'reviews' %}active{% endif %}">
+                                <i class="bi bi-star me-2"></i> Reviews
+                            </a>
+                            <a href="{% url 'directory:dashboard_enquiries' %}" class="list-group-item list-group-item-action {% if active_tab == 'enquiries' %}active{% endif %}">
+                                <i class="bi bi-envelope me-2"></i> Enquiries
+                            </a>
+                            <a href="{% url 'directory:dashboard_leads' %}" class="list-group-item list-group-item-action {% if active_tab == 'leads' %}active{% endif %}">
+                                <i class="bi bi-people me-2"></i> My Leads
+                            </a>
+                            <a href="{% url 'directory:kyc_gst_documents' %}" class="list-group-item list-group-item-action">
+                                <i class="bi bi-shield-check me-2"></i> KYC & GST
+                                {% if business and business.kyc_status == 'pending' %}
+                                    <span class="badge bg-warning ms-auto">Under Review</span>
+                                {% elif business and business.kyc_status == 'completed' and business.gst_verified %}
+                                    <span class="badge bg-success ms-auto">Verified</span>
+                                {% endif %}
+                            </a>
+                            <a href="{% url 'directory:subscription_dashboard' %}" class="list-group-item list-group-item-action {% if active_tab == 'subscription' %}active{% endif %}">
+                                <i class="bi bi-credit-card me-2"></i> Subscription
+                            </a>
+                        {% else %}
+                            <!-- Regular User - Show Upgrade Option -->
+                            <a href="{% url 'accounts:upgrade_to_business' %}" class="list-group-item list-group-item-action {% if active_tab == 'upgrade' %}active{% endif %} text-success">
+                                <i class="bi bi-arrow-up-circle me-2"></i> Upgrade to Business
+                            </a>
+                        {% endif %}
+
                         <!-- Affiliate Program for ALL users -->
                         <a class="list-group-item list-group-item-action {% if 'affiliate' in active_tab %}active{% endif %}" 
                            data-bs-toggle="collapse" href="#affiliateSubmenu" role="button" 
@@ -377,41 +431,6 @@
                                 {% endif %}
                             </div>
                         </div>
-                        
-                        {% if user.profile.is_business_owner %}
-                            <!-- Business Owner Only Features -->
-                            <a href="{% url 'directory:dashboard_listings' %}" class="list-group-item list-group-item-action {% if active_tab == 'listings' %}active{% endif %}">
-                                <i class="bi bi-building me-2"></i> My Listings
-                            </a>
-                            <a href="{% url 'directory:add_business' %}" class="list-group-item-action {% if active_tab == 'add_business' %}active{% endif %}">
-                                <i class="bi bi-plus-circle me-2"></i> Add Listing
-                            </a>
-                            <a href="{% url 'directory:dashboard_reviews' %}" class="list-group-item list-group-item-action {% if active_tab == 'reviews' %}active{% endif %}">
-                                <i class="bi bi-star me-2"></i> Reviews
-                            </a>
-                            <a href="{% url 'directory:dashboard_enquiries' %}" class="list-group-item list-group-item-action {% if active_tab == 'enquiries' %}active{% endif %}">
-                                <i class="bi bi-envelope me-2"></i> Enquiries
-                            </a>
-                            <a href="{% url 'directory:dashboard_leads' %}" class="list-group-item list-group-item-action {% if active_tab == 'leads' %}active{% endif %}">
-                                <i class="bi bi-people me-2"></i> My Leads
-                            </a>
-                            <a href="{% url 'directory:kyc_gst_documents' %}" class="list-group-item list-group-item-action">
-                                <i class="bi bi-shield-check me-2"></i> KYC & GST
-                                {% if business and business.kyc_status == 'pending' %}
-                                    <span class="badge bg-warning ms-auto">Under Review</span>
-                                {% elif business and business.kyc_status == 'completed' and business.gst_verified %}
-                                    <span class="badge bg-success ms-auto">Verified</span>
-                                {% endif %}
-                            </a>
-                            <a href="{% url 'directory:subscription_dashboard' %}" class="list-group-item list-group-item-action {% if active_tab == 'subscription' %}active{% endif %}">
-                                <i class="bi bi-credit-card me-2"></i> Subscription
-                            </a>
-                        {% else %}
-                            <!-- Regular User - Show Upgrade Option -->
-                            <a href="{% url 'accounts:upgrade_to_business' %}" class="list-group-item list-group-item-action {% if active_tab == 'upgrade' %}active{% endif %} text-success">
-                                <i class="bi bi-arrow-up-circle me-2"></i> Upgrade to Business
-                            </a>
-                        {% endif %}
                         
                         <!-- Logout for all users -->
                         <form method="post" action="{% url 'account_logout' %}" style="display: inline;">

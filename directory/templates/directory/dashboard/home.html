@@ -13,20 +13,397 @@
             {% endif %}
         </p>
     </div>
+    {% if user.profile.is_business_owner %}
+    <div class="col-auto">
+        <a href="{% url 'directory:add_business' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Add New Listing
+        </a>
+    </div>
+    {% endif %}
 </div>
 
 {% if user.profile.is_business_owner %}
-    <!-- Existing business owner dashboard content -->
-    <!-- Your current business owner dashboard code here -->
-{% else %}
-    <!-- Dashboard for Regular Users -->
+    <!-- Business Owner Dashboard Content -->
+    
+    <!-- Key Statistics Cards - 3 Box Layout -->
+    <div class="row g-4 mb-4 dashboard-stats">
+        <!-- Total Listings with Premium Count -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary bg-opacity-10 p-3 me-3 rounded-3">
+                            <i class="bi bi-building text-primary fs-4"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-0">{{ businesses.count }}</h3>
+                            <p class="text-muted mb-0 small">Total Listings</p>
+                            {% if premium_listings_count > 0 %}
+                                <small class="text-success">
+                                    <i class="bi bi-star-fill me-1"></i>{{ premium_listings_count }} Premium
+                                </small>
+                            {% else %}
+                                <small class="text-muted">No premium listings</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Leads with Breakdown -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success bg-opacity-10 p-3 me-3 rounded-3">
+                            <i class="bi bi-people text-success fs-4"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-0">{{ total_leads_count }}</h3>
+                            <p class="text-muted mb-0 small">Total Leads</p>
+                            <div class="d-flex gap-2 flex-wrap">
+                                {% if enquiries_count > 0 %}
+                                    <small class="text-primary">
+                                        <i class="bi bi-envelope-fill me-1"></i>{{ enquiries_count }}
+                                    </small>
+                                {% endif %}
+                                {% if coupon_requests_count > 0 %}
+                                    <small class="text-info">
+                                        <i class="bi bi-ticket-fill me-1"></i>{{ coupon_requests_count }}
+                                    </small>
+                                {% endif %}
+                                {% if reviews_count > 0 %}
+                                    <small class="text-warning">
+                                        <i class="bi bi-star-fill me-1"></i>{{ reviews_count }}
+                                    </small>
+                                {% endif %}
+                            </div>
+                            {% if unread_enquiries_count > 0 %}
+                                <span class="badge bg-danger small">{{ unread_enquiries_count }} new</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Average Rating with Review Count -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-10 p-3 me-3 rounded-3">
+                            <i class="bi bi-star text-warning fs-4"></i>
+                        </div>
+                        <div class="avg-rating-container">
+                            <h3 class="fw-bold mb-0">{{ avg_rating|floatformat:1 }}</h3>
+                            <p class="text-muted mb-1 small">Avg Rating</p>
+                            <div class="d-flex align-items-center">
+                                <div class="stars me-2">
+                                    {% for i in "12345"|make_list %}
+                                        <i class="bi bi-star{% if forloop.counter <= avg_rating %}-fill{% endif %} text-warning small"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <small class="text-muted">({{ reviews_count }} review{{ reviews_count|pluralize }})</small>
+                            {% if pending_reviews_count > 0 %}
+                                <span class="badge bg-warning small mt-1">{{ pending_reviews_count }} pending</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a href="{% url 'directory:add_business' %}" class="btn btn-primary w-100">
+                                <i class="bi bi-plus-circle me-2"></i>Add New Listing
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'directory:dashboard_listings' %}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-building me-2"></i>Manage Listings
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'directory:dashboard_enquiries' %}" class="btn btn-outline-success w-100">
+                                <i class="bi bi-envelope me-2"></i>View Enquiries
+                                {% if unread_enquiries_count > 0 %}
+                                    <span class="badge bg-danger ms-2">{{ unread_enquiries_count }}</span>
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'directory:dashboard_reviews' %}" class="btn btn-outline-warning w-100">
+                                <i class="bi bi-star me-2"></i>Manage Reviews
+                                {% if pending_reviews_count > 0 %}
+                                    <span class="badge bg-warning ms-2">{{ pending_reviews_count }}</span>
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Affiliate Opportunity Card for Business Owners -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-success bg-opacity-10 p-3 me-3 rounded-3">
+                            <i class="bi bi-people text-success fs-4"></i>
+                        </div>
+                        <h5 class="card-title mb-0">Earn More</h5>
+                    </div>
+                    <p class="text-muted mb-3 small">Refer other businesses and earn 20% commission on their premium subscriptions.</p>
+                    {% if user.affiliate_profile %}
+                        {% if user.affiliate_profile.status == 'approved' %}
+                            <a href="{% url 'affiliate:dashboard' %}" class="btn btn-success btn-sm">View Affiliate Dashboard</a>
+                        {% elif user.affiliate_profile.status == 'pending' %}
+                            <div class="alert alert-warning small mb-0">Application under review</div>
+                        {% else %}
+                            <a href="{% url 'affiliate:apply' %}" class="btn btn-primary btn-sm">Reapply as Affiliate</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'affiliate:apply' %}" class="btn btn-primary btn-sm">Become Affiliate</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
     <div class="row g-4">
+        <!-- Recent Enquiries -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Enquiries</h5>
+                    <a href="{% url 'directory:dashboard_enquiries' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_enquiries %}
+                        {% for enquiry in recent_enquiries %}
+                            <div class="d-flex align-items-start mb-3 {% if not enquiry.is_responded %}border-start border-3 border-primary ps-3{% endif %}">
+                                <div class="bg-primary bg-opacity-10 p-2 me-3 rounded-3">
+                                    <i class="bi bi-person text-primary"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">{{ enquiry.name }}</h6>
+                                    <p class="text-muted small mb-1">{{ enquiry.message|truncatechars:60 }}</p>
+                                    <small class="text-muted">{{ enquiry.created_at|timesince }} ago</small>
+                                    {% if not enquiry.is_responded %}
+                                        <span class="badge bg-primary ms-2">New</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-3">
+                            <i class="bi bi-inbox text-muted fs-1"></i>
+                            <p class="text-muted mt-2 mb-0">No enquiries yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Reviews -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Reviews</h5>
+                    <a href="{% url 'directory:dashboard_reviews' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_reviews %}
+                        {% for review in recent_reviews %}
+                            <div class="d-flex align-items-start mb-3 {% if not review.is_approved %}border-start border-3 border-warning ps-3{% endif %}">
+                                <div class="bg-warning bg-opacity-10 p-2 me-3 rounded-3">
+                                    <i class="bi bi-star text-warning"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <h6 class="mb-0 me-2">{{ review.name }}</h6>
+                                        <div class="stars">
+                                            {% for i in "12345"|make_list %}
+                                                <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %} text-warning small"></i>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-1">{{ review.comment|truncatechars:60 }}</p>
+                                    <small class="text-muted">{{ review.created_at|timesince }} ago</small>
+                                    {% if not review.is_approved %}
+                                        <span class="badge bg-warning ms-2">Pending</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-3">
+                            <i class="bi bi-star text-muted fs-1"></i>
+                            <p class="text-muted mt-2 mb-0">No reviews yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% else %}
+    <!-- Regular User Dashboard with Upgrade Prompt -->
+    
+    <!-- Blurred Content Overlay -->
+    <div class="position-relative">
+        <!-- Blurred Statistics Preview -->
+        <div class="blur-content">
+            <div class="row g-4 mb-4 dashboard-stats">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 p-3 me-3 rounded-3">
+                                    <i class="bi bi-building text-primary fs-4"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fw-bold mb-0">••</h3>
+                                    <p class="text-muted mb-0 small">Total Listings</p>
+                                    <small class="text-muted">• Premium</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-success bg-opacity-10 p-3 me-3 rounded-3">
+                                    <i class="bi bi-people text-success fs-4"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fw-bold mb-0">••</h3>
+                                    <p class="text-muted mb-0 small">Total Leads</p>
+                                    <small class="text-muted">• • •</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-warning bg-opacity-10 p-3 me-3 rounded-3">
+                                    <i class="bi bi-star text-warning fs-4"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fw-bold mb-0">•.•</h3>
+                                    <p class="text-muted mb-0 small">Avg Rating</p>
+                                    <small class="text-muted">(• reviews)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Blurred Charts/Content -->
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-transparent">
+                            <h5 class="mb-0">Recent Activity</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="placeholder-content">
+                                <div class="placeholder-line"></div>
+                                <div class="placeholder-line"></div>
+                                <div class="placeholder-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-transparent">
+                            <h5 class="mb-0">Performance</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="placeholder-content">
+                                <div class="placeholder-line"></div>
+                                <div class="placeholder-line"></div>
+                                <div class="placeholder-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Upgrade Overlay -->
+        <div class="upgrade-overlay">
+            <div class="upgrade-modal">
+                <div class="upgrade-icon">
+                    <i class="bi bi-unlock"></i>
+                </div>
+                <h3 class="fw-bold mb-3">Unlock Full Dashboard Access</h3>
+                <p class="text-muted mb-4">Upgrade to a business account to access comprehensive analytics, manage listings, and grow your business presence.</p>
+                
+                <div class="upgrade-benefits mb-4">
+                    <div class="benefit-item">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span>Create & manage business listings</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span>Track customer enquiries & reviews</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span>Access detailed analytics & insights</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span>Verification badges for trust</span>
+                    </div>
+                </div>
+                
+                <a href="{% url 'accounts:upgrade_to_business' %}" class="btn btn-primary btn-lg px-4">
+                    <i class="bi bi-arrow-up-circle me-2"></i>Upgrade for FREE
+                </a>
+                
+                <p class="small text-muted mt-3 mb-0">
+                    <i class="bi bi-shield-check me-1"></i>
+                    100% free upgrade • No hidden costs • Instant access
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Available Features for Regular Users -->
+    <div class="row g-4 mt-4">
         <!-- Affiliate Opportunity Card -->
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                        <div class="bg-primary bg-opacity-10 p-3 me-3 rounded-3">
                             <i class="bi bi-people text-primary fs-4"></i>
                         </div>
                         <h5 class="card-title mb-0">Become an Affiliate</h5>
@@ -52,33 +429,12 @@
             </div>
         </div>
         
-        <!-- Business Account Upgrade Card -->
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
-                            <i class="bi bi-arrow-up-circle text-success fs-4"></i>
-                        </div>
-                        <h5 class="card-title mb-0">Upgrade to Business</h5>
-                    </div>
-                    <p class="text-muted mb-3">List your business, manage customers, and grow your online presence.</p>
-                    <ul class="list-unstyled small mb-4">
-                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Create business listings</li>
-                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Manage customer reviews</li>
-                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Track business analytics</li>
-                    </ul>
-                    <a href="{% url 'accounts:upgrade_to_business' %}" class="btn btn-success">Upgrade Account</a>
-                </div>
-            </div>
-        </div>
-        
         <!-- Profile Completion Card -->
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                        <div class="bg-info bg-opacity-10 p-3 me-3 rounded-3">
                             <i class="bi bi-person-gear text-info fs-4"></i>
                         </div>
                         <h5 class="card-title mb-0">Complete Profile</h5>
@@ -88,22 +444,60 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Security Card -->
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
-                            <i class="bi bi-shield-lock text-warning fs-4"></i>
-                        </div>
-                        <h5 class="card-title mb-0">Account Security</h5>
-                    </div>
-                    <p class="text-muted mb-3">Manage your password and account security settings.</p>
-                    <a href="{% url 'account_change_password' %}" class="btn btn-outline-warning">Change Password</a>
-                </div>
-            </div>
-        </div>
     </div>
 {% endif %}
+
+<!-- Add this CSS to your dashboard home template -->
+<style>
+/* Fix rating display alignment */
+.dashboard-stats .stars {
+    display: inline-flex;
+    gap: 1px;
+}
+
+.dashboard-stats .d-flex.align-items-center {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+}
+
+.dashboard-stats .stars + small {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Ensure the rating section stays on one line */
+.avg-rating-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.avg-rating-container .d-flex {
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.stars {
+    margin-right: 0.5rem !important;
+}
+
+.stars i {
+    font-size: 0.875rem;
+}
+
+/* Mobile adjustments */
+@media (max-width: 767.98px) {
+    .dashboard-stats .card-body {
+        padding: 1rem;
+    }
+    
+    .dashboard-stats h3 {
+        font-size: 1.5rem;
+    }
+    
+    .dashboard-stats .small {
+        font-size: 0.75rem;
+    }
+}
+</style>
 {% endblock %}

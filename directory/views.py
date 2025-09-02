@@ -356,42 +356,65 @@ def request_coupon(request, business_id):
 
 @login_required
 def dashboard_home(request):
-    """Dashboard home view"""
-    # Make sure user is a business owner
-    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
-        messages.error(request, "You don't have permission to access this page.")
-        return redirect('directory:home')
+    """Dashboard home view with 3-box layout"""
+    # Get businesses owned by the current user (if they're a business owner)
+    businesses = Business.objects.filter(owner=request.user) if hasattr(request.user, 'profile') and request.user.profile.is_business_owner else Business.objects.none()
     
-    # Get businesses owned by the current user
-    businesses = Business.objects.filter(owner=request.user)
+    # Initialize stats
+    premium_listings_count = 0
+    enquiries_count = 0
+    coupon_requests_count = 0
+    reviews_count = 0
+    total_leads_count = 0
+    avg_rating = 0
+    unread_enquiries = 0
+    pending_reviews = 0
+    recent_enquiries = []
+    recent_reviews = []
     
-    # Get stats for all user's businesses
-    enquiries_count = Enquiry.objects.filter(business__owner=request.user).count()
-    reviews_count = Review.objects.filter(business__owner=request.user).count()
-    
-    # Calculate average rating across all businesses
-    avg_rating = Review.objects.filter(
-        business__owner=request.user
-    ).aggregate(Avg('rating'))['rating__avg'] or 0
-    
-    # Get unread enquiries and pending reviews counts for notifications
-    unread_enquiries = Enquiry.objects.filter(business__owner=request.user, is_responded=False).count()
-    pending_reviews = Review.objects.filter(business__owner=request.user, is_approved=False).count()
-    
-    # Get recent enquiries and reviews
-    recent_enquiries = Enquiry.objects.filter(
-        business__owner=request.user
-    ).order_by('-created_at')[:5]
-    
-    recent_reviews = Review.objects.filter(
-        business__owner=request.user
-    ).order_by('-created_at')[:5]
-    
+    # Only calculate stats for business owners
+    if hasattr(request.user, 'profile') and request.user.profile.is_business_owner:
+        # Count premium listings using the existing property
+        premium_listings_count = sum(1 for business in businesses if business.has_premium_features)
+        
+        # Get all lead sources
+        enquiries_count = Enquiry.objects.filter(business__owner=request.user).count()
+        reviews_count = Review.objects.filter(business__owner=request.user).count()
+        
+        # Count coupon requests (if you have this functionality)
+        coupon_requests_count = 0  # Set this based on your actual coupon model if it exists
+        
+        # Total leads = enquiries + coupon requests + reviews
+        total_leads_count = enquiries_count + coupon_requests_count + reviews_count
+        
+        # Calculate average rating across all businesses
+        from django.db.models import Avg
+        avg_rating = Review.objects.filter(
+            business__owner=request.user,
+            is_approved=True  # Only count approved reviews
+        ).aggregate(Avg('rating'))['rating__avg'] or 0
+        
+        # Get unread enquiries and pending reviews counts for notifications
+        unread_enquiries = Enquiry.objects.filter(business__owner=request.user, is_responded=False).count()
+        pending_reviews = Review.objects.filter(business__owner=request.user, is_approved=False).count()
+        
+        # Get recent enquiries and reviews
+        recent_enquiries = Enquiry.objects.filter(
+            business__owner=request.user
+        ).order_by('-created_at')[:5]
+        
+        recent_reviews = Review.objects.filter(
+            business__owner=request.user
+        ).order_by('-created_at')[:5]
+
     context = {
         'active_tab': 'home',
-        'businesses': businesses,  # This already contains all businesses
+        'businesses': businesses,
+        'premium_listings_count': premium_listings_count,
         'enquiries_count': enquiries_count,
+        'coupon_requests_count': coupon_requests_count,
         'reviews_count': reviews_count,
+        'total_leads_count': total_leads_count,
         'avg_rating': avg_rating,
         'recent_enquiries': recent_enquiries,
         'recent_reviews': recent_reviews,
@@ -494,68 +517,40 @@ def toggle_business_status(request):
 
 @login_required
 def dashboard_leads(request):
-    """Dashboard leads view - combines enquiries, reviews and coupon requests"""
+    """Dashboard leads view - consolidated view of all leads"""
     if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
         messages.error(request, "You don't have permission to access this page.")
         return redirect('directory:home')
     
-    # Get all businesses owned by the user
-    businesses = Business.objects.filter(owner=request.user)
+    # Get all leads data
+    enquiries = Enquiry.objects.filter(business__owner=request.user).order_by('-created_at')
+    reviews = Review.objects.filter(business__owner=request.user).order_by('-created_at')
     
-    # Get all enquiries and convert them to a common lead format
-    enquiries = Enquiry.objects.filter(business__owner=request.user).select_related('business')
-    enquiry_leads = []
-    for enquiry in enquiries:
-        enquiry_leads.append({
-            'id': enquiry.id,
-            'name': enquiry.name,
-            'email': enquiry.email,
-            'phone': enquiry.phone,
-            'source': 'enquiry',
-            'business': enquiry.business,
-            'created_at': enquiry.created_at,
-            'is_responded': enquiry.is_responded,
-        })
+    # Get coupon requests if the model exists
+    coupon_requests = []
+    try:
+        from .models import CouponRequest
+        coupon_requests = CouponRequest.objects.filter(business__owner=request.user).order_by('-created_at')
+    except (ImportError, AttributeError):
+        pass
     
-    # Get all reviews and convert them to a common lead format
-    reviews = Review.objects.filter(business__owner=request.user).select_related('business')
-    review_leads = []
-    for review in reviews:
-        review_leads.append({
-            'id': review.id,
-            'name': review.name,
-            'email': review.email,
-            'phone': None,  # Reviews typically don't have phone numbers
-            'source': 'review',
-            'business': review.business,
-            'created_at': review.created_at,
-            'is_approved': review.is_approved,
-        })
-    
-    # Add this new section for coupon requests
-    coupons = CouponRequest.objects.filter(business__owner=request.user).select_related('business')
-    coupon_leads = []
-    for coupon in coupons:
-        coupon_leads.append({
-            'id': coupon.id,
-            'name': '',  # No name available
-            'email': coupon.email,
-            'phone': None,
-            'source': 'coupon',
-            'business': coupon.business,
-            'created_at': coupon.created_at,
-            'coupon_code': coupon.coupon_code,
-            'is_sent': coupon.is_sent,
-        })
-    
-    # Combine and sort by date
-    leads = sorted(enquiry_leads + review_leads + coupon_leads, 
-                   key=lambda x: x['created_at'], reverse=True)
+    # Statistics
+    enquiries_count = enquiries.count()
+    reviews_count = reviews.count()
+    coupon_requests_count = len(coupon_requests)
+    unread_enquiries_count = enquiries.filter(is_responded=False).count()
+    pending_reviews_count = reviews.filter(is_approved=False).count()
     
     context = {
         'active_tab': 'leads',
-        'leads': leads,
-        'businesses': businesses,
+        'enquiries': enquiries[:50],  # Limit to recent 50
+        'reviews': reviews[:50],
+        'coupon_requests': coupon_requests[:50] if coupon_requests else [],
+        'enquiries_count': enquiries_count,
+        'reviews_count': reviews_count,
+        'coupon_requests_count': coupon_requests_count,
+        'unread_enquiries_count': unread_enquiries_count,
+        'pending_reviews_count': pending_reviews_count,
     }
     
     return render(request, 'directory/dashboard/leads.html', context)
