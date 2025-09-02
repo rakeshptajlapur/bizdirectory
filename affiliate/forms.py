@@ -8,6 +8,7 @@ class AffiliateApplicationForm(forms.ModelForm):
     class Meta:
         model = AffiliateProfile
         fields = ['promotion_strategy', 'aadhar_card', 'pan_card']
+        # Note: Excluding total_earnings from form as it's auto-calculated
         widgets = {
             'promotion_strategy': forms.Textarea(attrs={
                 'rows': 4, 
@@ -28,7 +29,7 @@ class AffiliateApplicationForm(forms.ModelForm):
             'aadhar_card': 'Upload Aadhar Card (PDF/Image)',
             'pan_card': 'Upload PAN Card (PDF/Image)'
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Make documents required only for new applications
@@ -38,19 +39,19 @@ class AffiliateApplicationForm(forms.ModelForm):
         else:
             self.fields['aadhar_card'].required = False
             self.fields['pan_card'].required = False
-    
+
     def clean_aadhar_card(self):
         aadhar_file = self.cleaned_data.get('aadhar_card')
         if aadhar_file:
             return self.validate_file(aadhar_file, 'Aadhar card')
         return aadhar_file
-    
+
     def clean_pan_card(self):
         pan_file = self.cleaned_data.get('pan_card')
         if pan_file:
             return self.validate_file(pan_file, 'PAN card')
         return pan_file
-    
+
     def validate_file(self, file, field_name):
         """Validate uploaded file"""
         # Check file size (5MB max)

@@ -90,7 +90,7 @@ def affiliate_dashboard(request):
 
 @login_required
 def apply_affiliate(request):
-    """Apply to become an affiliate with proper file upload handling"""
+    """Apply to become an affiliate - SIMPLIFIED AND FIXED"""
     # Check if already an affiliate
     try:
         affiliate = AffiliateProfile.objects.get(user=request.user)
@@ -104,15 +104,29 @@ def apply_affiliate(request):
         affiliate = None
 
     if request.method == 'POST':
-        form = AffiliateApplicationForm(request.POST, request.FILES, instance=affiliate)
-        if form.is_valid():
-            affiliate = form.save(commit=False)
-            affiliate.user = request.user
-            affiliate.status = 'pending'
-            affiliate.save()
+        try:
+            form = AffiliateApplicationForm(request.POST, request.FILES, instance=affiliate)
+            if form.is_valid():
+                affiliate = form.save(commit=False)
+                affiliate.user = request.user
+                affiliate.status = 'pending'
+                
+                # The save method will handle default values
+                affiliate.save()
+                
+                messages.success(request, "Your affiliate application has been submitted for review.")
+                return redirect('affiliate:dashboard')
+            else:
+                # Display form errors clearly
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"Error in {field}: {error}")
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error in affiliate application: {e}")
+            messages.error(request, f"Error submitting application: {str(e)}")
             
-            messages.success(request, "Your affiliate application with KYC documents has been submitted for review.")
-            return redirect('affiliate:dashboard')
     else:
         form = AffiliateApplicationForm(instance=affiliate)
 
