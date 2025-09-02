@@ -297,6 +297,24 @@
             font-size: 0.9rem;
         }
     }
+    
+    /* Sticky CTA at the bottom */
+    .sticky-cta-bottom {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #fff;
+        border-top: 1px solid #dee2e6;
+        padding: 0.5rem 1rem;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        z-index: 1100;
+    }
+    
+    .sticky-cta-bottom .btn {
+        height: 38px;
+        font-size: 0.875rem;
+    }
 </style>
 {% endblock %}
 
@@ -1016,5 +1034,31 @@
             $("#showMoreCategories").removeClass("d-none");
         });
     });
+    
+    // Scroll to top function
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 </script>
 {% endblock %}
+
+<!-- Add before closing body tag -->
+<div class="sticky-cta-bottom d-md-none">
+    <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary flex-fill" onclick="scrollToTop()">
+            <i class="bi bi-arrow-up me-1"></i>
+            <span>Back to Top</span>
+        </button>
+        {% if user.is_authenticated %}
+        <a href="{% url 'directory:add_listings_info' %}" class="btn btn-primary flex-fill">
+            <i class="bi bi-plus-circle me-1"></i>
+            <span>Add Business</span>
+        </a>
+        {% else %}
+        <a href="{% url 'account_signup' %}" class="btn btn-primary flex-fill">
+            <i class="bi bi-person-plus me-1"></i>
+            <span>Join Free</span>
+        </a>
+        {% endif %}
+    </div>
+</div>

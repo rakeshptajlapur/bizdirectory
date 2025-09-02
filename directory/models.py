@@ -119,6 +119,15 @@ class Business(models.Model):
             return True
         return False
 
+    def get_related_businesses(self, limit=6):
+        """Get related businesses in the same category, excluding current business"""
+        return Business.objects.filter(
+            category=self.category,
+            is_active=True
+        ).exclude(
+            id=self.id
+        ).order_by('-created_at')[:limit]
+
 class BusinessImage(models.Model):
     business = models.ForeignKey(Business, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='business_images/')

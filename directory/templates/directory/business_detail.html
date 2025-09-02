@@ -743,6 +743,47 @@
         display: none !important;
     }
 }
+
+/* Related business cards styling */
+.related-business-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.related-business-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.related-business-card .stretched-link::after {
+    z-index: 1;
+}
+
+.related-business-card .badge {
+    z-index: 2;
+    position: relative;
+}
+
+/* Mobile adjustments for related businesses */
+@media (max-width: 767.98px) {
+    .related-business-card .card-img-top {
+        height: 150px !important;
+    }
+    
+    .related-business-card .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    .related-business-card .card-title {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+    
+    .related-business-card .card-text {
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+}
 </style>
 {% endblock %}
 
@@ -1002,7 +1043,7 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
                                     <h3 class="card-title mb-0">Customer Reviews</h3>
-                                    <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#addReviewForm">
+                                    <button class="
                                         <i class="bi bi-star-fill me-1"></i>Write a Review
                                     </button>
                                 </div>
@@ -1205,7 +1246,8 @@
         </div>
     </div>
 
-    <!-- Related Businesses -->
+    <!-- Similar Businesses Section - FIXED -->
+    {% if business.get_related_businesses %}
     <div class="container-fluid px-3 px-lg-4 mb-5">
         <div class="container">
             <h3 class="border-bottom pb-2 mb-4">Similar Businesses</h3>
@@ -1213,19 +1255,59 @@
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 {% for related_business in business.get_related_businesses %}
                     <div class="col">
-                        <div class="card h-100 shadow-sm">
-                            <img src="{{ related_business.get_primary_image_url }}" class="card-img-top" alt="{{ related_business.name }}" style="height: 200px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ related_business.name }}</h5>
-                                <p class="card-text text-muted">{{ related_business.description|truncatewords:15 }}</p>
-                                <a href="{% url 'directory:business_detail' related_business.pk %}" class="stretched-link"></a>
+                        <div class="card h-100 shadow-sm related-business-card">
+                            <div class="position-relative">
+                                <img src="{{ related_business.get_primary_image_url }}" 
+                                     class="card-img-top" 
+                                     alt="{{ related_business.name }}" 
+                                     style="height: 180px; object-fit: cover;">
+                                <span class="position-absolute top-0 start-0 m-2 badge bg-primary">
+                                    {{ related_business.category.name }}
+                                </span>
                             </div>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ related_business.name }}</h5>
+                                <p class="card-text text-muted flex-grow-1">{{ related_business.description|truncatewords:15 }}</p>
+                                
+                                <!-- Rating if available -->
+                                {% if related_business.avg_rating %}
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="stars me-2">
+                                        {% for i in "12345"|make_list %}
+                                            <i class="bi bi-star{% if forloop.counter <= related_business.avg_rating|default:0 %}-fill{% endif %} text-warning"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <small class="text-muted">({{ related_business.approved_reviews_count }})</small>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Location -->
+                                <small class="text-muted">
+                                    <i class="bi bi-geo-alt me-1"></i>{{ related_business.city }}, {{ related_business.pincode }}
+                                </small>
+                            </div>
+                            <a href="{% url 'directory:business_detail' related_business.pk %}" class="stretched-link" aria-label="View {{ related_business.name }}"></a>
                         </div>
                     </div>
                 {% endfor %}
             </div>
         </div>
     </div>
+    {% else %}
+    <!-- Debug: Show when no related businesses found -->
+    <div class="container-fluid px-3 px-lg-4 mb-5">
+        <div class="container">
+            <h3 class="border-bottom pb-2 mb-4">Similar Businesses</h3>
+            <div class="text-center py-4">
+                <i class="bi bi-building text-muted fs-1"></i>
+                <p class="text-muted mt-2">No similar businesses found in this category.</p>
+                <a href="{% url 'directory:listings' %}?category={{ business.category.id }}" class="btn btn-outline-primary">
+                    Browse {{ business.category.name }} Businesses
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <!-- Mobile Sticky CTA -->

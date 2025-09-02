@@ -421,6 +421,42 @@
     </div>
 </section>
 
+<!-- Add before closing body tag -->
+<div class="sticky-cta-bottom">
+    <div class="d-flex gap-2">
+        {% if user.is_authenticated %}
+            {% if user.profile.is_business_owner %}
+            <a href="{% url 'directory:add_business' %}" class="btn btn-success flex-fill">
+                <i class="bi bi-plus-circle me-1"></i>
+                <span>Add Listing</span>
+            </a>
+            <a href="{% url 'directory:dashboard_home' %}" class="btn btn-outline-primary flex-fill">
+                <i class="bi bi-speedometer2 me-1"></i>
+                <span>Dashboard</span>
+            </a>
+            {% else %}
+            <a href="{% url 'accounts:upgrade_to_business' %}" class="btn btn-primary flex-fill">
+                <i class="bi bi-arrow-up-circle me-1"></i>
+                <span>Upgrade</span>
+            </a>
+            <a href="{% url 'directory:dashboard_home' %}" class="btn btn-outline-primary flex-fill">
+                <i class="bi bi-speedometer2 me-1"></i>
+                <span>Dashboard</span>
+            </a>
+            {% endif %}
+        {% else %}
+        <a href="{% url 'account_signup' %}" class="btn btn-primary flex-fill">
+            <i class="bi bi-person-plus me-1"></i>
+            <span>Get Started</span>
+        </a>
+        <a href="{% url 'account_login' %}" class="btn btn-outline-primary flex-fill">
+            <i class="bi bi-box-arrow-in-right me-1"></i>
+            <span>Login</span>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
 <style>
 .step-number {
     position: absolute;

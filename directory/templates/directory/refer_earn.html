@@ -650,6 +650,50 @@
     </div>
 </section>
 
+<div class="sticky-cta-bottom">
+    <div class="d-flex gap-2">
+        {% if user.is_authenticated %}
+            {% if not user.affiliate_profile %}
+            <a href="{% url 'affiliate:apply' %}" class="btn btn-success flex-fill">
+                <i class="bi bi-person-plus me-1"></i>
+                <span>Apply Now</span>
+            </a>
+            <a href="{% url 'directory:dashboard_home' %}" class="btn btn-outline-primary flex-fill">
+                <i class="bi bi-speedometer2 me-1"></i>
+                <span>Dashboard</span>
+            </a>
+            {% elif user.affiliate_profile.status == 'approved' %}
+            <a href="{% url 'affiliate:dashboard' %}" class="btn btn-primary flex-fill">
+                <i class="bi bi-bar-chart me-1"></i>
+                <span>My Earnings</span>
+            </a>
+            <a href="{% url 'affiliate:referrals' %}" class="btn btn-outline-primary flex-fill">
+                <i class="bi bi-people me-1"></i>
+                <span>Referrals</span>
+            </a>
+            {% else %}
+            <div class="btn btn-warning flex-fill disabled">
+                <i class="bi bi-clock me-1"></i>
+                <span>Under Review</span>
+            </div>
+            <a href="{% url 'directory:dashboard_home' %}" class="btn btn-outline-primary flex-fill">
+                <i class="bi bi-speedometer2 me-1"></i>
+                <span>Dashboard</span>
+            </a>
+            {% endif %}
+        {% else %}
+        <a href="{% url 'account_signup' %}" class="btn btn-primary flex-fill">
+            <i class="bi bi-person-plus me-1"></i>
+            <span>Join & Earn</span>
+        </a>
+        <a href="{% url 'account_login' %}" class="btn btn-outline-primary flex-fill">
+            <i class="bi bi-box-arrow-in-right me-1"></i>
+            <span>Login</span>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
 <style>
 .step-number {
     position: absolute;
