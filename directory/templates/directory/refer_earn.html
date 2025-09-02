@@ -21,27 +21,27 @@
                 {% if user.is_authenticated %}
                     {% if user.affiliate_profile %}
                         {% if user.affiliate_profile.status == 'approved' %}
-                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
                                 <a href="{% url 'affiliate:dashboard' %}" class="btn btn-success btn-lg px-5 py-3">View Affiliate Dashboard</a>
                             </div>
                         {% elif user.affiliate_profile.status == 'pending' %}
-                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
                                 <div class="btn btn-warning btn-lg px-5 py-3" disabled>Application Under Review</div>
                             </div>
                         {% else %}
-                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
                                 <a href="{% url 'affiliate:apply' %}" class="btn btn-primary btn-lg px-5 py-3">Reapply as Affiliate</a>
                                 <a href="{% url 'directory:dashboard_home' %}" class="btn btn-outline-light btn-lg px-5 py-3">Go to Dashboard</a>
                             </div>
                         {% endif %}
                     {% else %}
-                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
                             <a href="{% url 'affiliate:apply' %}" class="btn btn-primary btn-lg px-5 py-3">Become Affiliate Now</a>
                             <a href="{% url 'directory:dashboard_home' %}" class="btn btn-outline-light btn-lg px-5 py-3">Go to Dashboard</a>
                         </div>
                     {% endif %}
                 {% else %}
-                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
                         <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg px-5 py-3">Sign Up & Start Earning</a>
                         <a href="{% url 'account_login' %}" class="btn btn-outline-light btn-lg px-5 py-3">Already Member? Login</a>
                     </div>
@@ -87,8 +87,8 @@
         
         <div class="row g-4">
             <div class="col-lg-3 col-md-6">
-                <div class="card border-0 shadow-sm h-100 text-center">
-                    <div class="card-body p-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4 text-center text-lg-center text-start">
                         <div class="bg-primary bg-opacity-10 rounded-circle p-4 d-inline-flex mb-4" style="width: 100px; height: 100px; align-items: center; justify-content: center;">
                             <i class="bi bi-person-plus-fill fs-1 text-primary"></i>
                         </div>
@@ -100,8 +100,8 @@
             </div>
             
             <div class="col-lg-3 col-md-6">
-                <div class="card border-0 shadow-sm h-100 text-center">
-                    <div class="card-body p-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4 text-center text-lg-center text-start">
                         <div class="bg-success bg-opacity-10 rounded-circle p-4 d-inline-flex mb-4" style="width: 100px; height: 100px; align-items: center; justify-content: center;">
                             <i class="bi bi-clipboard-check-fill fs-1 text-success"></i>
                         </div>
@@ -113,8 +113,8 @@
             </div>
             
             <div class="col-lg-3 col-md-6">
-                <div class="card border-0 shadow-sm h-100 text-center">
-                    <div class="card-body p-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4 text-center text-lg-center text-start">
                         <div class="bg-warning bg-opacity-10 rounded-circle p-4 d-inline-flex mb-4" style="width: 100px; height: 100px; align-items: center; justify-content: center;">
                             <i class="bi bi-patch-check-fill fs-1 text-warning"></i>
                         </div>
@@ -126,8 +126,8 @@
             </div>
             
             <div class="col-lg-3 col-md-6">
-                <div class="card border-0 shadow-sm h-100 text-center">
-                    <div class="card-body p-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4 text-center text-lg-center text-start">
                         <div class="bg-info bg-opacity-10 rounded-circle p-4 d-inline-flex mb-4" style="width: 100px; height: 100px; align-items: center; justify-content: center;">
                             <i class="bi bi-cash-coin fs-1 text-info"></i>
                         </div>
@@ -238,113 +238,183 @@
             </div>
         </div>
         
-        <!-- Earning Calculator - Enhanced Width -->
+        <!-- Earning Calculator - Compact Mobile Version -->
         <div class="row justify-content-center mt-5">
             <div class="col-lg-10 col-xl-9">
                 <div class="card border-0 shadow-lg">
-                    <div class="card-body p-5">
-                        <h3 class="fw-bold text-center mb-4">Calculate Your Earning Potential</h3>
+                    <div class="card-body p-4 p-lg-5">
+                        <h3 class="fw-bold text-center text-lg-center text-start mb-3 mb-lg-4">Calculate Your Earning Potential</h3>
                         
-                        <div class="row align-items-center g-4">
-                            <div class="col-lg-5 mb-4 mb-lg-0">
-                                <label class="form-label fw-bold h5 mb-3">How many businesses can you refer monthly?</label>
-                                <input type="range" class="form-range mb-3" id="referralRange" min="1" max="100" value="10" oninput="calculateEarnings()">
-                                <div class="d-flex justify-content-between mb-4">
-                                    <small class="text-muted">1 Business</small>
-                                    <small class="text-muted">100+ Businesses</small>
+                        <!-- Mobile Compact Layout -->
+                        <div class="d-lg-none">
+                            <!-- Mobile Slider Section -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold mb-2">Monthly referrals?</label>
+                                <input type="range" class="form-range mb-2" id="referralRange" min="1" max="100" value="10" oninput="calculateEarnings()">
+                                <div class="d-flex justify-content-between small text-muted mb-3">
+                                    <span>1</span>
+                                    <span>100+</span>
                                 </div>
-                                
-                                <!-- Visual Slider Value Display -->
-                                <div class="text-center">
-                                    <div class="bg-primary bg-opacity-10 rounded-3 p-3 mb-3">
-                                        <div class="h4 mb-0 text-primary">
-                                            <span id="referralCount" class="fw-bold">10</span> Referrals/Month
+                            </div>
+                            
+                            <!-- Mobile Results Grid -->
+                            <div class="row g-2 mb-3">
+                                <div class="col-4">
+                                    <div class="bg-primary bg-opacity-10 rounded p-2 text-center">
+                                        <div class="small text-primary">Referrals</div>
+                                        <div class="fw-bold text-primary h6 mb-0">
+                                            <span id="referralCount">10</span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <div class="col-lg-2 d-none d-lg-flex justify-content-center">
-                                <div class="text-center">
-                                    <i class="bi bi-arrow-right text-primary fs-1"></i>
-                                    <div class="small text-muted mt-2">Earnings</div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-lg-5">
-                                <div class="earnings-display">
-                                    <!-- Monthly Earnings -->
-                                    <div class="bg-success bg-opacity-10 rounded-3 p-4 mb-3 text-center">
-                                        <div class="text-success mb-2">
-                                            <i class="bi bi-calendar-month fs-2"></i>
-                                        </div>
-                                        <div class="h5 text-success mb-1">Monthly Earnings</div>
-                                        <div class="h2 mb-0 text-success fw-bold">
+                                <div class="col-4">
+                                    <div class="bg-success bg-opacity-10 rounded p-2 text-center">
+                                        <div class="small text-success">Monthly</div>
+                                        <div class="fw-bold text-success h6 mb-0">
                                             ₹<span id="monthlyEarning">10,000</span>
                                         </div>
                                     </div>
-                                    
-                                    <!-- Yearly Earnings -->
-                                    <div class="bg-warning bg-opacity-10 rounded-3 p-4 text-center">
-                                        <div class="text-warning mb-2">
-                                            <i class="bi bi-calendar4-range fs-2"></i>
-                                        </div>
-                                        <div class="h5 text-warning mb-1">Yearly Earnings</div>
-                                        <div class="h2 mb-0 text-warning fw-bold">
+                                </div>
+                                <div class="col-4">
+                                    <div class="bg-warning bg-opacity-10 rounded p-2 text-center">
+                                        <div class="small text-warning">Yearly</div>
+                                        <div class="fw-bold text-warning h6 mb-0">
                                             ₹<span id="yearlyEarning">1,20,000</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- Mobile Info -->
+                            <div class="alert alert-info py-2 mb-3">
+                                <small><i class="bi bi-info-circle me-1"></i>
+                                <span id="referralCountText">10</span> × ₹1,000 = ₹<span id="monthlyEarningText">10,000</span>/month</small>
+                            </div>
+                            
+                            <!-- Mobile CTA -->
+                            {% if not user.is_authenticated %}
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'account_signup' %}" class="btn btn-primary">Start Earning Today</a>
+                                    <a href="{% url 'account_login' %}" class="btn btn-outline-primary">Login & Apply</a>
+                                </div>
+                            {% elif not user.affiliate_profile %}
+                                <div class="d-grid">
+                                    <a href="{% url 'affiliate:apply' %}" class="btn btn-primary">Become Affiliate Now</a>
+                                </div>
+                            {% elif user.affiliate_profile.status == 'pending' %}
+                                <div class="alert alert-warning py-2 mb-0">
+                                    <small><i class="bi bi-clock me-1"></i>Application under review</small>
+                                </div>
+                            {% elif user.affiliate_profile.status == 'approved' %}
+                                <div class="d-grid">
+                                    <a href="{% url 'affiliate:dashboard' %}" class="btn btn-success">View Your Dashboard</a>
+                                </div>
+                            {% endif %}
                         </div>
                         
-                        <!-- Calculation Details -->
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <div class="bg-light rounded-3 p-4">
-                                    <div class="row text-center g-3">
-                                        <div class="col-md-3">
-                                            <div class="h6 mb-1">Commission Rate</div>
-                                            <div class="h4 text-primary mb-0">20%</div>
+                        <!-- Desktop Layout (unchanged) -->
+                        <div class="d-none d-lg-block">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-5 mb-4 mb-lg-0">
+                                    <label class="form-label fw-bold h5 mb-3">How many businesses can you refer monthly?</label>
+                                    <input type="range" class="form-range mb-3" id="referralRangeDesktop" min="1" max="100" value="10" oninput="calculateEarningsDesktop()">
+                                    <div class="d-flex justify-content-between mb-4">
+                                        <small class="text-muted">1 Business</small>
+                                        <small class="text-muted">100+ Businesses</small>
+                                    </div>
+                                    
+                                    <!-- Visual Slider Value Display -->
+                                    <div class="text-center">
+                                        <div class="bg-primary bg-opacity-10 rounded-3 p-3 mb-3">
+                                            <div class="h4 mb-0 text-primary">
+                                                <span id="referralCountDesktop" class="fw-bold">10</span> Referrals/Month
+                                            </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="h6 mb-1">Premium Plan Cost</div>
-                                            <div class="h4 text-info mb-0">₹5,000</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-2 d-flex justify-content-center">
+                                    <div class="text-center">
+                                        <i class="bi bi-arrow-right text-primary fs-1"></i>
+                                        <div class="small text-muted mt-2">Earnings</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-5">
+                                    <div class="earnings-display">
+                                        <!-- Monthly Earnings -->
+                                        <div class="bg-success bg-opacity-10 rounded-3 p-4 mb-3 text-center">
+                                            <div class="text-success mb-2">
+                                                <i class="bi bi-calendar-month fs-2"></i>
+                                            </div>
+                                            <div class="h5 text-success mb-1">Monthly Earnings</div>
+                                            <div class="h2 mb-0 text-success fw-bold">
+                                                ₹<span id="monthlyEarningDesktop">10,000</span>
+                                            </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="h6 mb-1">Per Referral Earning</div>
-                                            <div class="h4 text-success mb-0">₹1,000</div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="h6 mb-1">Payout Threshold</div>
-                                            <div class="h4 text-warning mb-0">₹5,000</div>
+                                        
+                                        <!-- Yearly Earnings -->
+                                        <div class="bg-warning bg-opacity-10 rounded-3 p-4 text-center">
+                                            <div class="text-warning mb-2">
+                                                <i class="bi bi-calendar4-range fs-2"></i>
+                                            </div>
+                                            <div class="h5 text-warning mb-1">Yearly Earnings</div>
+                                            <div class="h2 mb-0 text-warning fw-bold">
+                                                ₹<span id="yearlyEarningDesktop">1,20,000</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- CTA and Info -->
-                        <div class="text-center mt-4">
-                            <div class="alert alert-info d-inline-block mb-4">
-                                <i class="bi bi-info-circle me-2"></i>
-                                <strong>Calculation:</strong> <span id="referralCountText">10</span> referrals × ₹1,000 commission = ₹<span id="monthlyEarningText">10,000</span>/month
+                            
+                            <!-- Calculation Details -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="bg-light rounded-3 p-4">
+                                        <div class="row text-center g-3">
+                                            <div class="col-md-3">
+                                                <div class="h6 mb-1">Commission Rate</div>
+                                                <div class="h4 text-primary mb-0">20%</div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="h6 mb-1">Premium Plan Cost</div>
+                                                <div class="h4 text-info mb-0">₹5,000</div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="h6 mb-1">Per Referral Earning</div>
+                                                <div class="h4 text-success mb-0">₹1,000</div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="h6 mb-1">Payout Threshold</div>
+                                                <div class="h4 text-warning mb-0">₹5,000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             
-                            {% if not user.is_authenticated %}
-                                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                                    <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg px-5">Start Earning Today</a>
-                                    <a href="{% url 'account_login' %}" class="btn btn-outline-primary btn-lg px-5">Login & Apply</a>
+                            <!-- CTA and Info -->
+                            <div class="text-center mt-4">
+                                <div class="alert alert-info d-inline-block mb-4">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <strong>Calculation:</strong> <span id="referralCountTextDesktop">10</span> referrals × ₹1,000 commission = ₹<span id="monthlyEarningTextDesktop">10,000</span>/month
                                 </div>
-                            {% elif not user.affiliate_profile %}
-                                <a href="{% url 'affiliate:apply' %}" class="btn btn-primary btn-lg px-5">Become Affiliate Now</a>
-                            {% elif user.affiliate_profile.status == 'pending' %}
-                                <div class="alert alert-warning">
-                                    <i class="bi bi-clock me-2"></i>Your application is under review
-                                </div>
-                            {% elif user.affiliate_profile.status == 'approved' %}
-                                <a href="{% url 'affiliate:dashboard' %}" class="btn btn-success btn-lg px-5">View Your Dashboard</a>
-                            {% endif %}
+                                
+                                {% if not user.is_authenticated %}
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                        <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg px-5">Start Earning Today</a>
+                                        <a href="{% url 'account_login' %}" class="btn btn-outline-primary btn-lg px-5">Login & Apply</a>
+                                    </div>
+                                {% elif not user.affiliate_profile %}
+                                    <a href="{% url 'affiliate:apply' %}" class="btn btn-primary btn-lg px-5">Become Affiliate Now</a>
+                                {% elif user.affiliate_profile.status == 'pending' %}
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-clock me-2"></i>Your application is under review
+                                    </div>
+                                {% elif user.affiliate_profile.status == 'approved' %}
+                                    <a href="{% url 'affiliate:dashboard' %}" class="btn btn-success btn-lg px-5">View Your Dashboard</a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -464,7 +534,7 @@
 <!-- Requirements Section -->
 <section class="py-5 bg-light">
     <div class="container">
-        <div class="text-center mb-5">
+        <div class="text-center text-lg-center text-start mb-5">
             <h2 class="display-5 fw-bold">Affiliate Requirements</h2>
             <p class="lead text-muted">Simple requirements to get started</p>
         </div>
@@ -472,7 +542,7 @@
         <div class="row g-4">
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body p-4 text-center">
+                    <div class="card-body p-4 text-center text-lg-center text-start">
                         <i class="bi bi-person-check-fill text-primary fs-1 mb-3"></i>
                         <h5 class="fw-bold mb-3">Basic Requirements</h5>
                         <ul class="list-unstyled text-start">
@@ -487,7 +557,7 @@
             
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body p-4 text-center">
+                    <div class="card-body p-4 text-center text-lg-center text-start">
                         <i class="bi bi-file-earmark-text-fill text-success fs-1 mb-3"></i>
                         <h5 class="fw-bold mb-3">Documents Needed</h5>
                         <ul class="list-unstyled text-start">
@@ -502,7 +572,7 @@
             
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body p-4 text-center">
+                    <div class="card-body p-4 text-center text-lg-center text-start">
                         <i class="bi bi-graph-up-arrow text-info fs-1 mb-3"></i>
                         <h5 class="fw-bold mb-3">Success Tips</h5>
                         <ul class="list-unstyled text-start">
@@ -529,7 +599,7 @@
                 {% if user.is_authenticated %}
                     {% if user.affiliate_profile %}
                         {% if user.affiliate_profile.status == 'approved' %}
-                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
                                 <a href="{% url 'affiliate:dashboard' %}" class="btn btn-light btn-lg px-5 py-3">
                                     <i class="bi bi-bar-chart me-2"></i>View Affiliate Dashboard
                                 </a>
@@ -538,20 +608,20 @@
                                 </a>
                             </div>
                         {% elif user.affiliate_profile.status == 'pending' %}
-                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
                                 <div class="alert alert-warning d-inline-block">
                                     <i class="bi bi-clock me-2"></i>Your affiliate application is under review
                                 </div>
                             </div>
                         {% else %}
-                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
                                 <a href="{% url 'affiliate:apply' %}" class="btn btn-light btn-lg px-5 py-3">
                                     <i class="bi bi-person-plus me-2"></i>Reapply as Affiliate
                                 </a>
                             </div>
                         {% endif %}
                     {% else %}
-                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
                             <a href="{% url 'affiliate:apply' %}" class="btn btn-light btn-lg px-5 py-3">
                                 <i class="bi bi-person-plus me-2"></i>Apply as Affiliate
                             </a>
@@ -561,7 +631,7 @@
                         </div>
                     {% endif %}
                 {% else %}
-                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
                         <a href="{% url 'account_signup' %}" class="btn btn-light btn-lg px-5 py-3">
                             <i class="bi bi-person-plus me-2"></i>Sign Up & Apply
                         </a>
@@ -601,8 +671,9 @@
     position: relative;
 }
 
-/* Enhanced Mobile Button Spacing */
-.btn-container {
+/* Enhanced Mobile Button Centering */
+.btn-container,
+.d-flex.flex-column.flex-sm-row {
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -611,20 +682,40 @@
 }
 
 @media (min-width: 576px) {
-    .btn-container {
+    .btn-container,
+    .d-flex.flex-column.flex-sm-row {
         flex-direction: row;
         gap: 1.5rem;
     }
 }
 
-/* Mobile button improvements */
+/* Mobile button improvements with perfect centering */
 @media (max-width: 575.98px) {
     .btn-lg {
         width: 100%;
         max-width: 280px;
         padding: 1rem 2rem !important;
         font-size: 1rem !important;
-        margin-bottom: 0;
+        margin: 0 auto; /* Center the button horizontally */
+        display: block;
+        text-align: center;
+    }
+    
+    /* Ensure button containers are centered */
+    .d-flex.flex-column.flex-sm-row {
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center;
+        width: 100%;
+    }
+    
+    /* Center the entire button group */
+    .hero-section .container,
+    .py-5.bg-primary .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
     
     /* Ensure proper spacing between stacked buttons */
@@ -642,11 +733,13 @@
         font-size: 1.75rem !important;
         line-height: 1.3;
         margin-bottom: 1rem;
+        text-align: center;
     }
     
     .hero-section .lead {
         font-size: 1rem !important;
         margin-bottom: 2rem;
+        text-align: center;
     }
     
     /* CTA section mobile adjustments */
@@ -654,11 +747,18 @@
         font-size: 1.5rem !important;
         line-height: 1.3;
         margin-bottom: 1rem;
+        text-align: center;
     }
     
     .py-5.bg-primary .lead {
         font-size: 0.95rem !important;
         margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    /* Center the text content as well */
+    .col-lg-8 {
+        text-align: center;
     }
 }
 
@@ -676,6 +776,7 @@
         padding: 0.875rem 1.5rem !important;
         font-size: 0.9rem !important;
         max-width: 260px;
+        margin: 0 auto;
     }
     
     .hero-section h1 {
@@ -705,6 +806,7 @@
     background: linear-gradient(to right, #0d6efd 0%, #0d6efd 50%, #dee2e6 50%, #dee2e6 100%);
     outline: none;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 #referralRange::-webkit-slider-thumb {

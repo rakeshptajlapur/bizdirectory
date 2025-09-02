@@ -313,82 +313,217 @@
         }
     }
     
-    /* Gallery thumbnails - mobile optimized */
-    .gallery-thumbnails {
-        gap: 0.5rem;
-        padding: 0.5rem 0;
-    }
-    
-    .gallery-thumb {
-        flex-shrink: 0;
-        width: 60px;
-        height: 60px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
-    }
-    
-    .gallery-thumb.active {
-        border-color: #0d6efd;
-        transform: scale(1.05);
-    }
-    
+    /* Enhanced Mobile Responsiveness - Reduced Margins */
     @media (max-width: 767.98px) {
-        .gallery-thumb {
-            width: 50px;
-            height: 50px;
-        }
-    }
-    
-    /* Info cards responsive styling */
-    .info-card {
-        border-radius: 12px;
-        border: none;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    
-    .info-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    }
-    
-    /* Sticky Mobile CTA */
-    .mobile-sticky-cta {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: white;
-        border-top: 1px solid #dee2e6;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        padding: 0.75rem;
-        display: none;
-    }
-    
-    .mobile-sticky-cta .btn-group {
-        width: 100%;
-        gap: 0.5rem;
-    }
-    
-    .mobile-sticky-cta .btn {
-        flex: 1;
-        padding: 0.75rem 0.5rem;
-        font-size: 0.85rem;
-        font-weight: 600;
-        border-radius: 8px;
-    }
-    
-    @media (max-width: 767.98px) {
-        .mobile-sticky-cta {
-            display: block;
+        /* Reduce container margins significantly */
+        .container-fluid {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
         }
         
-        /* Add bottom padding to content to account for sticky CTA */
-        .main-content {
-            padding-bottom: 80px;
+        .container {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+        
+        /* Business header card mobile optimization */
+        .business-header-card {
+            margin-bottom: 1rem !important;
+            border-radius: 8px;
+        }
+        
+        .business-header-card .row {
+            margin: 0;
+        }
+        
+        .business-image-container {
+            height: 180px;
+            min-height: unset;
+        }
+        
+        .business-content {
+            padding: 0.75rem !important;
+        }
+        
+        .business-content h1 {
+            font-size: 1.25rem !important;
+            line-height: 1.3;
+            margin-bottom: 0.5rem;
+        }
+        
+        .quick-contact-buttons {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .quick-contact-buttons .btn {
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+        }
+        
+        /* Reduce spacing between sections */
+        .main-content > .container-fluid {
+            margin-bottom: 1rem !important;
+        }
+        
+        .main-content .mb-4 {
+            margin-bottom: 1rem !important;
+        }
+        
+        .main-content .mb-5 {
+            margin-bottom: 1.5rem !important;
+        }
+        
+        /* Info cards - tighter spacing */
+        .info-card {
+            margin-bottom: 1rem !important;
+            border-radius: 8px;
+        }
+        
+        .info-card .card-body {
+            padding: 0.75rem !important;
+        }
+        
+        .info-card .card-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+        
+        /* Gallery thumbnails - reduce spacing */
+        .gallery-thumbnails {
+            gap: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .gallery-thumb {
+            width: 45px;
+            height: 45px;
+        }
+        
+        /* Offer banner - reduce padding */
+        .offer-banner {
+            padding: 1rem !important;
+            margin-bottom: 1rem !important;
+            border-radius: 8px;
+        }
+        
+        .offer-banner h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .offer-banner form {
+            margin-top: 0.75rem;
+        }
+        
+        /* Row spacing adjustments */
+        .row.g-4 {
+            --bs-gutter-y: 1rem;
+        }
+        
+        /* Service items - tighter layout */
+        .service-item {
+            padding: 0.5rem !important;
+        }
+        
+        .service-item h5 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        /* Review cards - reduce spacing */
+        .review-card {
+            padding: 0.75rem !important;
+            margin-bottom: 0.75rem !important;
+        }
+        
+        /* Trust badges - smaller on mobile */
+        .trust-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        /* Contact form - tighter spacing */
+        .mb-3 {
+            margin-bottom: 0.75rem !important;
+        }
+        
+        .form-label {
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Related businesses - reduce card height */
+        .related-businesses .card-img-top {
+            height: 150px !important;
+        }
+        
+        .related-businesses .card-body {
+            padding: 0.75rem !important;
+        }
+    }
+
+    /* Extra small screens - even tighter margins */
+    @media (max-width: 575.98px) {
+        .container-fluid {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+        
+        .business-content {
+            padding: 0.5rem !important;
+        }
+        
+        .info-card .card-body {
+            padding: 0.5rem !important;
+        }
+        
+        .offer-banner {
+            padding: 0.75rem !important;
+        }
+        
+        .gallery-thumbnails {
+            padding: 0.25rem 0.5rem;
+        }
+        
+        /* Stack trust badges vertically on very small screens */
+        .business-content .d-flex.flex-wrap.gap-2 {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem !important;
+        }
+        
+        /* Reduce text sizes slightly */
+        .business-content h1 {
+            font-size: 1.1rem !important;
+        }
+        
+        .business-content .text-muted {
+            font-size: 0.85rem;
+        }
+        
+        .quick-contact-buttons .btn {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+    }
+
+    /* Landscape phone optimization */
+    @media (max-width: 767.98px) and (orientation: landscape) {
+        .business-image-container {
+            height: 120px;
+        }
+        
+        .business-content {
+            padding: 0.5rem !important;
+        }
+        
+        .business-content h1 {
+            font-size: 1.1rem !important;
         }
     }
     
@@ -434,6 +569,180 @@
         justify-content: center;
         color: #6c757d;
     }
+
+    /* Mobile-specific layout improvements */
+    @media (max-width: 767.98px) {
+        /* Main content wrapper */
+        .main-content {
+            padding-bottom: 90px; /* Account for sticky CTA */
+        }
+        
+        /* Remove excessive Bootstrap spacing on mobile */
+        .mt-4 {
+            margin-top: 1rem !important;
+        }
+        
+        .py-4 {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+        }
+        
+        /* Login gate modal - better mobile sizing */
+        .login-gate-modal {
+            margin: 0.5rem;
+            padding: 1rem;
+            max-height: 85vh;
+            width: calc(100% - 1rem);
+        }
+        
+        .login-gate-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .login-gate-modal h2 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .benefit-item {
+            padding: 0.4rem 0;
+            font-size: 0.85rem;
+        }
+        
+        .benefit-icon {
+            width: 22px;
+            height: 22px;
+            margin-right: 0.5rem;
+            font-size: 0.7rem;
+        }
+        
+        /* Stars and ratings - smaller on mobile */
+        .stars i {
+            font-size: 0.9rem;
+        }
+        
+        /* Address and location info */
+        .business-content .small {
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+        
+        /* Mobile sticky CTA optimization */
+        .mobile-sticky-cta {
+            padding: 0.5rem;
+        }
+        
+        .mobile-sticky-cta .btn {
+            padding: 0.6rem 0.4rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        /* List group items - tighter spacing */
+        .list-group-item {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Form controls - better mobile sizing */
+        .form-control {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Border bottom spacing */
+        .border-bottom {
+            padding-bottom: 0.5rem !important;
+            margin-bottom: 0.75rem !important;
+        }
+    }
+
+    /* Ultra-compact mode for very small screens */
+    @media (max-width: 360px) {
+        .business-content h1 {
+            font-size: 1rem !important;
+            line-height: 1.2;
+        }
+        
+        .trust-badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.4rem;
+        }
+        
+        .quick-contact-buttons .btn {
+            font-size: 0.75rem;
+            padding: 0.35rem 0.7rem;
+        }
+        
+        .info-card .card-title {
+            font-size: 1rem;
+        }
+        
+        .gallery-thumb {
+            width: 40px;
+            height: 40px;
+        }
+    }
+
+    /* Mobile Sticky CTA - FIXED */
+.mobile-sticky-cta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: white;
+    border-top: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    z-index: 1020;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    display: none; /* Hidden by default */
+}
+
+/* Show sticky CTA only on mobile */
+@media (max-width: 767.98px) {
+    .mobile-sticky-cta {
+        display: block !important;
+    }
+    
+    /* Add bottom padding to main content to prevent overlap */
+    .main-content {
+        padding-bottom: 80px !important;
+    }
+    
+    /* Ensure sticky CTA buttons are properly sized */
+    .mobile-sticky-cta .btn {
+        font-size: 0.8rem;
+        padding: 0.6rem 0.5rem;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .mobile-sticky-cta .d-flex {
+        gap: 0.5rem;
+    }
+    
+    .mobile-sticky-cta .flex-fill {
+        min-width: 0; /* Allow flex items to shrink */
+    }
+}
+
+/* Hide on desktop */
+@media (min-width: 768px) {
+    .mobile-sticky-cta {
+        display: none !important;
+    }
+}
 </style>
 {% endblock %}
 
@@ -925,25 +1234,46 @@
     <div class="d-flex gap-2">
         {% if business.phone %}
         <a href="tel:{{ business.phone }}" class="btn btn-success flex-fill">
-            <i class="bi bi-telephone-fill me-1"></i>Call
+            <i class="bi bi-telephone-fill me-1"></i>
+            <span class="d-none d-sm-inline">Call</span>
+            <span class="d-sm-none">Call</span>
         </a>
         {% endif %}
         
         {% if business.website %}
-        <a href="{{ business.website }}" target="_blank" class="btn btn-outline-primary flex-fill">
-            <i class="bi bi-globe me-1"></i>Website
+        <a href="{{ business.website }}" target="_blank" rel="noopener" class="btn btn-outline-primary flex-fill">
+            <i class="bi bi-globe me-1"></i>
+            <span class="d-none d-sm-inline">Website</span>
+            <span class="d-sm-none">Web</span>
         </a>
         {% endif %}
         
-        <a href="#contact-form" class="btn btn-primary flex-fill">
-            <i class="bi bi-envelope-fill me-1"></i>Enquiry
+        <a href="#contact-form" class="btn btn-primary flex-fill" onclick="scrollToContactForm()">
+            <i class="bi bi-envelope-fill me-1"></i>
+            <span class="d-none d-sm-inline">Enquiry</span>
+            <span class="d-sm-none">Email</span>
         </a>
         
         <a href="{% url 'directory:listings' %}?category={{ business.category.id }}" class="btn btn-outline-secondary flex-fill">
-            <i class="bi bi-grid me-1"></i>More
+            <i class="bi bi-grid me-1"></i>
+            <span class="d-none d-sm-inline">More</span>
+            <span class="d-sm-none">More</span>
         </a>
     </div>
 </div>
+
+<!-- Add scroll to contact form function -->
+<script>
+function scrollToContactForm() {
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+}
+</script>
 {% endif %}
 {% endblock %}
 
