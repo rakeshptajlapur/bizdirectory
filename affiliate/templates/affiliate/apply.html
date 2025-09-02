@@ -6,7 +6,7 @@
 <div class="row mb-4">
     <div class="col">
         <h1 class="h3">Become an Affiliate Partner</h1>
-        <p class="text-muted">Join our affiliate program and earn 20% commission on every premium subscription referral</p>
+        <p class="text-muted">Join our affiliate program and earn 20% commission on referrals</p>
     </div>
 </div>
 
@@ -14,187 +14,138 @@
     <div class="col-lg-8">
         <div class="card border-0 shadow-sm">
             <div class="card-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
                 <form method="post" enctype="multipart/form-data" id="affiliateApplicationForm">
                     {% csrf_token %}
                     
                     <!-- Promotion Strategy -->
                     <div class="mb-4">
-                        <label for="{{ form.promotion_strategy.id_for_label }}" class="form-label">{{ form.promotion_strategy.label }}</label>
+                        <label for="{{ form.promotion_strategy.id_for_label }}" class="form-label fw-semibold">
+                            How will you promote our platform?
+                        </label>
                         {{ form.promotion_strategy }}
-                        <div class="form-text">
-                            Explain how you plan to promote BizDirectory. Include details about your audience, marketing channels, and promotion strategies.
+                        <div class="form-text small">
+                            Describe your audience, marketing channels, and promotion strategy.
                         </div>
                         {% if form.promotion_strategy.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger small mt-1">
                                 {{ form.promotion_strategy.errors }}
                             </div>
                         {% endif %}
                     </div>
                     
-                    <!-- KYC Documents Section -->
-                    <div class="card bg-light border-0 mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title border-bottom pb-2 mb-3">
-                                <i class="bi bi-shield-check me-2"></i>Identity Verification Documents
-                            </h5>
-                            
-                            <!-- File Format Alert - Updated for Images Only -->
-                            <div class="alert alert-info mb-3">
-                                <h6 class="mb-2"><i class="bi bi-info-circle me-2"></i>File Requirements</h6>
-                                <ul class="mb-0 small">
-                                    <li><strong>Accepted formats:</strong> JPG, JPEG, PNG (Images only)</li>
-                                    <li><strong>Maximum file size:</strong> 5MB per image</li>
-                                    <li><strong>Quality:</strong> Clear, high-resolution images</li>
-                                    <li><strong>Condition:</strong> Valid and unexpired documents only</li>
-                                </ul>
+                    <!-- Documents Section -->
+                    <div class="border rounded p-3 mb-4" style="background-color: #f8f9fa;">
+                        <h6 class="mb-3">
+                            <i class="bi bi-shield-check me-2 text-primary"></i>Identity Documents
+                        </h6>
+                        
+                        <div class="alert alert-info small mb-3">
+                            <strong>Requirements:</strong> JPG/PNG images only • Max 5MB each • Clear and readable
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.aadhar_card.id_for_label }}" class="form-label">
+                                    Aadhar Card <span class="text-danger">*</span>
+                                </label>
+                                {{ form.aadhar_card }}
+                                {% if form.aadhar_card.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.aadhar_card.errors }}
+                                    </div>
+                                {% endif %}
+                                {% if form.instance.aadhar_card %}
+                                    <div class="mt-1">
+                                        <span class="badge bg-success small">Previously uploaded</span>
+                                    </div>
+                                {% endif %}
                             </div>
                             
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="{{ form.aadhar_card.id_for_label }}" class="form-label">Aadhar Card <span class="text-danger">*</span></label>
-                                    {{ form.aadhar_card }}
-                                    <div class="form-text">
-                                        <strong>Upload Aadhar card image (JPG/PNG, Max: 5MB)</strong><br>
-                                        Upload a clear, high-quality photo of your Aadhar card (both sides if needed).
+                            <div class="col-md-6">
+                                <label for="{{ form.pan_card.id_for_label }}" class="form-label">
+                                    PAN Card <span class="text-danger">*</span>
+                                </label>
+                                {{ form.pan_card }}
+                                {% if form.pan_card.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.pan_card.errors }}
                                     </div>
-                                    {% if form.aadhar_card.errors %}
-                                        <div class="text-danger">
-                                            {{ form.aadhar_card.errors }}
-                                        </div>
-                                    {% endif %}
-                                    {% if form.instance.aadhar_card %}
-                                        <div class="mt-2">
-                                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Previously Uploaded</span>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <label for="{{ form.pan_card.id_for_label }}" class="form-label">PAN Card <span class="text-danger">*</span></label>
-                                    {{ form.pan_card }}
-                                    <div class="form-text">
-                                        <strong>Upload PAN card image (JPG/PNG, Max: 5MB)</strong><br>
-                                        Upload a clear, high-quality photo of your PAN card.
+                                {% endif %}
+                                {% if form.instance.pan_card %}
+                                    <div class="mt-1">
+                                        <span class="badge bg-success small">Previously uploaded</span>
                                     </div>
-                                    {% if form.pan_card.errors %}
-                                        <div class="text-danger">
-                                            {{ form.pan_card.errors }}
-                                        </div>
-                                    {% endif %}
-                                    {% if form.instance.pan_card %}
-                                        <div class="mt-2">
-                                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Previously Uploaded</span>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            
-                            <div class="alert alert-warning mt-3 mb-0">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                <strong>Important:</strong> Please ensure images are clear, high-quality, and all text is readable. Blurry or low-quality images may delay your application approval.
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Terms Checkbox -->
                     <div class="form-check mb-4">
                         <input class="form-check-input" type="checkbox" id="termsCheck" required>
                         <label class="form-check-label" for="termsCheck">
-                            I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#affiliateTermsModal">Affiliate Terms & Conditions</a>
+                            I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#affiliateTermsModal">Terms & Conditions</a>
                         </label>
                     </div>
                     
-                    <div class="mb-4">
+                    <!-- Submit Button -->
+                    <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary" id="submitBtn">
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" style="display: none;"></span>
                             Submit Application
                         </button>
-                        <a href="{% url 'affiliate:dashboard' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+                        <a href="{% url 'affiliate:dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
     
-    <!-- Sidebar with requirements and tips -->
+    <!-- Compact Sidebar -->
     <div class="col-lg-4">
-        <!-- Application Requirements Card -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="card-title border-bottom pb-2">Application Requirements</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-3">
-                        <i class="bi bi-check-circle text-success me-2"></i>
-                        Valid Aadhar Card (Government ID)
-                    </li>
-                    <li class="mb-3">
-                        <i class="bi bi-check-circle text-success me-2"></i>
-                        Valid PAN Card (Tax ID)
-                    </li>
-                    <li class="mb-3">
-                        <i class="bi bi-check-circle text-success me-2"></i>
-                        Clear promotion strategy
-                    </li>
-                    <li class="mb-3">
-                        <i class="bi bi-check-circle text-success me-2"></i>
-                        Active social media or website
-                    </li>
-                </ul>
-            </div>
-        </div>
-        
-        <!-- Promotion Tips Card -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="card-title border-bottom pb-2">Promotion Tips</h5>
-                <ul class="list-unstyled small">
-                    <li class="mb-2">
-                        <i class="bi bi-lightbulb text-warning me-2"></i>
-                        Mention your target audience
-                    </li>
-                    <li class="mb-2">
-                        <i class="bi bi-lightbulb text-warning me-2"></i>
-                        Describe your content strategy
-                    </li>
-                    <li class="mb-2">
-                        <i class="bi bi-lightbulb text-warning me-2"></i>
-                        Include any marketing channels you'll use
-                    </li>
-                </ul>
-            </div>
-        </div>
-        
-        <!-- File Upload Guidelines - Updated for Images Only -->
         <div class="card border-0 shadow-sm">
             <div class="card-body">
-                <h5 class="card-title border-bottom pb-2">Image Upload Guidelines</h5>
-                <ul class="list-unstyled small">
-                    <li class="mb-2">
-                        <i class="bi bi-image text-primary me-2"></i>
-                        <strong>Accepted formats:</strong> JPG, JPEG, PNG
-                    </li>
-                    <li class="mb-2">
-                        <i class="bi bi-cloud-arrow-up text-primary me-2"></i>
-                        <strong>Maximum file size:</strong> 5MB per image
-                    </li>
-                    <li class="mb-2">
-                        <i class="bi bi-eye text-primary me-2"></i>
-                        Use high-resolution, clear images
-                    </li>
-                    <li class="mb-2">
-                        <i class="bi bi-sun text-primary me-2"></i>
-                        Good lighting, no shadows or glare
-                    </li>
-                    <li>
-                        <i class="bi bi-shield-check text-primary me-2"></i>
-                        Documents must be valid and unexpired
-                    </li>
-                </ul>
+                <h6 class="border-bottom pb-2 mb-3">
+                    <i class="bi bi-info-circle me-2 text-primary"></i>Quick Info
+                </h6>
+                
+                <div class="mb-3">
+                    <h6 class="text-success mb-2">✓ Requirements</h6>
+                    <ul class="list-unstyled small text-muted mb-0">
+                        <li>• Valid Aadhar & PAN cards</li>
+                        <li>• Clear promotion strategy</li>
+                        <li>• Active marketing presence</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="text-primary mb-2">📁 File Guidelines</h6>
+                    <ul class="list-unstyled small text-muted mb-0">
+                        <li>• JPG/PNG images only</li>
+                        <li>• Maximum 5MB per file</li>
+                        <li>• Clear, readable documents</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-success small mb-0">
+                    <i class="bi bi-lightning-fill me-1"></i>
+                    <strong>Quick approval:</strong> Applications reviewed within 24-48 hours
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Terms and Conditions Modal -->
+<!-- Simplified Terms Modal -->
 <div class="modal fade" id="affiliateTermsModal" tabindex="-1" aria-labelledby="affiliateTermsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -203,26 +154,26 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h6>1. Commission Structure</h6>
-                <p>Affiliates earn 20% commission on each premium subscription purchased using their referral code. Commission is calculated on the subscription amount excluding taxes.</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <h6>Commission Structure</h6>
+                        <p class="small">20% commission on premium subscriptions using your referral code.</p>
+                        
+                        <h6>Payment Terms</h6>
+                        <p class="small">Monthly payments with ₹5,000 minimum threshold. Processed within 30 days.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Referral Tracking</h6>
+                        <p class="small">Commission credited when referred business upgrades within 90 days.</p>
+                        
+                        <h6>Program Rules</h6>
+                        <p class="small">No spamming or false advertising. Violation results in termination.</p>
+                    </div>
+                </div>
                 
-                <h6>2. Payment Terms</h6>
-                <p>Commissions are paid monthly with a minimum payout threshold of ₹5,000. Payments are processed within 30 days of the end of each month.</p>
-                
-                <h6>3. Referral Tracking</h6>
-                <p>Referrals are tracked through unique affiliate codes. Commission is credited only when the referred business upgrades to a premium plan within 90 days of registration.</p>
-                
-                <h6>4. Prohibited Practices</h6>
-                <p>Affiliates must not engage in spamming, false advertising, or any deceptive practices. Violation will result in termination from the program and forfeiture of unpaid commissions.</p>
-                
-                <h6>5. Program Changes</h6>
-                <p>BizDirectory reserves the right to modify or terminate the affiliate program at any time with a 30-day notice.</p>
-                
-                <h6>6. Relationship</h6>
-                <p>Affiliates are independent contractors and not employees of BizDirectory.</p>
-                
-                <h6>7. Tax Reporting</h6>
-                <p>Affiliates are responsible for reporting and paying taxes on their commission earnings as required by law.</p>
+                <div class="alert alert-info small mb-0">
+                    <strong>Note:</strong> You are an independent contractor. Report and pay taxes on commission earnings as required by law.
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
@@ -232,53 +183,46 @@
 </div>
 
 <script>
-// Enhanced image upload validation and form handling
+// Simplified validation
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('affiliateApplicationForm');
     const submitBtn = document.getElementById('submitBtn');
     const spinner = submitBtn.querySelector('.spinner-border');
     const fileInputs = document.querySelectorAll('input[type="file"]');
     
-    // Image upload validation
+    // File validation
     fileInputs.forEach(input => {
         input.addEventListener('change', function() {
             const file = this.files[0];
-            if (file) {
-                // Check file size (5MB max)
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('Image size should not exceed 5MB');
-                    this.value = '';
-                    return;
-                }
-                
-                // Check file type - only images
-                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-                if (!allowedTypes.includes(file.type)) {
-                    alert('Please upload only JPG, JPEG, or PNG images');
-                    this.value = '';
-                    return;
-                }
-                
-                // Show success indicator
-                const feedback = this.parentElement.querySelector('.file-feedback');
-                if (feedback) {
-                    feedback.remove();
-                }
-                
-                const successDiv = document.createElement('div');
-                successDiv.className = 'file-feedback mt-1 text-success small';
-                successDiv.innerHTML = '<i class="bi bi-check-circle me-1"></i> Image selected: ' + file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
-                this.parentElement.appendChild(successDiv);
+            if (!file) return;
+            
+            // Size check
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                this.value = '';
+                return;
             }
+            
+            // Type check
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Please upload JPG or PNG images only');
+                this.value = '';
+                return;
+            }
+            
+            // Success feedback
+            const label = this.parentElement.querySelector('label');
+            label.classList.add('text-success');
+            setTimeout(() => label.classList.remove('text-success'), 2000);
         });
     });
     
-    // Form submission handling
+    // Form submission
     form.addEventListener('submit', function(e) {
         submitBtn.disabled = true;
         spinner.style.display = 'inline-block';
         
-        // Re-enable after 5 seconds to prevent permanent disable
         setTimeout(function() {
             submitBtn.disabled = false;
             spinner.style.display = 'none';
