@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -49,9 +50,17 @@ class Business(models.Model):
     
     # Business Details (Non-public)
     registration_number = models.CharField(max_length=50)
-    registration_document = models.FileField(upload_to='documents/')
+    registration_document = models.FileField(
+        upload_to='documents/',
+        storage=MediaCloudinaryStorage()  # Force Cloudinary
+    )
     gst_number = models.CharField(max_length=15, blank=True)
-    gst_document = models.FileField(upload_to='gst_documents/', null=True, blank=True)  # New field
+    gst_document = models.FileField(
+        upload_to='gst_documents/', 
+        null=True, 
+        blank=True,
+        storage=MediaCloudinaryStorage()  # Force Cloudinary
+    )  # New field
     gst_verified = models.BooleanField(default=False)
     kyc_status = models.CharField(
         max_length=20,
@@ -129,9 +138,12 @@ class Business(models.Model):
         ).order_by('-created_at')[:limit]
 
 class BusinessImage(models.Model):
-    business = models.ForeignKey(Business, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='business_images/')
-    caption = models.CharField(max_length=100, blank=True)
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(
+        upload_to='business_images/',
+        storage=MediaCloudinaryStorage()  # Force Cloudinary
+    )
+    caption = models.CharField(max_length=200, blank=True)
     is_primary = models.BooleanField(default=False)
 
 class BusinessHours(models.Model):

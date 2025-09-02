@@ -32,10 +32,26 @@
                                 {% if affiliate.aadhar_card %}
                                     <i class="bi bi-check-circle-fill text-success fs-1 mb-2"></i>
                                     <p class="text-success mb-2">Document Uploaded</p>
-                                    <small class="text-muted">Uploaded on: {{ affiliate.aadhar_card.name|default:"Unknown date" }}</small>
+                                    <div class="mb-2">
+                                        <a href="{{ affiliate.aadhar_card.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye me-1"></i> 
+                                            {% if affiliate.aadhar_card.name|slice:"-4:" == ".pdf" %}
+                                                View PDF
+                                            {% else %}
+                                                View Image
+                                            {% endif %}
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-info ms-1" onclick="downloadFile('{{ affiliate.aadhar_card.url }}', 'aadhar_card')">
+                                            <i class="bi bi-download me-1"></i> Download
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">
+                                        Format: {{ affiliate.aadhar_card.name|slice:"-4:" }}<br>
+                                        Size: {% if affiliate.aadhar_card.size %}{{ affiliate.aadhar_card.size|filesizeformat }}{% else %}Unknown{% endif %}
+                                    </small>
                                 {% else %}
                                     <i class="bi bi-x-circle-fill text-danger fs-1 mb-2"></i>
-                                    <p class="text-danger mb-0">No Document</p>
+                                    <p class="text-danger mb-0">No Document Uploaded</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -48,10 +64,21 @@
                                 {% if affiliate.pan_card %}
                                     <i class="bi bi-check-circle-fill text-success fs-1 mb-2"></i>
                                     <p class="text-success mb-2">Document Uploaded</p>
-                                    <small class="text-muted">Uploaded on: {{ affiliate.pan_card.name|default:"Unknown date" }}</small>
+                                    <div class="mb-2">
+                                        <a href="{{ affiliate.pan_card.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye me-1"></i> View Document
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-info ms-1" onclick="downloadFile('{{ affiliate.pan_card.url }}', 'pan_card')">
+                                            <i class="bi bi-download me-1"></i> Download
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">
+                                        Format: {{ affiliate.pan_card.name|slice:"-4:" }}<br>
+                                        Size: {% if affiliate.pan_card.size %}{{ affiliate.pan_card.size|filesizeformat }}{% else %}Unknown{% endif %}
+                                    </small>
                                 {% else %}
                                     <i class="bi bi-x-circle-fill text-danger fs-1 mb-2"></i>
-                                    <p class="text-danger mb-0">No Document</p>
+                                    <p class="text-danger mb-0">No Document Uploaded</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -66,9 +93,11 @@
                         {{ form.aadhar_card|add_class:"form-control" }}
                         <div class="form-text">
                             {% if affiliate.aadhar_card %}
-                                Current file will be replaced if you upload a new one. 
+                                <strong>Current file will be replaced if you upload a new one.</strong><br>
                             {% endif %}
-                            Upload a clear, color scan or photo of your Aadhar card (front and back). Maximum file size: 5MB.
+                            <strong>Accepted formats:</strong> JPG, PNG, PDF<br>
+                            <strong>Maximum file size:</strong> 5MB<br>
+                            Upload a clear, color scan or photo of your Aadhar card (front and back).
                         </div>
                         {% if form.aadhar_card.errors %}
                             <div class="text-danger">
@@ -82,9 +111,11 @@
                         {{ form.pan_card|add_class:"form-control" }}
                         <div class="form-text">
                             {% if affiliate.pan_card %}
-                                Current file will be replaced if you upload a new one. 
+                                <strong>Current file will be replaced if you upload a new one.</strong><br>
                             {% endif %}
-                            Upload a clear, color scan or photo of your PAN card. Maximum file size: 5MB.
+                            <strong>Accepted formats:</strong> JPG, PNG, PDF<br>
+                            <strong>Maximum file size:</strong> 5MB<br>
+                            Upload a clear, color scan or photo of your PAN card.
                         </div>
                         {% if form.pan_card.errors %}
                             <div class="text-danger">
@@ -95,7 +126,7 @@
                     
                     <div class="alert alert-warning mb-4">
                         <i class="bi bi-exclamation-triangle me-2"></i>
-                        Please ensure that all submitted documents are valid, unexpired, and clearly legible. Blurry or incomplete documents may delay your verification.
+                        <strong>Important:</strong> Please ensure that all submitted documents are valid, unexpired, and clearly legible. Blurry or incomplete documents may delay your verification.
                     </div>
                     
                     <div class="mb-3">
@@ -126,8 +157,11 @@
                     <li class="mb-2">
                         <i class="bi bi-check-circle text-success me-2"></i>Valid and unexpired documents
                     </li>
-                    <li>
+                    <li class="mb-2">
                         <i class="bi bi-check-circle text-success me-2"></i>File formats: JPG, PNG, PDF
+                    </li>
+                    <li>
+                        <i class="bi bi-check-circle text-success me-2"></i>Maximum size: 5MB per file
                     </li>
                 </ul>
             </div>
@@ -140,7 +174,7 @@
                 </h5>
                 <ul class="list-unstyled small mb-0">
                     <li class="mb-2"><i class="bi bi-lock text-success me-2"></i>SSL encrypted uploads</li>
-                    <li class="mb-2"><i class="bi bi-lock text-success me-2"></i>Secure storage</li>
+                    <li class="mb-2"><i class="bi bi-lock text-success me-2"></i>Secure cloud storage</li>
                     <li class="mb-2"><i class="bi bi-lock text-success me-2"></i>Privacy protected</li>
                     <li><i class="bi bi-lock text-success me-2"></i>GDPR compliant</li>
                 </ul>
@@ -148,4 +182,17 @@
         </div>
     </div>
 </div>
+
+<script>
+function downloadFile(url, filename) {
+    // Create a temporary link element and trigger download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+</script>
 {% endblock %}

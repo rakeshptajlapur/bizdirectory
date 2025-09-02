@@ -15,7 +15,7 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <!-- FIXED: Added proper enctype for file uploads -->
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" id="affiliateApplicationForm">
                     {% csrf_token %}
                     
                     <!-- Promotion Strategy -->
@@ -39,11 +39,25 @@
                                 <i class="bi bi-shield-check me-2"></i>Identity Verification Documents
                             </h5>
                             
+                            <!-- File Format Alert -->
+                            <div class="alert alert-info mb-3">
+                                <h6 class="mb-2"><i class="bi bi-info-circle me-2"></i>File Requirements</h6>
+                                <ul class="mb-0 small">
+                                    <li><strong>Accepted formats:</strong> JPG, PNG, PDF</li>
+                                    <li><strong>Maximum file size:</strong> 5MB per document</li>
+                                    <li><strong>Quality:</strong> Clear, legible, all corners visible</li>
+                                    <li><strong>Condition:</strong> Valid and unexpired documents only</li>
+                                </ul>
+                            </div>
+                            
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="{{ form.aadhar_card.id_for_label }}" class="form-label">Aadhar Card <span class="text-danger">*</span></label>
                                     {{ form.aadhar_card }}
-                                    <div class="form-text">Upload a clear, color scan or photo of your Aadhar card (front and back). Maximum file size: 5MB.</div>
+                                    <div class="form-text">
+                                        <strong>Upload Aadhar card (JPG/PNG/PDF, Max: 5MB)</strong><br>
+                                        Upload a clear, color scan or photo of your Aadhar card (front and back).
+                                    </div>
                                     {% if form.aadhar_card.errors %}
                                         <div class="text-danger">
                                             {{ form.aadhar_card.errors }}
@@ -59,7 +73,10 @@
                                 <div class="col-md-6">
                                     <label for="{{ form.pan_card.id_for_label }}" class="form-label">PAN Card <span class="text-danger">*</span></label>
                                     {{ form.pan_card }}
-                                    <div class="form-text">Upload a clear, color scan or photo of your PAN card. Maximum file size: 5MB.</div>
+                                    <div class="form-text">
+                                        <strong>Upload PAN card (JPG/PNG/PDF, Max: 5MB)</strong><br>
+                                        Upload a clear, color scan or photo of your PAN card.
+                                    </div>
                                     {% if form.pan_card.errors %}
                                         <div class="text-danger">
                                             {{ form.pan_card.errors }}
@@ -75,7 +92,7 @@
                             
                             <div class="alert alert-warning mt-3 mb-0">
                                 <i class="bi bi-exclamation-triangle me-2"></i>
-                                Please ensure that all submitted documents are valid, unexpired, and clearly legible. Blurry or incomplete documents may delay your application approval.
+                                <strong>Important:</strong> Please ensure that all submitted documents are valid, unexpired, and clearly legible. Blurry or incomplete documents may delay your application approval.
                             </div>
                         </div>
                     </div>
@@ -154,11 +171,11 @@
                 <ul class="list-unstyled small">
                     <li class="mb-2">
                         <i class="bi bi-file-earmark text-primary me-2"></i>
-                        Accepted formats: JPG, PNG, PDF
+                        <strong>Accepted formats:</strong> JPG, PNG, PDF
                     </li>
                     <li class="mb-2">
                         <i class="bi bi-cloud-arrow-up text-primary me-2"></i>
-                        Maximum file size: 5MB
+                        <strong>Maximum file size:</strong> 5MB per document
                     </li>
                     <li class="mb-2">
                         <i class="bi bi-eye text-primary me-2"></i>
@@ -247,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const successDiv = document.createElement('div');
                 successDiv.className = 'file-feedback mt-1 text-success small';
-                successDiv.innerHTML = '<i class="bi bi-check-circle me-1"></i> File selected: ' + file.name;
+                successDiv.innerHTML = '<i class="bi bi-check-circle me-1"></i> File selected: ' + file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
                 this.parentElement.appendChild(successDiv);
             }
         });

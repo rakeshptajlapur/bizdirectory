@@ -6,6 +6,9 @@ from decimal import Decimal
 import uuid
 import re
 
+# Import Cloudinary storage explicitly
+from cloudinary_storage.storage import MediaCloudinaryStorage
+
 class AffiliateProfile(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending Approval'),
@@ -27,9 +30,19 @@ class AffiliateProfile(models.Model):
     # Application details
     promotion_strategy = models.TextField(help_text="How will you promote BizDirectory?")
     
-    # KYC Documents
-    aadhar_card = models.FileField(upload_to='affiliate_documents/aadhar/', blank=True, null=True)
-    pan_card = models.FileField(upload_to='affiliate_documents/pan/', blank=True, null=True)
+    # KYC Documents - FORCE Cloudinary storage
+    aadhar_card = models.FileField(
+        upload_to='affiliate_documents/aadhar/', 
+        blank=True, 
+        null=True,
+        storage=MediaCloudinaryStorage()  # Force Cloudinary
+    )
+    pan_card = models.FileField(
+        upload_to='affiliate_documents/pan/', 
+        blank=True, 
+        null=True,
+        storage=MediaCloudinaryStorage()  # Force Cloudinary
+    )
     
     # Bank Details for payouts
     account_holder_name = models.CharField(max_length=100, blank=True)
@@ -37,7 +50,7 @@ class AffiliateProfile(models.Model):
     account_number = models.CharField(max_length=20, blank=True)
     ifsc_code = models.CharField(max_length=11, blank=True, help_text="11-digit alphanumeric IFSC code")
     
-    # ADD THESE FIELDS - they exist in your database
+    # Earnings fields
     total_earnings = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     pending_earnings = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     paid_earnings = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
@@ -80,9 +93,6 @@ class AffiliateProfile(models.Model):
         if self.paid_earnings is None:
             self.paid_earnings = Decimal('0.00')
         
-        # Only generate code when approved and doesn't have one
-        if self.status == 'approved' and not self.affiliate_code:
-            self.affiliate_code = self.generate_affiliate_code()
         super().save(*args, **kwargs)
     
     def generate_affiliate_code(self):

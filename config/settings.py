@@ -6,6 +6,9 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import ssl
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -69,23 +72,22 @@ else:
 
 # Application definition
 INSTALLED_APPS = [
-    # ACCOUNTS MUST BE FIRST for template precedence
-    'accounts',
-    
+    'accounts',  # Must be first
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',  # Required for allauth
     
-    # Allauth apps
+    # IMPORTANT: Cloudinary must be BEFORE staticfiles
+    'cloudinary_storage',
+    'cloudinary',
+    'django.contrib.staticfiles',
+    
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    
-    # Other apps
     'directory',
     'affiliate',
     'widget_tweaks',
@@ -175,6 +177,34 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# ===== CLOUDINARY STORAGE CONFIGURATION =====
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+    # Add these settings for proper file handling
+    'SECURE': True,
+    'RESOURCE_TYPE': 'auto',  # Auto-detect file type
+}
+
+# Configure cloudinary directly
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
+    secure=True
+)
+
+# Force Cloudinary for ALL file uploads
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Add specific settings for PDF handling
+CLOUDINARY_STORAGE_OPTIONS = {
+    'resource_type': 'auto',  # Automatically detect resource type
+    'format': 'auto',         # Automatically detect format
+    'secure': True,           # Use HTTPS URLs
+}
 
 # File upload settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
@@ -276,30 +306,4 @@ REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
 CELERY_TASK_SOFT_TIME_LIMIT = 300
 CELERY_TASK_TIME_LIMIT = 600
 
-# Media Files Configuration - Add this section
-# Media files (user uploads)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Use different storage backends for development and production
-if not DEBUG:  # Production settings
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    AWS_ACCESS_KEY_ID = os.environ.get('R2_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.environ.get('R2_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.environ.get('R2_STORAGE_BUCKET_NAME', 'findnearbiz')
-    AWS_S3_ENDPOINT_URL = f"https://{os.environ.get('R2_ACCOUNT_ID')}.r2.cloudflarestorage.com"
-    AWS_S3_CUSTOM_DOMAIN = os.environ.get('R2_CUSTOM_DOMAIN', f'{os.environ.get("R2_ACCOUNT_ID")}.r2.cloudflarestorage.com')
-    AWS_LOCATION = 'media'
-    AWS_S3_REGION_NAME = 'auto'  # R2 doesn't need a specific region
-    AWS_S3_SIGNATURE_VERSION = 's3v4'
-    AWS_S3_ADDRESSING_STYLE = 'virtual'
-    AWS_DEFAULT_ACL = 'public-read'
-    AWS_QUERYSTRING_AUTH = False
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
-else:
-    # Local development settings
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-    STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
