@@ -14,7 +14,6 @@
     <div class="col-lg-8">
         <div class="card border-0 shadow-sm">
             <div class="card-body">
-                <!-- FIXED: Added proper enctype for file uploads -->
                 <form method="post" enctype="multipart/form-data" id="affiliateApplicationForm">
                     {% csrf_token %}
                     
@@ -39,13 +38,13 @@
                                 <i class="bi bi-shield-check me-2"></i>Identity Verification Documents
                             </h5>
                             
-                            <!-- File Format Alert -->
+                            <!-- File Format Alert - Updated for Images Only -->
                             <div class="alert alert-info mb-3">
                                 <h6 class="mb-2"><i class="bi bi-info-circle me-2"></i>File Requirements</h6>
                                 <ul class="mb-0 small">
-                                    <li><strong>Accepted formats:</strong> JPG, PNG, PDF</li>
-                                    <li><strong>Maximum file size:</strong> 5MB per document</li>
-                                    <li><strong>Quality:</strong> Clear, legible, all corners visible</li>
+                                    <li><strong>Accepted formats:</strong> JPG, JPEG, PNG (Images only)</li>
+                                    <li><strong>Maximum file size:</strong> 5MB per image</li>
+                                    <li><strong>Quality:</strong> Clear, high-resolution images</li>
                                     <li><strong>Condition:</strong> Valid and unexpired documents only</li>
                                 </ul>
                             </div>
@@ -55,8 +54,8 @@
                                     <label for="{{ form.aadhar_card.id_for_label }}" class="form-label">Aadhar Card <span class="text-danger">*</span></label>
                                     {{ form.aadhar_card }}
                                     <div class="form-text">
-                                        <strong>Upload Aadhar card (JPG/PNG/PDF, Max: 5MB)</strong><br>
-                                        Upload a clear, color scan or photo of your Aadhar card (front and back).
+                                        <strong>Upload Aadhar card image (JPG/PNG, Max: 5MB)</strong><br>
+                                        Upload a clear, high-quality photo of your Aadhar card (both sides if needed).
                                     </div>
                                     {% if form.aadhar_card.errors %}
                                         <div class="text-danger">
@@ -74,8 +73,8 @@
                                     <label for="{{ form.pan_card.id_for_label }}" class="form-label">PAN Card <span class="text-danger">*</span></label>
                                     {{ form.pan_card }}
                                     <div class="form-text">
-                                        <strong>Upload PAN card (JPG/PNG/PDF, Max: 5MB)</strong><br>
-                                        Upload a clear, color scan or photo of your PAN card.
+                                        <strong>Upload PAN card image (JPG/PNG, Max: 5MB)</strong><br>
+                                        Upload a clear, high-quality photo of your PAN card.
                                     </div>
                                     {% if form.pan_card.errors %}
                                         <div class="text-danger">
@@ -92,7 +91,7 @@
                             
                             <div class="alert alert-warning mt-3 mb-0">
                                 <i class="bi bi-exclamation-triangle me-2"></i>
-                                <strong>Important:</strong> Please ensure that all submitted documents are valid, unexpired, and clearly legible. Blurry or incomplete documents may delay your application approval.
+                                <strong>Important:</strong> Please ensure images are clear, high-quality, and all text is readable. Blurry or low-quality images may delay your application approval.
                             </div>
                         </div>
                     </div>
@@ -164,22 +163,26 @@
             </div>
         </div>
         
-        <!-- File Upload Guidelines -->
+        <!-- File Upload Guidelines - Updated for Images Only -->
         <div class="card border-0 shadow-sm">
             <div class="card-body">
-                <h5 class="card-title border-bottom pb-2">File Upload Guidelines</h5>
+                <h5 class="card-title border-bottom pb-2">Image Upload Guidelines</h5>
                 <ul class="list-unstyled small">
                     <li class="mb-2">
-                        <i class="bi bi-file-earmark text-primary me-2"></i>
-                        <strong>Accepted formats:</strong> JPG, PNG, PDF
+                        <i class="bi bi-image text-primary me-2"></i>
+                        <strong>Accepted formats:</strong> JPG, JPEG, PNG
                     </li>
                     <li class="mb-2">
                         <i class="bi bi-cloud-arrow-up text-primary me-2"></i>
-                        <strong>Maximum file size:</strong> 5MB per document
+                        <strong>Maximum file size:</strong> 5MB per image
                     </li>
                     <li class="mb-2">
                         <i class="bi bi-eye text-primary me-2"></i>
-                        Ensure documents are clear and legible
+                        Use high-resolution, clear images
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-sun text-primary me-2"></i>
+                        Good lighting, no shadows or glare
                     </li>
                     <li>
                         <i class="bi bi-shield-check text-primary me-2"></i>
@@ -229,29 +232,29 @@
 </div>
 
 <script>
-// Enhanced file upload validation and form handling
+// Enhanced image upload validation and form handling
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('affiliateApplicationForm');
     const submitBtn = document.getElementById('submitBtn');
     const spinner = submitBtn.querySelector('.spinner-border');
     const fileInputs = document.querySelectorAll('input[type="file"]');
     
-    // File upload validation
+    // Image upload validation
     fileInputs.forEach(input => {
         input.addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
                 // Check file size (5MB max)
                 if (file.size > 5 * 1024 * 1024) {
-                    alert('File size should not exceed 5MB');
+                    alert('Image size should not exceed 5MB');
                     this.value = '';
                     return;
                 }
                 
-                // Check file type
-                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+                // Check file type - only images
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
                 if (!allowedTypes.includes(file.type)) {
-                    alert('Please upload only JPG, PNG, or PDF files');
+                    alert('Please upload only JPG, JPEG, or PNG images');
                     this.value = '';
                     return;
                 }
@@ -264,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const successDiv = document.createElement('div');
                 successDiv.className = 'file-feedback mt-1 text-success small';
-                successDiv.innerHTML = '<i class="bi bi-check-circle me-1"></i> File selected: ' + file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+                successDiv.innerHTML = '<i class="bi bi-check-circle me-1"></i> Image selected: ' + file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
                 this.parentElement.appendChild(successDiv);
             }
         });
