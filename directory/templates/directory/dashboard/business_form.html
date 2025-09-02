@@ -6,7 +6,7 @@
 <div class="container-fluid py-4">
     <h1 class="mb-4">{% if is_edit %}Edit{% else %}Add New{% endif %} Business</h1>
 
-    <form method="post" enctype="multipart/form-data" class="needs-validation">
+    <form method="post" enctype="multipart/form-data" class="needs-validation" id="businessForm">
         {% csrf_token %}
 
         {% if form.non_field_errors %}
@@ -26,17 +26,26 @@
                 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label for="{{ form.name.id_for_label }}" class="form-label">Business Name*</label>
+                        <label for="{{ form.name.id_for_label }}" class="form-label">
+                            Business Name <span class="text-danger">*</span>
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Business name should be 3-100 characters. Can include letters, numbers, spaces, and common symbols like &, -, etc."></i>
+                        </label>
                         {{ form.name }}
                         {% if form.name.errors %}
                             <div class="invalid-feedback d-block">
                                 {{ form.name.errors.0 }}
                             </div>
                         {% endif %}
+                        <div class="form-text">Enter your official business name (3-100 characters)</div>
                     </div>
                     
                     <div class="col-md-6">
-                        <label for="{{ form.category.id_for_label }}" class="form-label">Category*</label>
+                        <label for="{{ form.category.id_for_label }}" class="form-label">
+                            Category <span class="text-danger">*</span>
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Select the category that best describes your business"></i>
+                        </label>
                         {{ form.category }}
                         {% if form.category.errors %}
                             <div class="invalid-feedback d-block">
@@ -46,14 +55,18 @@
                     </div>
                     
                     <div class="col-12">
-                        <label for="{{ form.description.id_for_label }}" class="form-label">Business Description*</label>
+                        <label for="{{ form.description.id_for_label }}" class="form-label">
+                            Business Description <span class="text-danger">*</span>
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Describe your business in 50-1000 characters. Include services, specialties, and what makes you unique"></i>
+                        </label>
                         {{ form.description }}
                         {% if form.description.errors %}
                             <div class="invalid-feedback d-block">
                                 {{ form.description.errors.0 }}
                             </div>
                         {% endif %}
-                        <div class="form-text">Describe your business, services offered, unique selling points, etc.</div>
+                        <div class="form-text">Describe your business, services offered, unique selling points, etc. (50-1000 characters)</div>
                     </div>
                 </div>
             </div>
@@ -68,66 +81,93 @@
                 
                 <div class="row g-3">
                     <div class="col-md-12">
-                        <label for="{{ form.address.id_for_label }}" class="form-label">Address*</label>
+                        <label for="{{ form.address.id_for_label }}" class="form-label">
+                            Address <span class="text-danger">*</span>
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Enter your complete business address with landmarks if any (10-200 characters)"></i>
+                        </label>
                         {{ form.address }}
                         {% if form.address.errors %}
                             <div class="invalid-feedback d-block">
                                 {{ form.address.errors.0 }}
                             </div>
                         {% endif %}
+                        <div class="form-text">Complete business address with landmarks (10-200 characters)</div>
                     </div>
                     
                     <div class="col-md-6">
-                        <label for="{{ form.city.id_for_label }}" class="form-label">City*</label>
+                        <label for="{{ form.city.id_for_label }}" class="form-label">
+                            City <span class="text-danger">*</span>
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="City name should contain only letters and spaces. No numbers allowed"></i>
+                        </label>
                         {{ form.city }}
                         {% if form.city.errors %}
                             <div class="invalid-feedback d-block">
                                 {{ form.city.errors.0 }}
                             </div>
                         {% endif %}
+                        <div class="form-text">City name (letters and spaces only)</div>
                     </div>
                     
                     <div class="col-md-6">
-                        <label for="{{ form.pincode.id_for_label }}" class="form-label">Pincode*</label>
+                        <label for="{{ form.pincode.id_for_label }}" class="form-label">
+                            Pincode <span class="text-danger">*</span>
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Enter valid 6-digit Indian postal code (e.g., 110001)"></i>
+                        </label>
                         {{ form.pincode }}
                         {% if form.pincode.errors %}
                             <div class="invalid-feedback d-block">
                                 {{ form.pincode.errors.0 }}
                             </div>
                         {% endif %}
+                        <div class="form-text">6-digit postal code (e.g., 110001)</div>
                     </div>
                     
                     <div class="col-md-6">
-                        <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number*</label>
+                        <label for="{{ form.phone.id_for_label }}" class="form-label">
+                            Phone Number <span class="text-danger">*</span>
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Enter 10-digit mobile number without country code (e.g., 9876543210)"></i>
+                        </label>
                         {{ form.phone }}
                         {% if form.phone.errors %}
                             <div class="invalid-feedback d-block">
                                 {{ form.phone.errors.0 }}
                             </div>
                         {% endif %}
+                        <div class="form-text">10-digit mobile number (e.g., 9876543210)</div>
                     </div>
                     
                     <div class="col-md-6">
-                        <label for="{{ form.email.id_for_label }}" class="form-label">Email Address*</label>
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            Email Address <span class="text-danger">*</span>
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Valid business email address (e.g., info@business.com)"></i>
+                        </label>
                         {{ form.email }}
                         {% if form.email.errors %}
                             <div class="invalid-feedback d-block">
                                 {{ form.email.errors.0 }}
                             </div>
                         {% endif %}
+                        <div class="form-text">Business email for customer inquiries</div>
                     </div>
                     
                     <div class="col-md-12">
-                        <label for="{{ form.website.id_for_label }}" class="form-label">Website (optional)</label>
+                        <label for="{{ form.website.id_for_label }}" class="form-label">
+                            Website (Optional)
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Enter complete website URL starting with http:// or https:// (e.g., https://mybusiness.com)"></i>
+                        </label>
                         {{ form.website }}
                         {% if form.website.errors %}
                             <div class="invalid-feedback d-block">
                                 {{ form.website.errors.0 }}
                             </div>
                         {% endif %}
-                        <div class="form-text">
-                            Enter complete URL including http:// or https:// (e.g., https://example.com)
-                        </div>
+                        <div class="form-text">Complete URL including http:// or https:// (e.g., https://example.com)</div>
                     </div>
                 </div>
             </div>
@@ -142,35 +182,59 @@
                 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label for="{{ form.registration_number.id_for_label }}" class="form-label">Registration Number*</label>
+                        <label for="{{ form.registration_number.id_for_label }}" class="form-label">
+                            Registration Number <span class="text-danger">*</span>
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Business registration number: 4-20 characters, can be alphanumeric (e.g., U12345MH2020PTC123456)"></i>
+                        </label>
                         {{ form.registration_number }}
                         {% if form.registration_number.errors %}
                             <div class="invalid-feedback d-block">
                                 {{ form.registration_number.errors.0 }}
                             </div>
                         {% endif %}
+                        <div class="form-text">Business registration/CIN number (4-20 characters)</div>
                     </div>
                     
                     <div class="col-md-6">
-                        <label for="{{ form.gst_number.id_for_label }}" class="form-label">GST Number (optional)</label>
+                        <label for="{{ form.gst_number.id_for_label }}" class="form-label">
+                            GST Number (Optional)
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="15-character GST number (e.g., 27AAPFU0939F1ZV). Format: 2 digits + 10 chars + 1 char + 1 char + Z + 1 char"></i>
+                        </label>
                         {{ form.gst_number }}
                         {% if form.gst_number.errors %}
                             <div class="invalid-feedback d-block">
                                 {{ form.gst_number.errors.0 }}
                             </div>
                         {% endif %}
+                        <div class="form-text">15-character GST number (e.g., 27AAPFU0939F1ZV)</div>
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">Registration Certificate (optional)</label>
-                        <input type="file" class="form-control" name="registration_document">
-                        <div class="form-text">Upload a PDF or image of your business registration certificate.</div>
+                        <label class="form-label">
+                            Registration Certificate (Optional)
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Upload clear image of business registration certificate. Accepted: JPG, PNG • Max: 5MB"></i>
+                        </label>
+                        <input type="file" class="form-control" name="registration_document" accept="image/jpeg,image/jpg,image/png">
+                        <div class="form-text">
+                            <strong>Image formats:</strong> JPG, PNG only • <strong>Max size:</strong> 5MB<br>
+                            Upload clear image of your business registration certificate
+                        </div>
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">GST Certificate (optional)</label>
-                        <input type="file" class="form-control" name="gst_document">
-                        <div class="form-text">Upload a PDF or image of your GST certificate.</div>
+                        <label class="form-label">
+                            GST Certificate (Optional)
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Upload clear image of GST registration certificate. Accepted: JPG, PNG • Max: 5MB"></i>
+                        </label>
+                        <input type="file" class="form-control" name="gst_document" accept="image/jpeg,image/jpg,image/png">
+                        <div class="form-text">
+                            <strong>Image formats:</strong> JPG, PNG only • <strong>Max size:</strong> 5MB<br>
+                            Upload clear image of your GST certificate
+                        </div>
                     </div>
                 </div>
             </div>
@@ -185,9 +249,16 @@
                 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Primary Image{% if not business %}*{% endif %}</label>
-                        <input type="file" class="form-control" name="primary_image" accept="image/*" {% if not business %}required{% endif %}>
-                        <div class="form-text">This will be the main image for your business listing.</div>
+                        <label class="form-label">
+                            Primary Business Image {% if not business %}<span class="text-danger">*</span>{% endif %}
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="High-quality image representing your business. Accepted: JPG, PNG • Max: 5MB • Recommended: 1200x800px"></i>
+                        </label>
+                        <input type="file" class="form-control" name="primary_image" accept="image/jpeg,image/jpg,image/png" {% if not business %}required{% endif %}>
+                        <div class="form-text">
+                            <strong>Image formats:</strong> JPG, PNG only • <strong>Max size:</strong> 5MB<br>
+                            <strong>Recommended:</strong> High-quality, well-lit photo of your business exterior/interior
+                        </div>
                         
                         {% if business and business.get_primary_image %}
                             <div class="mt-2">
@@ -274,12 +345,22 @@
                         {% for service in services %}
                         <div class="row g-3 mb-3 service-row">
                             <div class="col-md-5">
-                                <label class="form-label">Service Name</label>
-                                <input type="text" class="form-control" name="service_name" value="{{ service.name }}">
+                                <label class="form-label">
+                                    Service Name
+                                    <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                       title="Service name: 2-100 characters, letters and numbers allowed (e.g., Web Development, AC Repair)"></i>
+                                </label>
+                                <input type="text" class="form-control service-name" name="service_name" value="{{ service.name }}" maxlength="100">
+                                <div class="form-text">2-100 characters, letters and numbers</div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Short Description (optional)</label>
-                                <input type="text" class="form-control" name="service_description" value="{{ service.description }}">
+                                <label class="form-label">
+                                    Short Description (Optional)
+                                    <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                       title="Brief description of the service: up to 200 characters"></i>
+                                </label>
+                                <input type="text" class="form-control service-description" name="service_description" value="{{ service.description }}" maxlength="200">
+                                <div class="form-text">Up to 200 characters</div>
                             </div>
                             <div class="col-md-1 d-flex align-items-end">
                                 <button type="button" class="btn btn-outline-danger remove-service-btn">
@@ -291,12 +372,22 @@
                     {% else %}
                         <div class="row g-3 mb-3 service-row">
                             <div class="col-md-5">
-                                <label class="form-label">Service Name</label>
-                                <input type="text" class="form-control" name="service_name">
+                                <label class="form-label">
+                                    Service Name
+                                    <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                       title="Service name: 2-100 characters, letters and numbers allowed (e.g., Web Development, AC Repair)"></i>
+                                </label>
+                                <input type="text" class="form-control service-name" name="service_name" maxlength="100">
+                                <div class="form-text">2-100 characters, letters and numbers</div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Short Description (optional)</label>
-                                <input type="text" class="form-control" name="service_description">
+                                <label class="form-label">
+                                    Short Description (Optional)
+                                    <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                       title="Brief description of the service: up to 200 characters"></i>
+                                </label>
+                                <input type="text" class="form-control service-description" name="service_description" maxlength="200">
+                                <div class="form-text">Up to 200 characters</div>
                             </div>
                             <div class="col-md-1 d-flex align-items-end">
                                 <button type="button" class="btn btn-outline-danger remove-service-btn">
@@ -327,6 +418,229 @@
 
 {% block extra_js %}
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Business name validation
+    const nameInput = document.querySelector('input[name="name"]');
+    nameInput.addEventListener('input', function() {
+        const nameRegex = /^[a-zA-Z0-9\s\-&.,()]+$/;
+        if (this.value.length < 3) {
+            setValidationError(this, 'Business name must be at least 3 characters');
+        } else if (this.value.length > 100) {
+            setValidationError(this, 'Business name cannot exceed 100 characters');
+        } else if (!nameRegex.test(this.value)) {
+            setValidationError(this, 'Business name can only contain letters, numbers, spaces, and common symbols');
+        } else if (/^\d+$/.test(this.value)) {
+            setValidationError(this, 'Business name cannot be numbers only');
+        } else {
+            clearValidationError(this);
+        }
+    });
+    
+    // Description validation
+    const descriptionInput = document.querySelector('textarea[name="description"]');
+    descriptionInput.addEventListener('input', function() {
+        if (this.value.length < 50) {
+            setValidationError(this, 'Description should be at least 50 characters');
+        } else if (this.value.length > 1000) {
+            setValidationError(this, 'Description cannot exceed 1000 characters');
+        } else {
+            clearValidationError(this);
+        }
+    });
+    
+    // Address validation
+    const addressInput = document.querySelector('textarea[name="address"]');
+    addressInput.addEventListener('input', function() {
+        if (this.value.length < 10) {
+            setValidationError(this, 'Address should be at least 10 characters');
+        } else if (this.value.length > 200) {
+            setValidationError(this, 'Address cannot exceed 200 characters');
+        } else {
+            clearValidationError(this);
+        }
+    });
+    
+    // City validation (letters and spaces only)
+    const cityInput = document.querySelector('input[name="city"]');
+    cityInput.addEventListener('input', function() {
+        const cityRegex = /^[a-zA-Z\s]+$/;
+        if (this.value.length < 2) {
+            setValidationError(this, 'City name must be at least 2 characters');
+        } else if (!cityRegex.test(this.value)) {
+            setValidationError(this, 'City name can only contain letters and spaces');
+        } else {
+            clearValidationError(this);
+        }
+    });
+    
+    // Pincode validation
+    const pincodeInput = document.querySelector('input[name="pincode"]');
+    pincodeInput.addEventListener('input', function() {
+        const pincodeRegex = /^[0-9]{6}$/;
+        if (!pincodeRegex.test(this.value)) {
+            setValidationError(this, 'Please enter a valid 6-digit pincode');
+        } else {
+            clearValidationError(this);
+        }
+    });
+    
+    // Phone number validation
+    const phoneInput = document.querySelector('input[name="phone"]');
+    phoneInput.addEventListener('input', function() {
+        const phoneRegex = /^[6-9][0-9]{9}$/;
+        if (!phoneRegex.test(this.value)) {
+            setValidationError(this, 'Please enter a valid 10-digit mobile number starting with 6-9');
+        } else {
+            clearValidationError(this);
+        }
+    });
+    
+    // Email validation
+    const emailInput = document.querySelector('input[name="email"]');
+    emailInput.addEventListener('input', function() {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(this.value)) {
+            setValidationError(this, 'Please enter a valid email address');
+        } else {
+            clearValidationError(this);
+        }
+    });
+    
+    // Website validation (optional field)
+    const websiteInput = document.querySelector('input[name="website"]');
+    websiteInput.addEventListener('input', function() {
+        if (this.value) {
+            const urlRegex = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+            if (!urlRegex.test(this.value)) {
+                setValidationError(this, 'Please enter a valid website URL (e.g., https://example.com)');
+            } else {
+                clearValidationError(this);
+            }
+        } else {
+            clearValidationError(this);
+        }
+    });
+    
+    // Registration number validation
+    const regNumInput = document.querySelector('input[name="registration_number"]');
+    regNumInput.addEventListener('input', function() {
+        const regRegex = /^[A-Z0-9]+$/;
+        if (this.value.length < 4 || this.value.length > 20) {
+            setValidationError(this, 'Registration number must be 4-20 characters');
+        } else if (!regRegex.test(this.value.toUpperCase())) {
+            setValidationError(this, 'Registration number can only contain letters and numbers');
+        } else {
+            clearValidationError(this);
+        }
+    });
+    
+    // GST number validation
+    const gstInput = document.querySelector('input[name="gst_number"]');
+    if (gstInput) {
+        gstInput.addEventListener('input', function() {
+            if (this.value) {
+                const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+                if (!gstRegex.test(this.value.toUpperCase())) {
+                    setValidationError(this, 'Please enter a valid GST number (e.g., 27AAPFU0939F1ZV)');
+                } else {
+                    clearValidationError(this);
+                }
+            } else {
+                clearValidationError(this);
+            }
+        });
+    }
+    
+    // File validation function
+    function validateImageFile(input, fieldName) {
+        const file = input.files[0];
+        if (!file) return true;
+        
+        // Size check (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            setValidationError(input, `${fieldName} size must be less than 5MB`);
+            input.value = '';
+            return false;
+        }
+        
+        // Type check
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+            setValidationError(input, `${fieldName} must be JPG or PNG image`);
+            input.value = '';
+            return false;
+        }
+        
+        clearValidationError(input);
+        return true;
+    }
+    
+    // File input validations
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            let fieldName = 'File';
+            if (this.name === 'primary_image') fieldName = 'Business image';
+            else if (this.name === 'registration_document') fieldName = 'Registration certificate';
+            else if (this.name === 'gst_document') fieldName = 'GST certificate';
+            
+            validateImageFile(this, fieldName);
+        });
+    });
+    
+    // Service validation
+    function validateService(serviceRow) {
+        const nameInput = serviceRow.querySelector('.service-name');
+        const descInput = serviceRow.querySelector('.service-description');
+        
+        if (nameInput.value.trim()) {
+            const serviceRegex = /^[a-zA-Z0-9\s\-&.,()]+$/;
+            if (nameInput.value.length < 2) {
+                setValidationError(nameInput, 'Service name must be at least 2 characters');
+            } else if (!serviceRegex.test(nameInput.value)) {
+                setValidationError(nameInput, 'Service name can only contain letters, numbers, spaces, and common symbols');
+            } else {
+                clearValidationError(nameInput);
+            }
+        }
+        
+        if (descInput.value.trim() && descInput.value.length > 200) {
+            setValidationError(descInput, 'Description cannot exceed 200 characters');
+        } else {
+            clearValidationError(descInput);
+        }
+    }
+    
+    // Validation helper functions
+    function setValidationError(input, message) {
+        input.classList.add('is-invalid');
+        input.classList.remove('is-valid');
+        
+        let feedback = input.parentElement.querySelector('.invalid-feedback');
+        if (!feedback) {
+            feedback = document.createElement('div');
+            feedback.className = 'invalid-feedback';
+            input.parentElement.appendChild(feedback);
+        }
+        feedback.textContent = message;
+    }
+    
+    function clearValidationError(input) {
+        input.classList.remove('is-invalid');
+        input.classList.add('is-valid');
+        
+        const feedback = input.parentElement.querySelector('.invalid-feedback');
+        if (feedback) {
+            feedback.remove();
+        }
+    }
+    
     // Business hours toggle
     document.querySelectorAll('.business-day-toggle').forEach(function(toggle) {
         toggle.addEventListener('change', function() {
@@ -335,11 +649,9 @@
             const timeRows = document.querySelectorAll('#' + targetId + ', #close-time-' + targetId.split('-')[2]);
             
             if (this.checked) {
-                // Day is closed
                 timeRows.forEach(row => row.classList.add('d-none'));
                 timeInputs.forEach(input => input.disabled = true);
             } else {
-                // Day is open
                 timeRows.forEach(row => row.classList.remove('d-none'));
                 timeInputs.forEach(input => input.disabled = false);
             }
@@ -351,10 +663,19 @@
         const servicesContainer = document.getElementById('services-container');
         const serviceRow = document.querySelector('.service-row').cloneNode(true);
         
-        // Clear inputs
+        // Clear inputs and reset validation
         serviceRow.querySelectorAll('input').forEach(input => {
             input.value = '';
+            input.classList.remove('is-valid', 'is-invalid');
         });
+        serviceRow.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+        
+        // Add validation to new inputs
+        const nameInput = serviceRow.querySelector('.service-name');
+        const descInput = serviceRow.querySelector('.service-description');
+        
+        nameInput.addEventListener('input', () => validateService(serviceRow));
+        descInput.addEventListener('input', () => validateService(serviceRow));
         
         // Add remove event listener
         serviceRow.querySelector('.remove-service-btn').addEventListener('click', function() {
@@ -366,149 +687,21 @@
         servicesContainer.appendChild(serviceRow);
     });
     
-    // Initial setup for remove service buttons
-    document.querySelectorAll('.remove-service-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
+    // Initial setup for remove service buttons and validation
+    document.querySelectorAll('.service-row').forEach(function(row) {
+        const nameInput = row.querySelector('.service-name');
+        const descInput = row.querySelector('.service-description');
+        
+        nameInput.addEventListener('input', () => validateService(row));
+        descInput.addEventListener('input', () => validateService(row));
+        
+        row.querySelector('.remove-service-btn').addEventListener('click', function() {
             if (document.querySelectorAll('.service-row').length > 1) {
                 this.closest('.service-row').remove();
             }
         });
     });
-    
-    // Phone number validation
-    const phoneInput = document.querySelector('input[name="phone"]');
-    phoneInput.addEventListener('input', function() {
-        const phoneRegex = /^[0-9]{10}$/;
-        if (this.value && !phoneRegex.test(this.value)) {
-            this.setCustomValidity('Please enter a valid 10-digit phone number');
-            this.classList.add('is-invalid');
-            if (!this.nextElementSibling || !this.nextElementSibling.classList.contains('invalid-feedback')) {
-                const feedback = document.createElement('div');
-                feedback.className = 'invalid-feedback';
-                feedback.textContent = 'Please enter a valid 10-digit phone number';
-                this.parentNode.appendChild(feedback);
-            }
-        } else {
-            this.setCustomValidity('');
-            this.classList.remove('is-invalid');
-            if (this.nextElementSibling && this.nextElementSibling.classList.contains('invalid-feedback')) {
-                this.nextElementSibling.remove();
-            }
-        }
-    });
-    
-    // GST number validation
-    const gstInput = document.querySelector('input[name="gst_number"]');
-    if (gstInput) {
-        gstInput.addEventListener('input', function() {
-            const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
-            if (this.value && !gstRegex.test(this.value)) {
-                this.setCustomValidity('Please enter a valid GST number (e.g., 27AAPFU0939F1ZV)');
-                this.classList.add('is-invalid');
-            } else {
-                this.setCustomValidity('');
-                this.classList.remove('is-invalid');
-            }
-        });
-    }
-    
-    // File size and type validation
-    const fileInputs = document.querySelectorAll('input[type="file"]');
-    fileInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                // Check size (max 5MB)
-                const maxSize = 5 * 1024 * 1024; // 5MB
-                if (file.size > maxSize) {
-                    alert(`File "${file.name}" is too large. Maximum size is 5MB.`);
-                    this.value = '';
-                    return;
-                }
-                
-                // Check file type
-                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-                if (!allowedTypes.includes(file.type)) {
-                    alert(`File "${file.name}" has invalid type. Allowed types: JPG, PNG, PDF.`);
-                    this.value = '';
-                    return;
-                }
-            }
-        });
-    });
-    
-    // Description min length
-    const descriptionInput = document.querySelector('textarea[name="description"]');
-    descriptionInput.addEventListener('input', function() {
-        if (this.value.length < 20) {
-            this.setCustomValidity('Description should be at least 20 characters');
-        } else {
-            this.setCustomValidity('');
-        }
-    });
-    
-    // Business name validation
-    const nameInput = document.querySelector('input[name="name"]');
-    nameInput.addEventListener('input', function() {
-        if (this.value.length < 3) {
-            this.setCustomValidity('Business name must be at least 3 characters');
-        } else {
-            this.setCustomValidity('');
-        }
-    });
-    
-    // City validation
-    const cityInput = document.querySelector('input[name="city"]');
-    cityInput.addEventListener('input', function() {
-        if (this.value.length < 2) {
-            this.setCustomValidity('City name must be at least 2 characters');
-        } else {
-            this.setCustomValidity('');
-        }
-    });
-    
-    // Pincode validation
-    const pincodeInput = document.querySelector('input[name="pincode"]');
-    pincodeInput.addEventListener('input', function() {
-        const pincodeRegex = /^[0-9]{6}$/;
-        if (!pincodeRegex.test(this.value)) {
-            this.setCustomValidity('Please enter a valid 6-digit pincode');
-            this.classList.add('is-invalid');
-        } else {
-            this.setCustomValidity('');
-            this.classList.remove('is-invalid');
-        }
-    });
-    
-    // Website validation (optional field)
-    const websiteInput = document.querySelector('input[name="website"]');
-    websiteInput.addEventListener('input', function() {
-        if (this.value) {
-            const urlRegex = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
-            if (!urlRegex.test(this.value)) {
-                this.setCustomValidity('Please enter a valid website URL (e.g., https://example.com)');
-            } else {
-                this.setCustomValidity('');
-            }
-        } else {
-            this.setCustomValidity('');
-        }
-    });
-    
-    // Registration number validation
-    const regNumInput = document.querySelector('input[name="registration_number"]');
-    regNumInput.addEventListener('input', function() {
-        if (this.value.length < 5 || this.value.length > 30) {
-            this.setCustomValidity('Registration number must be between 5 and 30 characters');
-        } else {
-            this.setCustomValidity('');
-        }
-    });
-    
-    // Don't prevent form submission with custom validation
-    document.querySelector('form').addEventListener('submit', function(event) {
-        console.log('Form submitted');
-    });
+});
 </script>
 {% endblock %}
 

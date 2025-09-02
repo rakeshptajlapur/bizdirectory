@@ -37,22 +37,40 @@
                         </div>
                     </div>
                     
-                    <form method="post" enctype="multipart/form-data">
+                    <form method="post" enctype="multipart/form-data" id="paymentForm">
                         {% csrf_token %}
                         <div class="mb-4">
-                            <label for="payment_screenshot" class="form-label">Upload Payment Screenshot</label>
-                            <input class="form-control" type="file" id="payment_screenshot" name="payment_screenshot" accept="image/*" required>
-                            <div class="form-text">Please upload a screenshot of your successful payment.</div>
+                            <label for="payment_screenshot" class="form-label">
+                                Upload Payment Screenshot <span class="text-danger">*</span>
+                                <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                   title="Upload a clear screenshot of your successful payment. Accepted: JPG, PNG • Max: 5MB"></i>
+                            </label>
+                            <input class="form-control" type="file" id="payment_screenshot" name="payment_screenshot" 
+                                   accept="image/jpeg,image/jpg,image/png" required>
+                            <div class="form-text">
+                                <strong>Accepted formats:</strong> JPG, PNG images only<br>
+                                <strong>Maximum file size:</strong> 5MB<br>
+                                Ensure the screenshot shows transaction ID, amount, and success status clearly.
+                            </div>
+                            <div class="invalid-feedback"></div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="affiliate_code" class="form-label">Affiliate/Referral Code (Optional)</label>
-                            <input type="text" class="form-control" id="affiliate_code" name="affiliate_code" placeholder="Enter code if you have one">
-                            <div class="form-text">If someone referred you, enter their code here.</div>
+                            <label for="affiliate_code" class="form-label">
+                                Affiliate/Referral Code (Optional)
+                                <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                   title="Enter the referral code if someone referred you to get them commission"></i>
+                            </label>
+                            <input type="text" class="form-control" id="affiliate_code" name="affiliate_code" 
+                                   placeholder="Enter code if you have one" maxlength="20">
+                            <div class="form-text">If someone referred you, enter their code here to support them.</div>
                         </div>
                         
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">Submit Payment Proof</button>
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" style="display: none;"></span>
+                                Submit Payment Proof
+                            </button>
                             <a href="{% url 'directory:subscription_plans' %}" class="btn btn-outline-secondary">Cancel</a>
                         </div>
                     </form>
@@ -61,4 +79,69 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    const form = document.getElementById('paymentForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const spinner = submitBtn.querySelector('.spinner-border');
+    const fileInput = document.getElementById('payment_screenshot');
+    
+    // File validation
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        const feedback = this.parentElement.querySelector('.invalid-feedback');
+        
+        if (!file) return;
+        
+        // Reset validation
+        this.classList.remove('is-invalid');
+        feedback.textContent = '';
+        
+        // Size check (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            this.classList.add('is-invalid');
+            feedback.textContent = 'File size must be less than 5MB';
+            this.value = '';
+            return;
+        }
+        
+        // Type check
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+            this.classList.add('is-invalid');
+            feedback.textContent = 'Please upload JPG or PNG images only';
+            this.value = '';
+            return;
+        }
+        
+        // Success feedback
+        this.classList.add('is-valid');
+        const successDiv = this.parentElement.querySelector('.success-feedback') || document.createElement('div');
+        successDiv.className = 'success-feedback text-success small mt-1';
+        successDiv.innerHTML = '<i class="bi bi-check-circle me-1"></i>Screenshot ready to upload (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+        if (!this.parentElement.querySelector('.success-feedback')) {
+            this.parentElement.appendChild(successDiv);
+        }
+    });
+    
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        submitBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        
+        // Re-enable after 10 seconds
+        setTimeout(function() {
+            submitBtn.disabled = false;
+            spinner.style.display = 'none';
+        }, 10000);
+    });
+});
+</script>
 {% endblock %}
