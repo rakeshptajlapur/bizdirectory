@@ -992,3 +992,11 @@ def add_business_start(request):
     
     # Redirect to subscription plans with a flag to indicate new business flow
     return redirect(f"{reverse('directory:subscription_plans')}?for_new_business=true")
+
+def add_listings_info(request):
+    """Add Listings information page"""
+    return render(request, 'directory/add_listings_info.html')
+
+def refer_earn(request):
+    """Refer & Earn information page"""
+    return render(request, 'directory/refer_earn.html')

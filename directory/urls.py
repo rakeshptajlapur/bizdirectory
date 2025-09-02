@@ -45,4 +45,8 @@ urlpatterns = [
     path('plans/select/<int:plan_id>/', views.select_plan, name='select_plan'),
     path('plans/payment/<int:subscription_id>/', views.payment_upload, name='payment_upload'),
     path('plans/success/', views.payment_success, name='payment_success'),
+
+    # New Info Pages
+    path('add-listings/', views.add_listings_info, name='add_listings_info'),
+    path('refer-earn/', views.refer_earn, name='refer_earn'),
 ]

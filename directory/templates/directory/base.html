@@ -757,7 +757,10 @@
                         <a class="nav-link" href="{% url 'directory:listings' %}"><i class="bi bi-grid"></i> All Listings</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'directory:add_business' %}"><i class="bi bi-plus-circle"></i> Add Listing</a>
+                        <a class="nav-link" href="{% url 'directory:add_listings_info' %}"><i class="bi bi-plus-circle"></i> Add Listing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'directory:refer_earn' %}"><i class="bi bi-people"></i> Refer & Earn</a>
                     </li>
                     
                     <!-- Auth links properly within navbar-nav -->
@@ -821,8 +824,11 @@
             <a href="{% url 'directory:listings' %}" class="mobile-nav-link">
                 <i class="bi bi-grid me-2"></i>All Listings
             </a>
-            <a href="{% url 'directory:add_business' %}" class="mobile-nav-link">
-                <i class="bi bi-plus-circle me-2"></i>Add Business
+            <a href="{% url 'directory:add_listings_info' %}" class="mobile-nav-link">
+                <i class="bi bi-plus-circle me-2"></i>Add Listing
+            </a>
+            <a href="{% url 'directory:refer_earn' %}" class="mobile-nav-link">
+                <i class="bi bi-people me-2"></i>Refer & Earn
             </a>
             
             {% if user.is_authenticated %}
