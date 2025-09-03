@@ -27,39 +27,85 @@
             {% endfor %}
         {% endif %}
         
-        <form method="post">
+        <form method="post" id="profileForm" novalidate>
             {% csrf_token %}
             
             <div class="row g-4">
                 <div class="col-md-6">
-                    <label for="id_first_name" class="form-label">First Name</label>
-                    <input type="text" name="first_name" class="form-control" id="id_first_name" value="{{ user.first_name }}">
+                    <label for="id_first_name" class="form-label">
+                        First Name
+                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                           title="Enter your first name using letters only (no numbers or special characters)"></i>
+                    </label>
+                    <input type="text" name="first_name" class="form-control" id="id_first_name" 
+                           value="{{ user.first_name }}" pattern="^[A-Za-z\s]+$">
+                    <div class="invalid-feedback">First name should contain letters only</div>
                 </div>
                 
                 <div class="col-md-6">
-                    <label for="id_last_name" class="form-label">Last Name</label>
-                    <input type="text" name="last_name" class="form-control" id="id_last_name" value="{{ user.last_name }}">
+                    <label for="id_last_name" class="form-label">
+                        Last Name
+                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                           title="Enter your last name using letters only (no numbers or special characters)"></i>
+                    </label>
+                    <input type="text" name="last_name" class="form-control" id="id_last_name" 
+                           value="{{ user.last_name }}" pattern="^[A-Za-z\s]+$">
+                    <div class="invalid-feedback">Last name should contain letters only</div>
                 </div>
                 
                 <div class="col-md-6">
-                    <label for="id_username" class="form-label">Username</label>
-                    <input type="text" name="username" class="form-control" id="id_username" value="{{ user.username }}" readonly>
-                    <div class="form-text">Username cannot be changed</div>
+                    <label for="id_username" class="form-label">
+                        Username
+                        <i class="bi bi-lock-fill text-muted ms-1" data-bs-toggle="tooltip" 
+                           title="Username cannot be changed for security reasons"></i>
+                    </label>
+                    <div class="input-group">
+                        <input type="text" name="username" class="form-control bg-light" id="id_username" 
+                               value="{{ user.username }}" readonly>
+                        <span class="input-group-text bg-light text-muted">
+                            <i class="bi bi-shield-lock"></i>
+                        </span>
+                    </div>
+                    <div class="form-text text-muted">Username cannot be changed</div>
                 </div>
                 
                 <div class="col-md-6">
-                    <label for="id_email" class="form-label">Email Address</label>
-                    <input type="email" name="email" class="form-control" id="id_email" value="{{ user.email }}">
+                    <label for="id_email" class="form-label">
+                        Email Address
+                        <i class="bi bi-shield-check text-success ms-1" data-bs-toggle="tooltip" 
+                           title="Your verified email address. Contact support if you need to change it."></i>
+                    </label>
+                    <div class="input-group">
+                        <input type="email" name="email" class="form-control bg-light" id="id_email" 
+                               value="{{ user.email }}" readonly>
+                        <span class="input-group-text bg-light text-success">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </span>
+                    </div>
+                    <div class="form-text text-muted">Email changes require contacting support</div>
                 </div>
                 
                 <div class="col-md-6">
-                    <label for="id_phone" class="form-label">Phone Number</label>
-                    <input type="tel" name="phone" class="form-control" id="id_phone" value="{{ user.profile.phone }}">
+                    <label for="id_phone" class="form-label">
+                        Phone Number
+                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                           title="Enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"></i>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">+91</span>
+                        <input type="tel" name="phone" class="form-control" id="id_phone" 
+                               value="{{ user.profile.phone }}" placeholder="10-digit mobile number" 
+                               pattern="^[6-9][0-9]{9}$" maxlength="10">
+                        <div class="invalid-feedback">Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9</div>
+                    </div>
+                    <div class="form-text">Your business enquiries will be sent to this number</div>
                 </div>
                 
                 <div class="col-12 mt-4">
                     <div class="d-grid d-md-flex justify-content-md-end">
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class="btn btn-primary" id="saveButton">
+                            <i class="bi bi-save me-1"></i> Save Changes
+                        </button>
                     </div>
                 </div>
             </div>
@@ -86,5 +132,139 @@
     justify-content: center;
     font-size: 3rem;
 }
+
+/* Form validation styles */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.is-valid {
+    border-color: #198754 !important;
+    padding-right: calc(1.5em + 0.75rem) !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+    padding-right: calc(1.5em + 0.75rem) !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+/* Tooltip enhancements */
+.tooltip {
+    --bs-tooltip-max-width: 300px;
+}
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Form validation
+    const form = document.getElementById('profileForm');
+    const firstNameInput = document.getElementById('id_first_name');
+    const lastNameInput = document.getElementById('id_last_name');
+    const phoneInput = document.getElementById('id_phone');
+    const saveButton = document.getElementById('saveButton');
+    
+    // First name validation - letters only
+    firstNameInput.addEventListener('input', function() {
+        const nameRegex = /^[A-Za-z\s]+$/;
+        if (this.value && !nameRegex.test(this.value)) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        } else if (this.value) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        } else {
+            this.classList.remove('is-invalid');
+            this.classList.remove('is-valid');
+        }
+    });
+    
+    // Last name validation - letters only
+    lastNameInput.addEventListener('input', function() {
+        const nameRegex = /^[A-Za-z\s]+$/;
+        if (this.value && !nameRegex.test(this.value)) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        } else if (this.value) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        } else {
+            this.classList.remove('is-invalid');
+            this.classList.remove('is-valid');
+        }
+    });
+    
+    // Phone validation - 10 digits starting with 6-9
+    phoneInput.addEventListener('input', function() {
+        // Remove any non-digit characters
+        this.value = this.value.replace(/\D/g, '');
+        
+        const phoneRegex = /^[6-9][0-9]{9}$/;
+        if (this.value && !phoneRegex.test(this.value)) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        } else if (this.value) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        } else {
+            this.classList.remove('is-invalid');
+            this.classList.remove('is-valid');
+        }
+    });
+    
+    // Form submission validation
+    form.addEventListener('submit', function(event) {
+        let isValid = true;
+        
+        // Validate first name
+        if (firstNameInput.value && !/^[A-Za-z\s]+$/.test(firstNameInput.value)) {
+            firstNameInput.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        // Validate last name
+        if (lastNameInput.value && !/^[A-Za-z\s]+$/.test(lastNameInput.value)) {
+            lastNameInput.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        // Validate phone
+        if (phoneInput.value && !/^[6-9][0-9]{9}$/.test(phoneInput.value)) {
+            phoneInput.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        if (!isValid) {
+            event.preventDefault();
+            // Scroll to the first invalid field
+            document.querySelector('.is-invalid').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        } else {
+            // Show loading state
+            saveButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Saving...';
+            saveButton.disabled = true;
+        }
+    });
+});
+</script>
 {% endblock %}
