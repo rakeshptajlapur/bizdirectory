@@ -1043,7 +1043,8 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
                                     <h3 class="card-title mb-0">Customer Reviews</h3>
-                                    <button class="
+                                    <!-- FIXED BUTTON: -->
+                                    <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#addReviewForm" aria-expanded="false" aria-controls="addReviewForm">
                                         <i class="bi bi-star-fill me-1"></i>Write a Review
                                     </button>
                                 </div>
@@ -1055,46 +1056,70 @@
                                             {% csrf_token %}
                                             <h4 class="mb-3">Write a Review</h4>
                                             
-                                            <!-- Name and Email fields -->
+                                            <!-- Pre-filled Name and Email fields (readonly) -->
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
                                                     <label for="reviewName" class="form-label">Your Name</label>
                                                     <input type="text" class="form-control" id="reviewName" name="name" 
-                                                           value="{{ user_review.name|default:'' }}" required>
+                                                           value="{{ user.get_full_name|default:user.username }}" readonly>
+                                                    <div class="form-text text-muted">
+                                                        <i class="bi bi-info-circle me-1"></i>Name from your account profile
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label for="reviewEmail" class="form-label">Your Email</label>
                                                     <input type="email" class="form-control" id="reviewEmail" name="email"
-                                                           value="{{ user_review.email|default:'' }}" required>
-                                                    <div class="form-text">Your email won't be displayed publicly</div>
+                                                           value="{{ user.email }}" readonly>
+                                                    <div class="form-text text-muted">
+                                                        <i class="bi bi-shield-check me-1"></i>Verified email from your account
+                                                    </div>
                                                 </div>
                                             </div>
                                             
                                             <!-- Rating stars -->
                                             <div class="mb-3">
-                                                <label class="form-label">Rating</label>
+                                                <label class="form-label">Rating <span class="text-danger">*</span></label>
                                                 <div class="rating-select">
                                                     <div class="stars">
                                                         {% for i in '12345'|make_list %}
                                                             <i class="bi bi-star fs-4 review-star {% if user_review and user_review.rating >= forloop.counter %}active text-warning bi-star-fill{% endif %}" data-rating="{{ i }}"></i>
                                                         {% endfor %}
                                                     </div>
-                                                    <input type="hidden" name="rating" id="ratingInput" value="{{ user_review.rating|default:0 }}">
+                                                    <input type="hidden" name="rating" id="ratingInput" value="{{ user_review.rating|default:0 }}" required>
                                                 </div>
+                                                <div class="form-text">Click on stars to rate your experience</div>
                                             </div>
                                             
                                             <!-- Comment textarea -->
                                             <div class="mb-3">
-                                                <label for="reviewComment" class="form-label">Your Comment</label>
-                                                <textarea class="form-control" id="reviewComment" name="comment" rows="3" 
-                                                          placeholder="Share your experience" required>{{ user_review.comment|default:'' }}</textarea>
+                                                <label for="reviewComment" class="form-label">Your Review <span class="text-danger">*</span></label>
+                                                <textarea class="form-control" id="reviewComment" name="comment" rows="4" 
+                                                          placeholder="Share your experience with this business..." required>{{ user_review.comment|default:'' }}</textarea>
+                                                <div class="form-text">Minimum 10 characters required</div>
                                             </div>
                                             
-                                            <button type="submit" class="btn btn-primary">{{ user_review|yesno:"Update Review,Submit Review" }}</button>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="bi bi-star-fill me-1"></i>
+                                                    {{ user_review|yesno:"Update Review,Submit Review" }}
+                                                </button>
+                                                
+                                                {% if user_review %}
+                                                    <div class="small">
+                                                        <span class="badge bg-{{ user_review.is_approved|yesno:'success,warning' }}">
+                                                            {{ user_review.is_approved|yesno:"Approved,Pending Approval" }}
+                                                        </span>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
                                             
                                             {% if user_review %}
-                                                <div class="mt-2 small">
-                                                    <span class="text-muted">Your review is {{ user_review.is_approved|yesno:"approved,pending approval" }}</span>
+                                                <div class="mt-2 p-2 bg-light rounded">
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-info-circle me-1"></i>
+                                                        You previously reviewed this business on {{ user_review.created_at|date:"M d, Y" }}. 
+                                                        Updating will reset approval status.
+                                                    </small>
                                                 </div>
                                             {% endif %}
                                         </form>

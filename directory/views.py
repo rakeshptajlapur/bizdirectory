@@ -224,19 +224,24 @@ def add_listing(request):
     return render(request, 'directory/add_listing.html')
 
 def add_review(request, business_id):
-    """Handle review submission without requiring authentication"""
+    """Handle review submission for authenticated users"""
     business = get_object_or_404(Business, pk=business_id)
     
+    # Ensure user is authenticated (since review form is only shown to auth users)
+    if not request.user.is_authenticated:
+        messages.error(request, "Please login to submit a review.")
+        return redirect('account_login')
+    
     if request.method == 'POST':
-        # Get form data
-        name = request.POST.get('name')
-        email = request.POST.get('email')
+        # Get form data - use authenticated user's data
+        name = request.user.get_full_name() or request.user.username
+        email = request.user.email
         rating = request.POST.get('rating')
         comment = request.POST.get('comment')
         
         # Validate input
-        if not name or not email:
-            messages.error(request, "Please provide your name and email")
+        if not rating:
+            messages.error(request, "Please select a rating")
             return redirect('directory:business_detail', pk=business_id)
             
         try:
@@ -248,17 +253,22 @@ def add_review(request, business_id):
             messages.error(request, "Invalid rating value")
             return redirect('directory:business_detail', pk=business_id)
             
-        if not comment:
-            messages.error(request, "Please provide a review comment")
+        if not comment or len(comment.strip()) < 10:
+            messages.error(request, "Please provide a review comment (minimum 10 characters)")
             return redirect('directory:business_detail', pk=business_id)
         
-        # Check if email has already reviewed this business
-        existing_review = Review.objects.filter(business=business, email=email).first()
+        # Check if user has already reviewed this business
+        existing_review = Review.objects.filter(
+            business=business, 
+            user=request.user  # Use user field instead of email
+        ).first()
+        
         if existing_review:
             # Update existing review
             existing_review.name = name
+            existing_review.email = email
             existing_review.rating = rating
-            existing_review.comment = comment
+            existing_review.comment = comment.strip()
             existing_review.is_approved = False  # Reset approval on update
             existing_review.save()
             messages.success(request, "Your review has been updated and is pending approval.")
@@ -266,16 +276,14 @@ def add_review(request, business_id):
             # Create new review
             Review.objects.create(
                 business=business,
+                user=request.user,  # Link to authenticated user
                 name=name,
                 email=email,
                 rating=rating,
-                comment=comment,
+                comment=comment.strip(),
                 is_approved=False
             )
             messages.success(request, "Thank you! Your review has been submitted and is pending approval.")
-        
-        # Store email in session to identify returning reviewers
-        request.session['reviewer_email'] = email
         
         return redirect('directory:business_detail', pk=business_id)
     
