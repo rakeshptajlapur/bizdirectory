@@ -978,20 +978,27 @@
     {% if business.has_premium_features and user.is_authenticated %}
         <div class="container-fluid px-3 px-lg-4 mb-4">
             <div class="container">
-                <div class="offer-banner">
-                    <div class="row">
-                        <div class="col-lg-7 mb-3 mb-lg-0">
-                            <h3 class="mb-2">Special Deal: 20% Off First Service</h3>
-                            <p class="mb-0">Subscribe to get your exclusive deal code and stay updated with our latest offers.</p>
-                        </div>
-                        <div class="col-lg-5">
-                            <form method="post" action="{% url 'directory:request_coupon' business.pk %}">
-                                {% csrf_token %}
-                                <div class="input-group">
-                                    <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
-                                    <button type="submit" class="btn">Get Deal</button>
-                                </div>
-                            </form>
+                <div class="offer-banner mb-4">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-7 mb-3 mb-lg-0">
+                                <h3 class="mb-2">Special Deal: 20% Off First Service</h3>
+                                <p class="mb-0">Get your exclusive deal code delivered to your registered email address.</p>
+                            </div>
+                            <div class="col-lg-5">
+                                <form method="post" action="{% url 'directory:request_coupon' business.pk %}">
+                                    {% csrf_token %}
+                                    <div class="input-group">
+                                        <input type="email" name="email" class="form-control" 
+                                               value="{{ user.email }}" readonly
+                                               placeholder="Your email address">
+                                        <button type="submit" class="btn">Get Deal</button>
+                                    </div>
+                                    <div class="form-text text-white-50 mt-1">
+                                        <i class="bi bi-shield-check me-1"></i>Coupon will be sent to your registered email
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1245,19 +1252,36 @@
                                     {% csrf_token %}
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Your Name</label>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                                        <input type="text" class="form-control" id="name" name="name" 
+                                               value="{{ user.get_full_name|default:user.username }}" readonly>
+                                        <div class="form-text text-muted">
+                                            <i class="bi bi-info-circle me-1"></i>Name from your account profile
+                                        </div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email Address</label>
-                                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                                        <input type="email" class="form-control" id="email" name="email" 
+                                               value="{{ user.email }}" readonly>
+                                        <div class="form-text text-muted">
+                                            <i class="bi bi-shield-check me-1"></i>Verified email from your account
+                                        </div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="phone" class="form-label">Phone Number</label>
-                                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone">
+                                        <input type="tel" class="form-control" id="phone" name="phone" 
+                                               value="{{ user.profile.phone|default:'' }}" readonly>
+                                        <div class="form-text text-muted">
+    <i class="bi bi-telephone me-1"></i>Phone from your account profile
+    {% if not user.profile.phone %}
+        - <a href="{% url 'accounts:profile' %}" class="text-decoration-none">Add phone in profile</a>
+    {% endif %}
+</div>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="message" class="form-label">Message</label>
-                                        <textarea class="form-control" id="message" name="message" rows="4" placeholder="What would you like to enquire about?" required></textarea>
+                                        <label for="message" class="form-label">Your Message <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" id="message" name="message" rows="4" 
+                                                  placeholder="What would you like to enquire about?" required></textarea>
+                                        <div class="form-text">Please describe your inquiry (minimum 10 characters)</div>
                                     </div>
                                     <button type="submit" class="btn btn-primary w-100">
                                         <i class="bi bi-send me-1"></i>Send Message

@@ -291,20 +291,30 @@ def add_review(request, business_id):
     return redirect('directory:business_detail', pk=business_id)
 
 def send_enquiry(request, business_id):
-    """Handle enquiry form submissions"""
+    """Handle enquiry form submissions for authenticated users"""
     business = get_object_or_404(Business, pk=business_id)
     
+    # Ensure user is authenticated
+    if not request.user.is_authenticated:
+        messages.error(request, "Please login to send an enquiry.")
+        return redirect('account_login')
+    
     if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone', '')
-        message = request.POST.get('message')
+        # Get form data - use authenticated user's data for name, email, phone
+        name = request.user.get_full_name() or request.user.username
+        email = request.user.email
+        phone = getattr(request.user.profile, 'phone', '') if hasattr(request.user, 'profile') else ''
+        message = request.POST.get('message', '').strip()
         
         # Validate input
-        if not name or not email or not message:
-            messages.error(request, "Please fill all required fields")
+        if not message:
+            messages.error(request, "Please provide your message")
             return redirect('directory:business_detail', pk=business_id)
             
+        if len(message) < 10:
+            messages.error(request, "Message should be at least 10 characters long")
+            return redirect('directory:business_detail', pk=business_id)
+        
         # Create new enquiry
         Enquiry.objects.create(
             business=business,
@@ -314,9 +324,6 @@ def send_enquiry(request, business_id):
             message=message
         )
         
-        # Store email in session for future reference
-        request.session['enquirer_email'] = email
-        
         messages.success(request, "Thank you! Your enquiry has been sent to the business owner.")
         return redirect('directory:business_detail', pk=business_id)
     
@@ -324,29 +331,30 @@ def send_enquiry(request, business_id):
     return redirect('directory:business_detail', pk=business_id)
 
 def request_coupon(request, business_id):
-    """Handle coupon form submissions"""
+    """Handle coupon form submissions for authenticated users"""
     business = get_object_or_404(Business, pk=business_id)
     
+    # Ensure user is authenticated
+    if not request.user.is_authenticated:
+        messages.error(request, "Please login to request a coupon.")
+        return redirect('account_login')
+    
     if request.method == 'POST':
-        email = request.POST.get('email', '').strip()
+        # Use authenticated user's email
+        email = request.user.email
         
-        # Basic email validation
-        if not email or '@' not in email or '.' not in email:
-            messages.error(request, "Please provide a valid email address")
-            return redirect('directory:business_detail', pk=business_id)
-            
         try:
-            # Generate a unique coupon code
-            import random
-            import string
-            code_chars = string.ascii_uppercase + string.digits
-            coupon_code = ''.join(random.choice(code_chars) for _ in range(8))
-            
-            # Check if this email already requested a coupon
+            # Check if this user already requested a coupon
             existing_coupon = CouponRequest.objects.filter(business=business, email=email).first()
             if existing_coupon:
                 messages.info(request, f"You've already requested a coupon. Your code is: {existing_coupon.coupon_code}")
             else:
+                # Generate a unique coupon code
+                import random
+                import string
+                code_chars = string.ascii_uppercase + string.digits
+                coupon_code = ''.join(random.choice(code_chars) for _ in range(8))
+                
                 # Create coupon request
                 CouponRequest.objects.create(
                     business=business,
@@ -354,7 +362,7 @@ def request_coupon(request, business_id):
                     coupon_code=coupon_code,
                     is_sent=True
                 )
-                messages.success(request, f"Success! Your discount code is: {coupon_code}")
+                messages.success(request, f"Success! Your discount code is: {coupon_code}. Check your email for details.")
                 
         except Exception as e:
             messages.error(request, "Sorry, something went wrong. Please try again later.")
