@@ -677,17 +677,21 @@ def business_form(request, business_id=None):
                 except Exception as e:
                     logger.error(f"Gallery image #{i+1} save failed: business={business.id}, error={str(e)}", exc_info=True)
             
+            # Update with user feedback
             # Add logging for registration document
             registration_document = request.FILES.get('registration_document')
             if registration_document:
                 logger.info(f"Registration document upload: business={business.id}, file={registration_document.name}, size={registration_document.size}B, type={registration_document.content_type}")
                 try:
                     business.registration_document = registration_document
-                    business.kyc_status = 'pending'
+                    business.kyc_status = 'pending'  # Set KYC status to pending when new document uploaded
+                    business.save()  # Save immediately to ensure the file is saved
                     logger.info(f"Registration document saved successfully: business={business.id}")
+                    messages.success(request, "Registration certificate uploaded successfully. KYC verification is in progress.")
                 except Exception as e:
                     logger.error(f"Registration document save failed: business={business.id}, error={str(e)}", exc_info=True)
-            
+                    messages.error(request, "Failed to upload registration certificate. Please try again.")
+
             # Add logging for GST document
             gst_document = request.FILES.get('gst_document')
             if gst_document:
@@ -695,10 +699,13 @@ def business_form(request, business_id=None):
                 try:
                     business.gst_document = gst_document
                     if business.gst_number:
-                        business.gst_verified = False
+                        business.gst_verified = False  # Reset verification status when new document uploaded
+                    business.save()  # Save immediately to ensure the file is saved
                     logger.info(f"GST document saved successfully: business={business.id}")
+                    messages.success(request, "GST certificate uploaded successfully and will be verified shortly.")
                 except Exception as e:
                     logger.error(f"GST document save failed: business={business.id}, error={str(e)}", exc_info=True)
+                    messages.error(request, "Failed to upload GST certificate. Please try again.")
             
             # Handle business hours
             days_of_week = range(1, 8)  # 1-7 (Monday to Sunday)

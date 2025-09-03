@@ -222,6 +222,18 @@
                             <strong>Image formats:</strong> JPG, PNG only • <strong>Max size:</strong> 5MB<br>
                             Upload clear image of your business registration certificate
                         </div>
+                        
+                        {% if business and business.registration_document %}
+                            <div class="mt-2">
+                                <div class="d-flex align-items-center">
+                                    <a href="{{ business.registration_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="bi bi-eye me-1"></i> View Certificate
+                                    </a>
+                                    <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Uploaded</span>
+                                </div>
+                                <p class="mt-1 mb-0 small text-muted">You can upload a new file to replace it</p>
+                            </div>
+                        {% endif %}
                     </div>
                     
                     <div class="col-md-6">
@@ -235,6 +247,18 @@
                             <strong>Image formats:</strong> JPG, PNG only • <strong>Max size:</strong> 5MB<br>
                             Upload clear image of your GST certificate
                         </div>
+                        
+                        {% if business and business.gst_document %}
+                            <div class="mt-2">
+                                <div class="d-flex align-items-center">
+                                    <a href="{{ business.gst_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="bi bi-eye me-1"></i> View Certificate
+                                    </a>
+                                    <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Uploaded</span>
+                                </div>
+                                <p class="mt-1 mb-0 small text-muted">You can upload a new file to replace it</p>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
