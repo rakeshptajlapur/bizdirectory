@@ -7,34 +7,6 @@
 {% block extra_css %}
 {{ block.super }}
 <style>
-    /* Fix for mobile header padding and scroll behavior */
-@media (max-width: 767.98px) {
-    
-    /* Add padding to prevent logo and menu button touching edges */
-    .navbar .container {
-        padding-left: 0px !important;
-        padding-right: 15px !important;
-        
-    }
-    
-    /* Ensure header stays fully visible when scrolling */
-    .navbar.sticky-top {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1050;
-    }
-    
-    /* Add proper body padding to prevent content from hiding under navbar */
-    body {
-        padding-top: 60px;
-    }
-    
-    /* Fix z-index stacking for dropdown menus */
-    .navbar-collapse {
-        z-index: 1051;
-    }
-}
     /* Desktop content width alignment with header/footer */
     @media (min-width: 992px) {
         .main-content .container {
@@ -364,19 +336,15 @@
         }
         
         .quick-contact-buttons {
-            flex-direction: row !important;
-            gap: 0.5rem !important;
-            width: 100%;
+            flex-direction: column;
+            gap: 0.5rem;
         }
-  .quick-contact-buttons .btn {
-            flex: 1 1 0;
-            min-width: 0;
-            font-size: 1rem;
-            padding: 0.75rem 0.5rem;
-            text-align: center;
-            white-space: nowrap;
+        
+        .quick-contact-buttons .btn {
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
         }
-     }
+    }
     
     /* Enhanced Mobile Responsiveness - Reduced Margins */
     @media (max-width: 767.98px) {
@@ -851,7 +819,8 @@
 }
 
 /* Desktop Sticky Enquiry Form */
-.desktop-sticky-enquiry {
+{% if business.has_premium_features and user.is_authenticated %}
+div.desktop-sticky-enquiry {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -942,7 +911,6 @@
     white-space: nowrap;
     transition: all 0.3s ease;
     height: 45px;
-    color: white;
 }
 
 .sticky-send-btn:hover {
@@ -950,24 +918,18 @@
     box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3);
 }
 
-/* Show sticky enquiry only on desktop */
-@media (min-width: 992px) {
-    .desktop-sticky-enquiry {
-        display: block;
-    }
-    
-    /* Add bottom padding to prevent content overlap */
-    body.sticky-enquiry-active {
-        padding-bottom: 120px;
-    }
+/* Hide desktop sticky enquiry form by default */
+#desktopStickyEnquiry {
+    display: none;
 }
 
-/* Hide on mobile and tablet */
-@media (max-width: 991.98px) {
-    .desktop-sticky-enquiry {
-        display: none !important;
+/* Show desktop sticky enquiry form on wider screens */
+@media (min-width: 768px) {
+    #desktopStickyEnquiry {
+        display: flex !important;
     }
 }
+{% endif %}
 </style>
 {% endblock %}
 
@@ -1684,7 +1646,6 @@ function scrollToContactForm() {
     }
 </script>
 
-
 <!-- Desktop Sticky Enquiry Form Logic -->
 <script>
 // Desktop Sticky Enquiry Form Logic
@@ -1770,7 +1731,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 {% endblock %}
 
-<!-- Desktop Sticky Enquiry Form -->
 <!-- Desktop Sticky Enquiry Form -->
 {% if business.has_premium_features and user.is_authenticated %}
 <div class="desktop-sticky-enquiry" id="desktopStickyEnquiry">
