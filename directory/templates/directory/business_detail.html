@@ -968,6 +968,20 @@
         display: none !important;
     }
 }
+
+/* Ensure consistent image ratios */
+.business-image-container img {
+    object-fit: cover;
+    object-position: top center; /* Focus on the face for portrait images */
+}
+
+/* Force aspect ratio for gallery thumbnails */
+.gallery-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    object-position: top center; /* Focus on the face for portrait images */
+}
 </style>
 {% endblock %}
 
@@ -1041,10 +1055,10 @@
                 <div class="row g-0">
                     <!-- Image Section -->
                     <div class="col-md-4">
-                        <div class="business-image-container" style="height: 100%; min-height: 280px;">
+                        <div class="business-image-container" style="height: 100%; min-height: 280px; position: relative;">
                             <img src="{{ business.get_primary_image_url }}" alt="{{ business.name }}" 
-                                 id="mainImage"
-                                 style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                                id="mainImage"
+                                style="width: 100%; height: 100%; object-fit: cover; object-position: top center; position: absolute; top: 0; left: 0;">
                         </div>
                     </div>
                     
@@ -1464,12 +1478,12 @@
                                         <input type="tel" class="form-control" id="phone" name="phone" 
                                                value="{{ user.profile.phone|default:'' }}" readonly>
                                         <div class="form-text text-muted">
-    <i class="bi bi-telephone me-1"></i>Phone from your account profile
-    {% if not user.profile.phone %}
-        - <a href="{% url 'accounts:profile' %}" class="text-decoration-none">Add phone in profile</a>
-    {% endif %}
-</div>
-                                    </div>
+                                            <i class="bi bi-telephone me-1"></i>Phone from your account profile
+                                            {% if not user.profile.phone %}
+                                                - <a href="{% url 'accounts:profile' %}" class="text-decoration-none">Add phone in profile</a>
+                                            {% endif %}
+                                        </div>
+                                </div>
                                     <div class="mb-3">
                                         <label for="message" class="form-label">Your Message <span class="text-danger">*</span></label>
                                         <textarea class="form-control" id="message" name="message" rows="4" 
@@ -1500,9 +1514,9 @@
                         <div class="card h-100 shadow-sm related-business-card">
                             <div class="position-relative">
                                 <img src="{{ related_business.get_primary_image_url }}" 
-                                     class="card-img-top" 
-                                     alt="{{ related_business.name }}" 
-                                     style="height: 180px; object-fit: cover;">
+                                    class="card-img-top" 
+                                    alt="{{ related_business.name }}" 
+                                    style="height: 180px; object-fit: cover; object-position: top center;">
                                 <span class="position-absolute top-0 start-0 m-2 badge bg-primary">
                                     {{ related_business.category.name }}
                                 </span>

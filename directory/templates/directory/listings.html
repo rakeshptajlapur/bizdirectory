@@ -156,6 +156,8 @@
         .desktop-business-card .col-3 img {
             height: 200px;
             object-fit: cover;
+            object-position: top center; /* Focus on the face for portrait images */
+            width: 100%;
         }
     }
     
@@ -175,6 +177,8 @@
         .mobile-business-card .card-img-top {
             height: 150px;
             object-fit: cover;
+            object-position: top center; /* Focus on the face for portrait images */
+            width: 100%;
         }
         
         .mobile-business-card .card-body {
@@ -314,6 +318,38 @@
     .sticky-cta-bottom .btn {
         height: 38px;
         font-size: 0.875rem;
+    }
+    
+    /* Ensure consistent image ratios for business cards */
+    .desktop-business-card .col-3 img {
+        height: 200px;
+        object-fit: cover;
+        object-position: top center; /* Focus on the face for portrait images */
+        width: 100%;
+    }
+    
+    .mobile-business-card .card-img-top {
+        height: 150px;
+        object-fit: cover;
+        object-position: top center; /* Focus on the face for portrait images */
+        width: 100%;
+    }
+    
+    /* Force aspect ratio for all business images */
+    .business-image-wrapper {
+        position: relative;
+        padding-top: 66.67%; /* 3:2 aspect ratio */
+        overflow: hidden;
+    }
+    
+    .business-image-wrapper img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center; /* Focus on the face for portrait images */
     }
 </style>
 {% endblock %}

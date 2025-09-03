@@ -103,17 +103,17 @@ class Business(models.Model):
         if (primary_image and hasattr(primary_image.image, 'url')):
             return primary_image.image.url
         else:
-            # Fallback images based on business category
-            category_fallbacks = {
-                1: "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39",  # Plumbing
-                2: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655",  # Training
-                3: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d",  # Hospitals
-                4: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d",  # Schools
-                5: "https://images.unsplash.com/photo-1544724107-6d5c4caaff30",  # Electricians
-            }
-            category_id = self.category_id if self.category_id else 0
-            return category_fallbacks.get(category_id, 
-                f"https://via.placeholder.com/500x300?text={self.name.replace(' ', '+')}") + "?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+            # Using only 3 high-quality landscape model images as fallbacks
+            portrait_fallbacks = [
+                "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&h=600&q=80", # Professional female model with blue background
+                "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&h=600&q=80", # Female model in casual outfit, landscape orientation
+                "https://images.unsplash.com/photo-1488161628813-04466f872be2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&h=600&q=80", # Professional model portrait in landscape format
+            ]
+            
+            # Use business ID to deterministically select a fallback image
+            # This ensures the same business always gets the same fallback image
+            fallback_index = self.id % len(portrait_fallbacks)
+            return portrait_fallbacks[fallback_index]
 
     @property
     def has_premium_features(self):
