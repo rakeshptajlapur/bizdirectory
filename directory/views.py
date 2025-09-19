@@ -1027,3 +1027,7 @@ def refer_earn(request):
 def coming_soon(request):
     """Coming soon landing page"""
     return render(request, 'directory/coming_soon.html')
+
+def about(request):
+    """About us page"""
+    return render(request, 'directory/about.html')

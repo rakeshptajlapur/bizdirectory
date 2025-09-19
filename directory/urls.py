@@ -50,4 +50,7 @@ urlpatterns = [
     # New Info Pages
     path('add-listings/', views.add_listings_info, name='add_listings_info'),
     path('refer-earn/', views.refer_earn, name='refer_earn'),
+
+    # About Page
+    path('about/', views.about, name='about'),
 ]
