@@ -1023,3 +1023,7 @@ def add_listings_info(request):
 def refer_earn(request):
     """Refer & Earn information page"""
     return render(request, 'directory/refer_earn.html')
+
+def coming_soon(request):
+    """Coming soon landing page"""
+    return render(request, 'directory/coming_soon.html')

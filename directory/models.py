@@ -100,20 +100,28 @@ class Business(models.Model):
 
     def get_primary_image_url(self):
         primary_image = self.get_primary_image()
-        if (primary_image and hasattr(primary_image.image, 'url')):
-            return primary_image.image.url
-        else:
-            # Using only 3 high-quality landscape model images as fallbacks
-            portrait_fallbacks = [
-                "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&h=600&q=80", # Professional female model with blue background
-                "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&h=600&q=80", # Female model in casual outfit, landscape orientation
-                "https://images.unsplash.com/photo-1488161628813-04466f872be2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&h=600&q=80", # Professional model portrait in landscape format
-            ]
-            
-            # Use business ID to deterministically select a fallback image
-            # This ensures the same business always gets the same fallback image
-            fallback_index = self.id % len(portrait_fallbacks)
-            return portrait_fallbacks[fallback_index]
+        try:
+            if (primary_image and hasattr(primary_image.image, 'url')):
+                # Try to access the URL - if it fails, we'll use the fallback
+                url = primary_image.image.url
+                return url
+        except (ValueError, AttributeError, IOError) as e:
+            # Log the error but continue to fallback
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error retrieving image URL for business {self.id}: {str(e)}")
+    
+        # Using only 3 high-quality landscape model images as fallbacks
+        portrait_fallbacks = [
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&h=600&q=80", # Professional female model with blue background
+            "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&h=600&q=80", # Female model in casual outfit, landscape orientation
+            "https://images.unsplash.com/photo-1488161628813-04466f872be2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&h=600&q=80", # Professional model portrait in landscape format
+        ]
+        
+        # Use business ID to deterministically select a fallback image
+        # This ensures the same business always gets the same fallback image
+        fallback_index = self.id % len(portrait_fallbacks)
+        return portrait_fallbacks[fallback_index]
 
     @property
     def has_premium_features(self):

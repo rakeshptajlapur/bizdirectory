@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FindNearBiz - Coming Soon</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 60%);
+      color: #fff;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 20px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+
+    /* Countdown Style */
+    .countdown {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 20px 0 40px 0;
+      background: rgba(255,255,255,0.1);
+      padding: 15px 25px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .form-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fff;
+      border-radius: 30px;
+      padding: 5px;
+      max-width: 450px;
+      margin: 0 auto 40px auto;
+    }
+
+    .form-box input {
+      border: none;
+      flex: 1;
+      padding: 12px 15px;
+      border-radius: 30px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .form-box button {
+      background: #ff0077;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .form-box button:hover {
+      background: #e6006e;
+    }
+
+    .cta-buttons {
+      margin-top: 20px;
+    }
+
+    .cta-buttons a {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 25px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .whatsapp-btn {
+      background: #25d366;
+      color: #fff;
+    }
+
+    .whatsapp-btn:hover {
+      background: #1ebe5c;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: #ddd;
+    }
+
+    /* Features Section */
+    .features-section {
+      background: #fff;
+      color: #333;
+      padding: 60px 20px;
+      margin-top: 60px;
+      border-top-left-radius: 30px;
+      border-top-right-radius: 30px;
+      text-align: left;
+    }
+
+    .features-container {
+      max-width: 1000px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .feature-box {
+      background: #f9f9f9;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0px 5px 15px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .feature-box h3 {
+      color: #2575fc;
+      margin-bottom: 10px;
+    }
+
+    .feature-box p {
+      color: #555;
+      font-size: 1rem;
+    }
+
+    /* Demo Image Section */
+    .demo-section {
+      margin-top: 60px;
+      text-align: center;
+    }
+
+    .demo-section img {
+      max-width: 90%;
+      border-radius: 15px;
+      box-shadow: 0px 5px 20px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 FindNearBiz is Coming Soon</h1>
+    <p>Discover shops, services, and businesses near you — launching soon in Bidar & Gulbarga!</p>
+
+    <!-- Countdown Timer -->
+    <div class="countdown" id="countdown">Launching Soon...</div>
+
+    <!-- Email Form -->
+    <form action="https://formspree.io/f/xyzdqygo" method="POST" class="form-box">
+      <input type="email" name="email" placeholder="Enter your email" required>
+      <button type="submit">Join the waitlist</button>
+    </form>
+
+    <!-- WhatsApp Signup -->
+    <div class="cta-buttons">
+      <a href="https://wa.me/919741456971?text=I%20want%20to%20sign%20up%20for%20FindNearBiz" 
+         target="_blank" class="whatsapp-btn">Sign up with WhatsApp</a>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      Contact: chikmath.directory@gmail.com <br>
+      Follow us: Facebook | Instagram
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <h2 style="text-align:center; margin-bottom:40px;">✨ Why Join FindNearBiz?</h2>
+    <div class="features-container">
+      <div class="feature-box">
+        <h3>📍 Local Discovery</h3>
+        <p>Find trusted businesses, shops, and services near you instantly.</p>
+      </div>
+      <div class="feature-box">
+        <h3>✅ Verified Listings</h3>
+        <p>Only authentic and verified businesses are listed for your safety.</p>
+      </div>
+      <div class="feature-box">
+        <h3>🎁 Exclusive Offers</h3>
+        <p>Get early access to promotions and local deals when we launch.</p>
+      </div>
+    </div>
+
+    <!-- Demo Section -->
+   
+  </section>
+
+  <!-- Countdown Script -->
+  <script>
+    // Set your launch date here
+    var launchDate = new Date("Oct 22, 2025 00:00:00").getTime();
+
+    var timer = setInterval(function() {
+      var now = new Date().getTime();
+      var distance = launchDate - now;
+
+      if (distance < 0) {
+        document.getElementById("countdown").innerHTML = "🎉 We Are Live!";
+        clearInterval(timer);
+      } else {
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerHTML =
+          days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
