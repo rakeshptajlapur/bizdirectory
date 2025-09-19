@@ -1,90 +1,150 @@
 {% extends 'directory/base.html' %}
+{% load static %}
 
 {% block title %}Sign Up | BizDirectory{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Video background for signup page */
+    .signup-section {
+        position: relative;
+        overflow: hidden;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .signup-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+    }
+    
+    .signup-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1;
+    }
+    
+    .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* Make card more visible on video background */
+    .card.shadow {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: none;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h2 class="text-center mb-4">Create Account</h2>
-                    
-                    {% if form.errors %}
-                        <div class="alert alert-danger">
-                            {% for field, errors in form.errors.items %}
-                                {% for error in errors %}
-                                    <div>{{ field|title }}: {{ error }}</div>
+<div class="signup-section">
+    <!-- Video Background -->
+    <video autoplay muted loop class="signup-video">
+        <source src="{% static 'directory/videos/hero-background.mp4' %}" type="video/mp4">
+    </video>
+    <div class="signup-overlay"></div>
+    
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-body" style="padding:50px;">
+                        <h2 class="text-center mb-4">Create Account</h2>
+                        
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <div>{{ field|title }}: {{ error }}</div>
+                                    {% endfor %}
                                 {% endfor %}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                    
-                    <form method="post">
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            <label for="id_name" class="form-label">Name *</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                                <input type="text" name="name" class="form-control" id="id_name" 
-                                       value="{{ form.name.value|default:'' }}" required>
                             </div>
-                            <small class="form-text text-muted">Enter your full name as you'd like it displayed</small>
-                        </div>
+                        {% endif %}
                         
-                        <div class="mb-3">
-                            <label for="id_email" class="form-label">Email Address *</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                <input type="email" name="email" class="form-control" id="id_email" 
-                                       value="{{ form.email.value|default:'' }}" required>
-                            </div>
-                            <small class="form-text text-muted">We'll send a verification link to this email</small>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="id_password1" class="form-label">Password *</label>
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <!-- Name Field - No Label, Just Placeholder -->
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                    <input type="password" name="password1" class="form-control" id="id_password1" required>
-                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
+                                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                    <input type="text" name="name" class="form-control" id="id_name" 
+                                           value="{{ form.name.value|default:'' }}" 
+                                           placeholder="Enter your full name"
+                                           required>
                                 </div>
-                                <small class="form-text text-muted">At least 8 characters with uppercase, lowercase & numbers</small>
                             </div>
                             
-                            <div class="col-md-6 mb-3">
-                                <label for="id_password2" class="form-label">Confirm Password *</label>
+                            <!-- Email Field - No Label, Just Placeholder -->
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                                    <input type="password" name="password2" class="form-control" id="id_password2" required>
-                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" name="email" class="form-control" id="id_email" 
+                                           value="{{ form.email.value|default:'' }}" 
+                                           placeholder="Enter your email address"
+                                           required>
                                 </div>
-                                <small class="form-text text-muted">Re-enter your password to confirm</small>
                             </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="termsCheck" required>
-                                <label class="form-check-label" for="termsCheck">
-                                    I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
-                                </label>
+                            
+                            <!-- Password Fields - No Labels, Just Placeholders -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                        <input type="password" name="password1" class="form-control" id="id_password1" 
+                                               placeholder="Create password"
+                                               required>
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
+                                    <small class="form-text text-muted">At least 8 characters with uppercase, lowercase & numbers</small>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                        <input type="password" name="password2" class="form-control" id="id_password2" 
+                                               placeholder="Confirm password"
+                                               required>
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
+                                    <small class="form-text text-muted">Re-enter your password to confirm</small>
+                                </div>
                             </div>
-                        </div>
+                            
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                                    <label class="form-check-label" for="termsCheck">
+                                        I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Create Account</button>
+                            </div>
+                        </form>
                         
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Create Account</button>
+                        <div class="text-center mt-4">
+                            <p>Already have an account? <a href="{% url 'account_login' %}">Log In</a></p>
                         </div>
-                    </form>
-                    
-                    <div class="text-center mt-4">
-                        <p>Already have an account? <a href="{% url 'account_login' %}">Log In</a></p>
                     </div>
                 </div>
             </div>
