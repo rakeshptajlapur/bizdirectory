@@ -1,0 +1,274 @@
+{% extends 'directory/base.html' %}
+{% load static %}
+
+{% block title %}Refund Policy | BizDirectory{% endblock %}
+
+{% block extra_css %}
+<style>
+    .legal-section {
+        background-color: #f8f9fa;
+        padding: 2rem 0;
+    }
+    
+    .legal-content {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 3rem;
+        margin-bottom: 2rem;
+    }
+    
+    .legal-content h1 {
+        color: #0d6efd;
+        margin-bottom: 1rem;
+    }
+    
+    .legal-content h2 {
+        color: #212529;
+        font-size: 1.3rem;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    .legal-content ul {
+        margin-left: 1.5rem;
+    }
+    
+    .legal-content li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .refund-highlight {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .refund-highlight h3 {
+        color: #856404;
+        margin-bottom: 1rem;
+    }
+    
+    .free-tier-info {
+        background: #d1edff;
+        border: 1px solid #0d6efd;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .free-tier-info h3 {
+        color: #0d6efd;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-info {
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .last-updated {
+        background: #e7f3ff;
+        border-left: 4px solid #0d6efd;
+        padding: 1rem;
+        border-radius: 0 8px 8px 0;
+        margin-bottom: 2rem;
+    }
+    
+    .support-options {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="legal-section">
+    <div class="container">
+        <div class="legal-content">
+            <div class="last-updated">
+                <strong>Last Updated:</strong> January 2025
+            </div>
+            
+            <h1>Refund Policy</h1>
+            
+            <p class="lead">
+                At FindNearBiz (Kirti Directory), we believe in providing exceptional value through our services. 
+                This Refund Policy explains our approach to refunds and the alternatives we offer to ensure 
+                your satisfaction with our platform.
+            </p>
+
+            <div class="refund-highlight">
+                <h3><i class="bi bi-exclamation-triangle me-2"></i>No Refund Policy</h3>
+                <p class="mb-0">
+                    <strong>FindNearBiz does not offer refunds for premium subscription payments.</strong> 
+                    However, we provide several alternatives and support options to ensure you get maximum 
+                    value from our platform.
+                </p>
+            </div>
+
+            <h2>1. Why We Don't Offer Refunds</h2>
+            
+            <div class="free-tier-info">
+                <h3><i class="bi bi-gift me-2"></i>Unlimited Free Tier Available</h3>
+                <p class="mb-0">
+                    We offer a comprehensive <strong>free tier</strong> that allows users to explore and use our platform 
+                    without any financial commitment. You can create listings, search businesses, and experience 
+                    our core features at no cost.
+                </p>
+            </div>
+
+            <p>Our no-refund policy exists because:</p>
+            <ul>
+                <li><strong>Free Trial Period:</strong> Our unlimited free tier serves as an extended trial period</li>
+                <li><strong>Transparent Pricing:</strong> All premium features and their benefits are clearly outlined before purchase</li>
+                <li><strong>Immediate Access:</strong> Premium features are activated instantly upon payment</li>
+                <li><strong>Digital Services:</strong> Our services are digital in nature and consumed immediately</li>
+                <li><strong>Fair Pricing:</strong> Our premium plans are competitively priced for the value provided</li>
+            </ul>
+
+            <h2>2. Before You Upgrade</h2>
+            <p>We strongly encourage all users to:</p>
+            <ul>
+                <li><strong>Start Free:</strong> Use our free tier extensively to understand the platform</li>
+                <li><strong>Review Features:</strong> Carefully review all premium features before upgrading</li>
+                <li><strong>Contact Support:</strong> Reach out to us with any questions about premium features</li>
+                <li><strong>Read Documentation:</strong> Review our help guides and tutorials</li>
+            </ul>
+
+            <h2>3. What We Offer Instead of Refunds</h2>
+            
+            <h3>Comprehensive Support & Assistance</h3>
+            <p>While we don't offer refunds, we are committed to ensuring your success on our platform:</p>
+            
+            <div class="support-options">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-tools me-2"></i>Technical Support</h5>
+                        <ul class="mb-0">
+                            <li>Bug fixes and technical issues resolution</li>
+                            <li>Feature guidance and tutorials</li>
+                            <li>Platform optimization assistance</li>
+                            <li>Account setup and configuration help</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-person-hearts me-2"></i>Customer Success</h5>
+                        <ul class="mb-0">
+                            <li>Business growth strategy consultation</li>
+                            <li>Feature utilization guidance</li>
+                            <li>Best practices recommendations</li>
+                            <li>Performance improvement tips</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h2>4. Our Commitment to You</h2>
+            <p>Instead of refunds, we focus on delivering value through:</p>
+            <ul>
+                <li><strong>Continuous Improvement:</strong> Regular platform updates and new feature releases</li>
+                <li><strong>24/7 Support:</strong> Round-the-clock assistance for technical and business queries</li>
+                <li><strong>Educational Resources:</strong> Comprehensive guides, tutorials, and webinars</li>
+                <li><strong>Feature Requests:</strong> We actively consider and implement user-requested features</li>
+                <li><strong>Performance Optimization:</strong> Ongoing improvements to ensure maximum ROI</li>
+            </ul>
+
+            <h2>5. Exceptional Circumstances</h2>
+            <p>
+                In very rare cases involving technical errors on our part (such as double charging or system errors), 
+                we will review each case individually. Such reviews will be conducted on a case-by-case basis and 
+                require proper documentation of the technical error.
+            </p>
+
+            <h2>6. Subscription Management</h2>
+            <p>You have full control over your subscription:</p>
+            <ul>
+                <li><strong>Cancel Anytime:</strong> You can cancel your premium subscription at any time</li>
+                <li><strong>No Auto-Renewal:</strong> We don't automatically renew subscriptions without your consent</li>
+                <li><strong>Downgrade Option:</strong> Switch back to the free tier whenever you want</li>
+                <li><strong>Pause Subscription:</strong> Temporarily pause your premium features if needed</li>
+            </ul>
+
+            <h2>7. Payment Disputes</h2>
+            <p>
+                If you have concerns about a payment or believe there has been an error, please contact our 
+                support team immediately. We will investigate all legitimate payment disputes promptly and 
+                work towards a fair resolution.
+            </p>
+
+            <h2>8. Alternative Solutions</h2>
+            <p>Before considering any payment disputes, we offer:</p>
+            <ul>
+                <li><strong>Feature Customization:</strong> Tailoring features to better meet your needs</li>
+                <li><strong>Additional Training:</strong> Extra guidance to maximize platform benefits</li>
+                <li><strong>Plan Adjustments:</strong> Helping you find the most suitable plan</li>
+                <li><strong>Extended Support:</strong> Additional assistance beyond standard support</li>
+            </ul>
+
+            <h2>9. Contact Our Support Team</h2>
+            <p>
+                Our dedicated support team is always ready to help you succeed. Whether you have technical issues, 
+                need feature guidance, or want to maximize your platform usage, we're here to assist.
+            </p>
+
+            <div class="contact-info">
+                <h3 class="text-white mb-3">
+                    <i class="bi bi-headset me-2"></i>Get Support & Assistance
+                </h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Email Support</strong></p>
+                        <p class="mb-2">
+                            <i class="bi bi-envelope me-2"></i>
+                            support@findnearbiz.com
+                        </p>
+                        <small>Response within 24 hours</small>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Phone Support</strong></p>
+                        <p class="mb-2">
+                            <i class="bi bi-telephone me-2"></i>
+                            +91 97414 56971
+                        </p>
+                        <small>Business hours: 9 AM - 6 PM IST</small>
+                    </div>
+                </div>
+                
+                <hr class="my-3" style="border-color: rgba(255,255,255,0.3);">
+                
+                <p class="mb-2"><strong>Kirti Directory (FindNearBiz)</strong></p>
+                <p class="mb-0">
+                    <i class="bi bi-geo-alt me-2"></i>
+                    Bidar, Karnataka, India
+                </p>
+            </div>
+
+            <h2>10. Policy Updates</h2>
+            <p>
+                We may update this Refund Policy from time to time to reflect changes in our services or 
+                legal requirements. Any updates will be posted on this page with a revised "Last Updated" date. 
+                Your continued use of our services after any changes constitutes acceptance of the updated policy.
+            </p>
+
+            <div class="free-tier-info">
+                <h3><i class="bi bi-lightbulb me-2"></i>Remember</h3>
+                <p class="mb-0">
+                    Our free tier offers substantial value and functionality. Most businesses find our free plan 
+                    sufficient for their basic needs, and premium features are designed for businesses ready 
+                    to scale and maximize their online presence.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

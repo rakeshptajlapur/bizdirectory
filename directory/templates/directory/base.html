@@ -1046,11 +1046,11 @@
                 <div class="ps-lg-4">
                     <h5 class="fw-bold mb-3 text-dark">Quick Links</h5>
                     <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="{% url 'directory:listings' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>All Listings</a></li>
+                        <li class="mb-2"><a href="{% url 'directory:categories' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Categories</a></li>
                         <li class="mb-2"><a href="{% url 'directory:about' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>About Us</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Contact</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Privacy Policy</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Terms & Conditions</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Refund Policy</a></li>
+                        <li class="mb-2"><a href="{% url 'directory:contact' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Contact</a></li>
+
                     </ul>
                 </div>
             </div>
@@ -1100,9 +1100,10 @@
                 <p class="mb-md-0 text-dark">&copy; 2025 BizDirectory. All rights reserved.</p>
             </div>
             <div class="col-md-6 text-md-end small">
-                <a href="#" class="text-decoration-none link-dark me-3">Privacy</a>
-                <a href="#" class="text-decoration-none link-dark me-3">Terms</a>
-                <a href="#" class="text-decoration-none link-dark">Support</a>
+                <a href="{% url 'directory:privacy' %}" class="text-decoration-none link-dark me-3">Privacy</a>
+                <a href="{% url 'directory:terms' %}" class="text-decoration-none link-dark me-3">Terms</a>
+                <a href="{% url 'directory:refund_policy' %}" class="text-decoration-none link-dark me-3">Refund</a>
+                <a href="{% url 'directory:contact' %}" class="text-decoration-none link-dark">Contact</a>
             </div>
         </div>
     </div>

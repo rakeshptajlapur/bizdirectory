@@ -1,0 +1,189 @@
+{% extends 'directory/base.html' %}
+{% load static %}
+
+{% block title %}Contact Us | BizDirectory{% endblock %}
+
+{% block extra_css %}
+<style>
+    .contact-section {
+        background-color: #f8f9fa;
+        padding: 4rem 0;
+    }
+    
+    .contact-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 3rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .contact-card h1 {
+        color: #0d6efd;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-method {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .contact-method:hover {
+        transform: translateY(-5px);
+    }
+    
+    .contact-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.8rem;
+        margin: 0 auto 1rem auto;
+    }
+    
+    .whatsapp-icon {
+        background: linear-gradient(45deg, #25d366, #128c7e);
+    }
+    
+    .email-icon {
+        background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+    }
+    
+    .contact-btn {
+        padding: 1rem 2rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 50px;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .whatsapp-btn {
+        background: linear-gradient(45deg, #25d366, #128c7e);
+        color: white;
+    }
+    
+    .whatsapp-btn:hover {
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .email-btn {
+        background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+        color: white;
+    }
+    
+    .email-btn:hover {
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .contact-info {
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+        text-align: center;
+    }
+    
+    @media (max-width: 768px) {
+        .contact-section {
+            padding: 2rem 0;
+        }
+        
+        .contact-card {
+            padding: 2rem 1.5rem;
+            margin: 0 1rem;
+        }
+        
+        .contact-method {
+            padding: 1.5rem;
+        }
+        
+        .contact-btn {
+            padding: 0.875rem 1.5rem;
+            font-size: 0.95rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contact-section">
+    <div class="container">
+        <div class="contact-card">
+            <div class="text-center mb-4">
+                <h1><i class="bi bi-headset me-2"></i>Contact Us</h1>
+                <p class="lead text-muted">
+                    Get in touch with our team. We're here to help!
+                </p>
+            </div>
+
+            <!-- WhatsApp Contact -->
+            <div class="contact-method">
+                <div class="contact-icon whatsapp-icon">
+                    <i class="bi bi-whatsapp"></i>
+                </div>
+                <h4 class="mb-2">WhatsApp Chat</h4>
+                <p class="text-muted mb-3">
+                    Get instant support via WhatsApp
+                </p>
+                <a href="https://wa.me/919741456971?text=Hi%20FindNearBiz%20team,%20I%20need%20help%20with..." 
+                   target="_blank" 
+                   class="contact-btn whatsapp-btn">
+                    <i class="bi bi-whatsapp me-2"></i>Start Chat
+                </a>
+                <div class="mt-2">
+                    <small class="text-muted">+91 97414 56971</small>
+                </div>
+            </div>
+
+            <!-- Email Contact -->
+            <div class="contact-method">
+                <div class="contact-icon email-icon">
+                    <i class="bi bi-envelope"></i>
+                </div>
+                <h4 class="mb-2">Email Support</h4>
+                <p class="text-muted mb-3">
+                    Send us your detailed queries
+                </p>
+                <a href="mailto:support@findnearbiz.com?subject=Support%20Request&body=Hi%20FindNearBiz%20team,%0D%0A%0D%0APlease%20describe%20your%20query%20here..." 
+                   class="contact-btn email-btn">
+                    <i class="bi bi-envelope me-2"></i>Send Email
+                </a>
+                <div class="mt-2">
+                    <small class="text-muted">support@findnearbiz.com</small>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="contact-info">
+                <h5 class="text-white mb-3">
+                    <i class="bi bi-building me-2"></i>FindNearBiz
+                </h5>
+                <p class="mb-2">
+                    <i class="bi bi-geo-alt me-2"></i>
+                    Bidar, Karnataka, India
+                </p>
+                <p class="mb-0">
+                    <i class="bi bi-clock me-2"></i>
+                    Response time: 2-4 hours
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

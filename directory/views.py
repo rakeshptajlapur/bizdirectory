@@ -1031,3 +1031,19 @@ def coming_soon(request):
 def about(request):
     """About us page"""
     return render(request, 'directory/about.html')
+
+def terms(request):
+    """Terms and Conditions page"""
+    return render(request, 'directory/terms.html')
+
+def privacy(request):
+    """Privacy Policy page"""
+    return render(request, 'directory/privacy.html')
+
+def refund_policy(request):
+    """Refund Policy page"""
+    return render(request, 'directory/refund.html')
+
+def contact(request):
+    """Contact Us page"""
+    return render(request, 'directory/contact.html')

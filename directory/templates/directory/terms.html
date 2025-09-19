@@ -1,0 +1,173 @@
+{% extends 'directory/base.html' %}
+{% load static %}
+
+{% block title %}Terms & Conditions | BizDirectory{% endblock %}
+
+{% block extra_css %}
+<style>
+    .legal-section {
+        background-color: #f8f9fa;
+        padding: 2rem 0;
+    }
+    
+    .legal-content {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 3rem;
+        margin-bottom: 2rem;
+    }
+    
+    .legal-content h1 {
+        color: #0d6efd;
+        margin-bottom: 1rem;
+    }
+    
+    .legal-content h2 {
+        color: #212529;
+        font-size: 1.3rem;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    .legal-content h3 {
+        color: #495057;
+        font-size: 1.1rem;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .legal-content ul {
+        margin-left: 1.5rem;
+    }
+    
+    .legal-content li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .contact-info {
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .last-updated {
+        background: #e7f3ff;
+        border-left: 4px solid #0d6efd;
+        padding: 1rem;
+        border-radius: 0 8px 8px 0;
+        margin-bottom: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="legal-section">
+    <div class="container">
+        <div class="legal-content">
+            <div class="last-updated">
+                <strong>Last Updated:</strong> January 2025
+            </div>
+            
+            <h1>Terms & Conditions</h1>
+            
+            <p class="lead">
+                Welcome to FindNearBiz (Kirti Directory). By accessing or using our website 
+                <a href="https://www.findnearbiz.com" class="text-decoration-none">www.findnearbiz.com</a>, 
+                you agree to comply with and be bound by the following Terms and Conditions. 
+                Please read them carefully before using our services.
+            </p>
+
+            <h2>1. Acceptance of Terms</h2>
+            <p>
+                By registering, listing your business, or browsing our website, you acknowledge that you have read, 
+                understood, and agreed to these Terms & Conditions. If you do not agree, you must not use this website.
+            </p>
+
+            <h2>2. Services Provided</h2>
+            <p>FindNearBiz is an online local business directory where users can:</p>
+            <ul>
+                <li>Search for businesses in various categories.</li>
+                <li>View business profiles, contact information, and promotional offers.</li>
+                <li>Add or claim their own business listings (free or paid options).</li>
+            </ul>
+            <p>
+                We only act as an information platform and are not responsible for the products or services 
+                offered by listed businesses.
+            </p>
+
+            <h2>3. User Responsibilities</h2>
+            <ul>
+                <li>Users must provide accurate and truthful information when creating accounts or submitting listings.</li>
+                <li>You agree not to misuse the website by posting false, misleading, or offensive content.</li>
+                <li>You are solely responsible for interactions, transactions, or agreements made with businesses found through our platform.</li>
+            </ul>
+
+            <h2>4. Business Listings & Payments</h2>
+            <ul>
+                <li>Businesses may choose free or premium paid listings for additional visibility.</li>
+                <li>Payments made for paid listings are non-refundable unless otherwise stated.</li>
+                <li>We reserve the right to edit, remove, or reject any listing that violates our policies.</li>
+            </ul>
+
+            <h2>5. Intellectual Property</h2>
+            <p>
+                All content, design, logos, and materials on FindNearBiz are the property of Kirti Directory 
+                unless otherwise noted.
+            </p>
+            <ul>
+                <li>You may not copy, reproduce, or distribute any part of this website without written permission.</li>
+            </ul>
+
+            <h2>6. Limitation of Liability</h2>
+            <ul>
+                <li>FindNearBiz does not guarantee the accuracy, reliability, or completeness of listings.</li>
+                <li>We are not liable for any loss, damage, or disputes arising from the use of services provided by businesses listed on the website.</li>
+            </ul>
+
+            <h2>7. Termination of Access</h2>
+            <p>
+                We reserve the right to suspend or terminate any user or business account at our discretion 
+                if found violating these Terms & Conditions.
+            </p>
+
+            <h2>8. Privacy Policy</h2>
+            <p>
+                Your privacy is important to us. Please review our 
+                <a href="{% url 'directory:privacy' %}" class="text-decoration-none">Privacy Policy</a> 
+                to understand how we collect and use your information.
+            </p>
+
+            <h2>9. Changes to Terms</h2>
+            <p>
+                We may update these Terms & Conditions at any time. Changes will be effective upon posting on this website.
+            </p>
+
+            <h2>10. Governing Law</h2>
+            <p>
+                These Terms & Conditions are governed by the laws of India. Any disputes will be subject 
+                to the jurisdiction of courts in Bidar, Karnataka.
+            </p>
+
+            <div class="contact-info">
+                <h3 class="text-white mb-3">
+                    <i class="bi bi-envelope me-2"></i>Contact Information
+                </h3>
+                <p class="mb-2"><strong>Kirti Directory (FindNearBiz)</strong></p>
+                <p class="mb-2">
+                    <i class="bi bi-envelope me-2"></i>
+                    Email: support@findnearbiz.com
+                </p>
+                <p class="mb-0">
+                    <i class="bi bi-geo-alt me-2"></i>
+                    Location: Bidar, Karnataka, India
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
