@@ -982,6 +982,55 @@
     object-fit: cover;
     object-position: top center; /* Focus on the face for portrait images */
 }
+
+/* Close button for login gate */
+.btn-close-gate {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.btn-close-gate:hover {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    transform: scale(1.1);
+}
+
+.btn-close-gate:active {
+    transform: scale(0.95);
+}
+
+/* Make sure the modal has relative positioning for the close button */
+.login-gate-modal {
+    position: relative;
+    /* ... keep existing styles ... */
+}
+
+/* Mobile responsiveness for close button */
+@media (max-width: 768px) {
+    .btn-close-gate {
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+    }
+}
+
+/* ... rest of existing styles ... */
 </style>
 {% endblock %}
 
@@ -990,6 +1039,11 @@
 {% if not user.is_authenticated %}
 <div class="login-gate-overlay" id="loginGate">
     <div class="login-gate-modal">
+        <!-- Add close button at the top right -->
+        <button type="button" class="btn-close-gate" onclick="closeLoginGate()" aria-label="Close">
+            <i class="bi bi-x-lg"></i>
+        </button>
+        
         <div class="login-gate-icon">
             <i class="bi bi-unlock"></i>
         </div>
@@ -1035,6 +1089,13 @@
             </a>
             <a href="{% url 'account_login' %}?next={{ request.get_full_path }}" class="btn btn-outline-primary">
                 <i class="bi bi-box-arrow-in-right me-2"></i>Already have an account? Login
+            </a>
+        </div>
+        
+        <!-- Add a "Browse More Businesses" button -->
+        <div class="d-grid gap-2 mb-3">
+            <a href="{% url 'directory:listings' %}?category={{ business.category.id }}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left me-2"></i>Browse More {{ business.category.name }} Businesses
             </a>
         </div>
         
@@ -1696,92 +1757,42 @@ function scrollToContactForm() {
             }
         });
     }
-</script>
-
-
-<!-- Desktop Sticky Enquiry Form Logic -->
-<script>
-// Desktop Sticky Enquiry Form Logic
-document.addEventListener('DOMContentLoaded', function() {
-    const stickyEnquiry = document.getElementById('desktopStickyEnquiry');
-    const messageInput = document.querySelector('.sticky-message-input');
-    let enquiryShown = false;
-    let scrollThreshold = 500; // Show after scrolling 500px
     
-    // Auto-expand textarea
-    if (messageInput) {
-        messageInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
-        });
-    }
-    
-    // Show sticky enquiry on scroll (desktop only)
-    function handleScroll() {
-        if (window.innerWidth >= 992 && stickyEnquiry) {
-            const scrollY = window.scrollY;
+    // Function to close the login gate and redirect
+    function closeLoginGate() {
+        const loginGate = document.getElementById('loginGate');
+        if (loginGate) {
+            // Add fade out animation
+            loginGate.style.animation = 'fadeOut 0.3s ease';
             
-            if (scrollY > scrollThreshold && !enquiryShown) {
-                showStickyEnquiry();
-            }
+            setTimeout(() => {
+                // Redirect to listings page with the same category
+                window.location.href = "{% url 'directory:listings' %}?category={{ business.category.id }}";
+            }, 250);
         }
     }
     
-    // Show sticky enquiry
-    function showStickyEnquiry() {
-        if (stickyEnquiry && !enquiryShown) {
-            stickyEnquiry.classList.add('show');
-            document.body.classList.add('sticky-enquiry-active');
-            enquiryShown = true;
+    // Also allow ESC key to close the modal
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !document.querySelector('body').classList.contains('user-authenticated')) {
+            closeLoginGate();
         }
-    }
-    
-    // Hide sticky enquiry
-    window.hideStickyEnquiry = function() {
-        if (stickyEnquiry) {
-            stickyEnquiry.classList.remove('show');
-            document.body.classList.remove('sticky-enquiry-active');
-            enquiryShown = false;
-        }
-    };
-    
-    // Form submission handling
-    const stickyForm = document.querySelector('.sticky-enquiry-form');
-    if (stickyForm) {
-        stickyForm.addEventListener('submit', function(e) {
-            const message = messageInput.value.trim();
-            if (message.length < 10) {
-                e.preventDefault();
-                messageInput.focus();
-                messageInput.style.borderColor = '#dc3545';
-                setTimeout(() => {
-                    messageInput.style.borderColor = '#e9ecef';
-                }, 2000);
-                return false;
-            }
-        });
-    }
-    
-    // Attach scroll listener
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Show immediately if user clicks "Send Enquiry" button
-    const enquiryButtons = document.querySelectorAll('a[href="#contact-form"]');
-    enquiryButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            if (window.innerWidth >= 992) {
-                e.preventDefault();
-                showStickyEnquiry();
-                setTimeout(() => {
-                    if (messageInput) {
-                        messageInput.focus();
-                    }
-                }, 300);
-            }
-        });
     });
-});
 </script>
+
+<!-- Add fadeOut animation -->
+<style>
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+</style>
 {% endblock %}
 
 <!-- Desktop Sticky Enquiry Form -->
