@@ -1,69 +1,129 @@
 {% extends 'directory/base.html' %}
+{% load static %}
 
 {% block title %}Log In | BizDirectory{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Video background for login page */
+    .login-section {
+        position: relative;
+        overflow: hidden;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .login-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+    }
+    
+    .login-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1;
+    }
+    
+    .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* Make card more visible on video background */
+    .card.shadow {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: none;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h2 class="text-center mb-4">Welcome Back</h2>
-                    
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {{ form.non_field_errors }}
-                        </div>
-                    {% endif %}
-                    
-                    <form method="post">
-                        {% csrf_token %}
+<div class="login-section">
+    <!-- Video Background -->
+    <video autoplay muted loop class="login-video">
+        <source src="{% static 'directory/videos/hero-background.mp4' %}" type="video/mp4">
+    </video>
+    <div class="login-overlay"></div>
+    
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body" style="padding:50px;">
+                        <h2 class="text-center mb-4">Welcome Back</h2>
                         
-                        <div class="mb-4">
-                            <label for="id_login" class="form-label">Email</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                <input type="text" name="login" class="form-control" id="id_login" required>
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
                             </div>
-                        </div>
+                        {% endif %}
                         
-                        <div class="mb-3">
-                            <label for="id_password" class="form-label">Password</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                <input type="password" name="password" class="form-control" id="id_password" required>
-                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                            </div>
-                            {% if form.password.errors %}
-                                <div class="text-danger">{{ form.password.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        {% if form.remember %}
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <!-- Email Field -->
                             <div class="mb-3">
-                                <div class="form-check">
-                                    {{ form.remember }}
-                                    <label class="form-check-label" for="{{ form.remember.id_for_label }}">
-                                        {{ form.remember.label }}
-                                    </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    <input type="text" name="login" class="form-control" id="id_login" 
+                                           placeholder="Enter your email address" required>
                                 </div>
+                                {% if form.login.errors %}
+                                    <div class="text-danger mt-1">{{ form.login.errors }}</div>
+                                {% endif %}
                             </div>
-                        {% endif %}
+                            
+                            <!-- Password Field -->
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <input type="password" name="password" class="form-control" id="id_password" 
+                                           placeholder="Enter your password" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                {% if form.password.errors %}
+                                    <div class="text-danger mt-1">{{ form.password.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            {% if form.remember %}
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        {{ form.remember }}
+                                        <label class="form-check-label" for="{{ form.remember.id_for_label }}">
+                                            {{ form.remember.label }}
+                                        </label>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary">Log In</button>
+                            </div>
+                            
+                            {% if redirect_field_value %}
+                                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+                            {% endif %}
+                        </form>
                         
-                        <div class="d-grid mb-3">
-                            <button type="submit" class="btn btn-primary">Log In</button>
+                        <div class="text-center">
+                            <p>Don't have an account? <a href="{% url 'account_signup' %}">Sign Up</a></p>
+                            <p><a href="{% url 'account_reset_password' %}">Forgot your password?</a></p>
                         </div>
-                        
-                        {% if redirect_field_value %}
-                            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
-                        {% endif %}
-                    </form>
-                    
-                    <div class="text-center">
-                        <p>Don't have an account? <a href="{% url 'account_signup' %}">Sign Up</a></p>
-                        <p><a href="{% url 'account_reset_password' %}">Forgot your password?</a></p>
                     </div>
                 </div>
             </div>
