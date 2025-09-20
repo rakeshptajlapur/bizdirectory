@@ -64,12 +64,28 @@
                     <div class="card-body" style="padding:50px;">
                         <h2 class="text-center mb-4">Welcome Back</h2>
                         
+                        <!-- Enhanced Error Display -->
                         {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                {{ form.non_field_errors }}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <strong>Login Failed:</strong>
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            
+                            <!-- Simple helpful message -->
+                            <div class="alert alert-info">
+                                <small>
+                                    <i class="bi bi-lightbulb me-2"></i>
+                                    Double-check your email and password, or try 
+                                    <a href="{% url 'account_reset_password' %}">resetting your password</a>.
+                                </small>
                             </div>
                         {% endif %}
                         
+                        <!-- Keep AllAuth's original form -->
                         <form method="post">
                             {% csrf_token %}
                             
@@ -78,7 +94,8 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person"></i></span>
                                     <input type="text" name="login" class="form-control" id="id_login" 
-                                           placeholder="Enter your email address" required>
+                                           placeholder="Enter your email address" 
+                                           value="{{ form.login.value|default:'' }}" required>
                                 </div>
                                 {% if form.login.errors %}
                                     <div class="text-danger mt-1">{{ form.login.errors }}</div>
@@ -132,19 +149,48 @@
 </div>
 
 <script>
-// Toggle password visibility
-document.getElementById('togglePassword').addEventListener('click', function() {
-    const passwordField = document.getElementById('id_password');
-    const icon = this.querySelector('i');
+// SIMPLE FIX: Just prevent form resubmission on refresh
+document.addEventListener('DOMContentLoaded', function() {
+    // Clear password field if there were errors (security best practice)
+    {% if form.errors %}
+        const passwordField = document.getElementById('id_password');
+        if (passwordField) {
+            passwordField.value = '';
+            passwordField.focus();
+        }
+    {% endif %}
     
-    if (passwordField.type === 'password') {
-        passwordField.type = 'text';
-        icon.classList.remove('bi-eye');
-        icon.classList.add('bi-eye-slash');
-    } else {
-        passwordField.type = 'password';
-        icon.classList.remove('bi-eye-slash');
-        icon.classList.add('bi-eye');
+    // Password toggle functionality
+    const togglePassword = document.getElementById('togglePassword');
+    if (togglePassword) {
+        togglePassword.addEventListener('click', function() {
+            const passwordField = document.getElementById('id_password');
+            const icon = this.querySelector('i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+    }
+});
+
+// CRITICAL: Prevent form resubmission warning on page refresh
+if (window.history.replaceState) {
+    // Replace the current history entry to remove POST data
+    window.history.replaceState(null, null, window.location.pathname);
+}
+
+// Prevent accidental form resubmission
+window.addEventListener('beforeunload', function() {
+    // This helps prevent the resubmission dialog in some browsers
+    if (document.querySelector('form')) {
+        window.history.replaceState(null, null, window.location.pathname);
     }
 });
 </script>
