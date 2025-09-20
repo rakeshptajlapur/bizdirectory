@@ -1,19 +1,110 @@
 {% extends 'directory/base.html' %}
+{% load static %}
 
 {% block title %}Browse All Categories | BizDirectory{% endblock %}
 
-{% block content %}
-<div class="container">
-    <h1 class="mb-4">All Categories</h1>
+{% block extra_css %}
+<style>
+    .category-search-section {
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+    }
     
-    <!-- Search and Filter -->
-    <div class="mb-4">
-        <div class="input-group">
-            <input type="text" class="form-control" id="categorySearch" 
-                   placeholder="Search categories...">
-            <button class="btn btn-outline-secondary" type="button">
-                <i class="bi bi-search"></i>
-            </button>
+    .category-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        text-decoration: none;
+    }
+    
+    .category-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        object-fit: cover;
+        margin-right: 1rem;
+    }
+    
+    .category-letter {
+        color: #0d6efd;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    
+    .category-letter:hover {
+        background-color: #0d6efd;
+        color: white;
+    }
+    
+    .category-letter-group {
+        scroll-margin-top: 100px;
+    }
+    
+    .business-count-badge {
+        background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+        color: white;
+        border: none;
+        font-size: 0.8rem;
+        padding: 0.25rem 0.6rem;
+    }
+    
+    @media (max-width: 768px) {
+        .category-image {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .category-card .card-body {
+            padding: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="category-search-section">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold text-white mb-3">Browse All Categories</h1>
+                <p class="lead text-white-75 mb-6" style="color: white;">Find exactly what you're looking for</br> from our comprehensive list of business categories</p>
+                
+                <!-- Search and Filter -->
+                <div class="search-box bg-white rounded-pill p-2 shadow-lg">
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control border-0" id="categorySearch" 
+                               placeholder="Search categories..." style="box-shadow: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Quick Stats -->
+    <div class="row text-center mb-4">
+        <div class="col-md-4">
+            <div class="h3 fw-bold text-primary">{{ categorized|length }}</div>
+            <p class="text-muted">Categories Available</p>
+        </div>
+        <div class="col-md-4">
+            <div class="h3 fw-bold text-primary">{{ total_businesses }}</div>
+            <p class="text-muted">Total Businesses</p>
+        </div>
+        <div class="col-md-4">
+            <div class="h3 fw-bold text-primary">50+</div>
+            <p class="text-muted">Cities Covered</p>
         </div>
     </div>
     
@@ -22,9 +113,9 @@
         <div class="d-flex flex-wrap justify-content-center">
             {% for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
                 {% if letter in categorized %}
-                <a href="#letter-{{ letter }}" class="category-letter mx-1 px-2 py-1 border rounded">{{ letter }}</a>
+                <a href="#letter-{{ letter }}" class="category-letter mx-1 px-3 py-2 border rounded-pill">{{ letter }}</a>
                 {% else %}
-                <span class="category-letter mx-1 px-2 py-1 border rounded text-muted">{{ letter }}</span>
+                <span class="category-letter mx-1 px-3 py-2 border rounded-pill text-muted opacity-50">{{ letter }}</span>
                 {% endif %}
             {% endfor %}
         </div>
@@ -33,16 +124,40 @@
     <!-- Categories Organized Alphabetically -->
     <div class="category-groups">
         {% for letter, categories in categorized.items %}
-        <div id="letter-{{ letter }}" class="category-letter-group mb-4">
-            <h2 class="border-bottom pb-2">{{ letter }}</h2>
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+        <div id="letter-{{ letter }}" class="category-letter-group mb-5">
+            <div class="d-flex align-items-center mb-4">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                     style="width: 50px; height: 50px; font-size: 1.5rem; font-weight: bold;">
+                    {{ letter }}
+                </div>
+                <div>
+                    <h2 class="mb-0">{{ letter }}</h2>
+                    <p class="text-muted mb-0">{{ categories|length }} categor{{ categories|length|pluralize:"y,ies" }}</p>
+                </div>
+            </div>
+            
+            <div class="row g-3">
                 {% for category in categories %}
-                <div class="col">
+                <div class="col-lg-6">
                     <a href="{% url 'directory:listings' %}?category={{ category.id }}" class="text-decoration-none">
-                        <div class="card h-100 shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ category.name }}</h5>
-                                <span class="badge bg-secondary">{{ category.business_count }} business{{ category.business_count|pluralize:"es" }}</span>
+                        <div class="card h-100 shadow-sm category-card">
+                            <div class="card-body d-flex align-items-center">
+                                <!-- Category Image -->
+                                <img src="{{ category.get_image_url }}" 
+                                     alt="{{ category.name }}" 
+                                     class="category-image">
+                                
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title mb-1 text-dark">{{ category.name }}</h5>
+                                    <p class="text-muted small mb-2">{{ category.description|truncatewords:10|default:"Explore businesses in this category" }}</p>
+                                    <span class="badge business-count-badge">
+                                        {{ category.business_count }} business{{ category.business_count|pluralize:"es" }}
+                                    </span>
+                                </div>
+                                
+                                <div class="text-end">
+                                    <i class="bi bi-chevron-right text-muted"></i>
+                                </div>
                             </div>
                         </div>
                     </a>
@@ -52,8 +167,19 @@
         </div>
         {% endfor %}
     </div>
+    
+    <!-- No results message -->
+    <div id="no-results" class="text-center py-5 d-none">
+        <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
+        <h4 class="mt-3">No categories found</h4>
+        <p class="text-muted">Try adjusting your search terms</p>
+        <button class="btn btn-outline-primary" onclick="document.getElementById('categorySearch').value=''; filterCategories();">
+            Clear Search
+        </button>
+    </div>
 </div>
 
+<!-- Mobile Sticky CTA -->
 <div class="sticky-cta-bottom">
     <div class="d-flex gap-2">
         <a href="{% url 'directory:listings' %}" class="btn btn-primary flex-fill">
@@ -75,21 +201,48 @@
 </div>
 
 <script>
-    // Live search functionality
-    document.getElementById('categorySearch').addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        const categories = document.querySelectorAll('.card');
+function filterCategories() {
+    const searchTerm = document.getElementById('categorySearch').value.toLowerCase();
+    const categoryCards = document.querySelectorAll('.category-card');
+    const letterGroups = document.querySelectorAll('.category-letter-group');
+    const noResults = document.getElementById('no-results');
+    let hasVisibleResults = false;
+    
+    // Hide/show individual category cards
+    categoryCards.forEach(function(card) {
+        const categoryName = card.querySelector('.card-title').textContent.toLowerCase();
+        const categoryDesc = card.querySelector('.text-muted').textContent.toLowerCase();
+        const shouldShow = categoryName.includes(searchTerm) || categoryDesc.includes(searchTerm);
         
-        categories.forEach(function(category) {
-            const title = category.querySelector('h5').textContent.toLowerCase();
-            const parent = category.closest('.col');
-            
-            if (title.includes(searchTerm)) {
-                parent.style.display = '';
-            } else {
-                parent.style.display = 'none';
-            }
-        });
+        card.closest('.col-lg-6').style.display = shouldShow ? 'block' : 'none';
+        if (shouldShow) hasVisibleResults = true;
     });
+    
+    // Hide/show letter groups that have no visible categories
+    letterGroups.forEach(function(group) {
+        const visibleCards = group.querySelectorAll('.col-lg-6[style="display: block;"], .col-lg-6:not([style*="display: none"])');
+        group.style.display = visibleCards.length > 0 ? 'block' : 'none';
+    });
+    
+    // Show/hide no results message
+    noResults.classList.toggle('d-none', hasVisibleResults);
+}
+
+// Live search functionality
+document.getElementById('categorySearch').addEventListener('input', filterCategories);
+
+// Smooth scrolling for letter navigation
+document.querySelectorAll('.category-letter').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        if (targetId) {
+            document.querySelector(targetId).scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
 </script>
 {% endblock %}

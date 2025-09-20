@@ -3,11 +3,23 @@ from django.db.models import Avg
 from .models import Category, Business, BusinessImage, BusinessHours, Service, Review, Enquiry, SubscriptionPlan, UserSubscription
 from django.utils import timezone
 from datetime import timedelta
+from django.utils.html import format_html
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug')
+    list_display = ('name', 'slug', 'image_preview', 'business_count')
     prepopulated_fields = {'slug': ('name',)}
+    readonly_fields = ('image_preview',)
+    
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />', obj.image.url)
+        return "No image"
+    image_preview.short_description = "Image Preview"
+    
+    def business_count(self, obj):
+        return Business.objects.filter(category=obj, is_active=True).count()
+    business_count.short_description = "Active Businesses"
 
 @admin.register(Business)
 class BusinessAdmin(admin.ModelAdmin):

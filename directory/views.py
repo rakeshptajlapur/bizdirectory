@@ -138,10 +138,13 @@ def pincode_suggestions(request):
 
 # Add this view function
 def categories(request):
+    """View for browsing all categories"""
     categories = Category.objects.all().order_by('name')
     
     # Create a dictionary organized by first letter
     categorized = {}
+    total_businesses = 0
+    
     for category in categories:
         first_letter = category.name[0].upper()
         if first_letter not in categorized:
@@ -152,8 +155,12 @@ def categories(request):
     for letter in categorized:
         for category in categorized[letter]:
             category.business_count = Business.objects.filter(category=category, is_active=True).count()
+            total_businesses += category.business_count
     
-    return render(request, 'directory/categories.html', {'categorized': categorized})
+    return render(request, 'directory/categories.html', {
+        'categorized': categorized,
+        'total_businesses': total_businesses
+    })
 
 def listings(request):
     """View for all business listings with filters"""
