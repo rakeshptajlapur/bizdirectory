@@ -1050,7 +1050,9 @@
                         <li class="mb-2"><a href="{% url 'directory:categories' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Categories</a></li>
                         <li class="mb-2"><a href="{% url 'directory:about' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>About Us</a></li>
                         <li class="mb-2"><a href="{% url 'directory:contact' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Contact</a></li>
-
+                        <li class="mb-2"><a href="{% url 'directory:privacy' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Privacy Policy</a></li>
+                        <li class="mb-2"><a href="{% url 'directory:terms' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Terms & Conditions</a></li>
+                        <li class="mb-2"><a href="{% url 'directory:refund_policy' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Refund Policy</a></li>
                     </ul>
                 </div>
             </div>
@@ -1060,28 +1062,39 @@
                 <div class="ps-lg-4">
                     <h5 class="fw-bold mb-3 text-dark">For Businesses</h5>
                     <ul class="list-unstyled small">
-                        <li class="mb-2"><a href="{% url 'directory:add_business' %}" class="text-decoration-none link-dark"><i class="bi bi-plus-circle me-1"></i>Add Listing</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-currency-dollar me-1"></i>Pricing</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-tag me-1"></i>Latest Deals</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none link-dark"><i class="bi bi-speedometer2 me-1"></i>Business Dashboard</a></li>
+                        <li class="mb-2"><a href="{% url 'directory:add_listings_info' %}" class="text-decoration-none link-dark"><i class="bi bi-plus-circle me-1"></i>Add Listing</a></li>
+                        <li class="mb-2"><a href="{% url 'directory:add_listings_info' %}#pricing" class="text-decoration-none link-dark"><i class="bi bi-currency-dollar me-1"></i>Pricing</a></li>
+                        <li class="mb-2"><a href="{% url 'directory:dashboard_home' %}" class="text-decoration-none link-dark"><i class="bi bi-speedometer2 me-1"></i>Business Dashboard</a></li>
+                        <li class="mb-2"><a href="{% url 'directory:refer_earn' %}" class="text-decoration-none link-dark"><i class="bi bi-people me-1"></i>Refer & Earn</a></li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Newsletter signup section -->
+            <!-- Contact & Support Section (replacing newsletter) -->
             <div class="col-lg-3 col-md-6">
                 <div class="ps-md-4">
-                    <h5 class="fw-bold mb-3 text-dark">Stay Updated</h5>
-                    <p class="small text-dark mb-3">Subscribe for exclusive updates, deals and discounts.</p>
-                    <form class="mb-3">
-                        <div class="input-group">
-                            <input type="email" class="form-control form-control-sm border" placeholder="Your email" required>
-                            <button class="btn btn-primary" type="submit">
-                                <i class="bi bi-send-fill"></i>
-                            </button>
-                        </div>
-                    </form>
-                    <div class="d-flex gap-3 mt-3">
+                    <h5 class="fw-bold mb-3 text-dark">Get Support</h5>
+                    <p class="small text-dark mb-3">Need help? Contact us directly for instant support.</p>
+                    
+                    <!-- WhatsApp Button -->
+                    <div class="mb-2">
+                        <a href="https://wa.me/919741456971?text=Hi%20FindNearBiz%20team,%20I%20need%20help%20with..." 
+                           target="_blank" 
+                           class="btn btn-success btn-sm w-100">
+                            <i class="bi bi-whatsapp me-2"></i>WhatsApp Chat
+                        </a>
+                    </div>
+                    
+                    <!-- Email Button -->
+                    <div class="mb-3">
+                        <a href="mailto:support@findnearbiz.com?subject=Support%20Request&body=Hi%20FindNearBiz%20team,%0D%0A%0D%0APlease%20describe%20your%20query%20here..." 
+                           class="btn btn-primary btn-sm w-100">
+                            <i class="bi bi-envelope me-2"></i>Email Support
+                        </a>
+                    </div>
+                    
+                    <!-- Social Links -->
+                    <div class="d-flex gap-3">
                         <a href="#" class="text-decoration-none link-dark"><i class="bi bi-facebook fs-5"></i></a>
                         <a href="#" class="text-decoration-none link-dark"><i class="bi bi-twitter-x fs-5"></i></a>
                         <a href="#" class="text-decoration-none link-dark"><i class="bi bi-instagram fs-5"></i></a>
