@@ -687,12 +687,26 @@ function updateLocationFromPlace(place) {
     // Extract address components
     const addressComponents = extractAddressComponents(place.address_components);
     
+    // Enhanced location name handling
+    let locationName = place.name || place.formatted_address;
+    
+    // If place.name exists and is different from formatted_address, use it
+    if (place.name && place.name !== place.formatted_address) {
+        locationName = place.name;
+    } else {
+        // Extract a meaningful name from the formatted address
+        const addressParts = place.formatted_address.split(',');
+        locationName = addressParts[0].trim(); // Use the first part as location name
+    }
+    
+    console.log('Location name extracted:', locationName);
+    
     // Update all fields
     updateLocationFields({
         latitude: location.lat(),
         longitude: location.lng(),
         place_id: place.place_id,
-        location_name: place.name || place.formatted_address,
+        location_name: locationName,
         formatted_address: place.formatted_address,
         ...addressComponents
     });

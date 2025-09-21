@@ -621,29 +621,35 @@ def business_form(request, business_id=None):
         if form.is_valid():
             business = form.save(commit=False)
             
-            # ✅ Handle location data from Google Maps FIRST
+            # ✅ Handle location data from Google Maps FIRST - ENHANCED
             business.latitude = request.POST.get('latitude') or None
             business.longitude = request.POST.get('longitude') or None
             business.place_id = request.POST.get('place_id', '')
-            business.location_name = request.POST.get('location_name', '')
+            
+            # Fix location name storage - use business name if location_name is empty
+            location_name = request.POST.get('location_name', '')
+            if not location_name and business.name:
+                location_name = business.name  # Fallback to business name
+            business.location_name = location_name
+            
             business.formatted_address = request.POST.get('formatted_address', '')
             
-            # ✅ Auto-populated location fields - REMOVED DISTRICT
+            # ✅ Auto-populated location fields
             business.address = request.POST.get('formatted_address', '') or business.address
             business.city = request.POST.get('city', '') or business.city
             business.pincode = request.POST.get('pincode', '') or business.pincode
-            # REMOVED: business.district = request.POST.get('district', '') or business.district  
             business.state = request.POST.get('state', '') or business.state
             
-            # ✅ Debug logging - REMOVED DISTRICT
+            # ✅ Enhanced debug logging
             print(f"Location data being saved:")
+            print(f"  Business Name: {business.name}")
+            print(f"  Location Name: {business.location_name}")
+            print(f"  Formatted Address: {business.formatted_address}")
             print(f"  Latitude: {business.latitude}")
             print(f"  Longitude: {business.longitude}")
             print(f"  City: {business.city}")
-            # REMOVED: print(f"  District: {business.district}")
             print(f"  State: {business.state}")
             print(f"  Pincode: {business.pincode}")
-            print(f"  Formatted Address: {business.formatted_address}")
             
             if not is_edit:
                 business.owner = request.user
