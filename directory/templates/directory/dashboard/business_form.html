@@ -93,8 +93,34 @@
                             </div>
                         {% endif %}
                         <div class="form-text">Business registration/CIN number (4-20 characters)</div>
+                        
+                        <!-- Conditional Registration Document Upload -->
+                        <div id="registration-upload-section" class="mt-3" style="display: {% if business.registration_number %}block{% else %}none{% endif %};">
+                            <label class="form-label">
+                                Registration Certificate <span class="text-danger">*</span>
+                                <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                   title="Upload clear image/PDF of business registration certificate. Accepted: JPG, PNG, PDF • Max: 5MB"></i>
+                            </label>
+                            <input type="file" class="form-control" name="registration_document" accept="image/jpeg,image/jpg,image/png,application/pdf">
+                            <div class="form-text">
+                                <strong>Accepted formats:</strong> JPG, PNG, PDF • <strong>Max size:</strong> 5MB<br>
+                                Upload clear image or PDF of your business registration certificate
+                            </div>
+                            
+                            {% if business and business.registration_document %}
+                                <div class="mt-2">
+                                    <div class="d-flex align-items-center">
+                                        <a href="{{ business.registration_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                            <i class="bi bi-eye me-1"></i> View Certificate
+                                        </a>
+                                        <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Uploaded</span>
+                                    </div>
+                                    <p class="mt-1 mb-0 small text-muted">You can upload a new file to replace it</p>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
-                    
+
                     <div class="col-md-6">
                         <label for="{{ form.gst_number.id_for_label }}" class="form-label">
                             GST Number (Optional)
@@ -108,57 +134,39 @@
                             </div>
                         {% endif %}
                         <div class="form-text">15-character GST number (e.g., 27AAPFU0939F1ZV)</div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label class="form-label">
-                            Registration Certificate (Optional)
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Upload clear image/PDF of business registration certificate. Accepted: JPG, PNG, PDF • Max: 5MB"></i>
-                        </label>
-                        <input type="file" class="form-control" name="registration_document" accept="image/jpeg,image/jpg,image/png,application/pdf">
-                        <div class="form-text">
-                            <strong>Accepted formats:</strong> JPG, PNG, PDF • <strong>Max size:</strong> 5MB<br>
-                            Upload clear image or PDF of your business registration certificate
-                        </div>
                         
-                        {% if business and business.registration_document %}
-                            <div class="mt-2">
-                                <div class="d-flex align-items-center">
-                                    <a href="{{ business.registration_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
-                                        <i class="bi bi-eye me-1"></i> View Certificate
-                                    </a>
-                                    <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Uploaded</span>
-                                </div>
-                                <p class="mt-1 mb-0 small text-muted">You can upload a new file to replace it</p>
+                        <!-- Conditional GST Document Upload -->
+                        <div id="gst-upload-section" class="mt-3" style="display: {% if business.gst_number %}block{% else %}none{% endif %};">
+                            <label class="form-label">
+                                GST Certificate <span class="text-danger">*</span>
+                                <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                   title="Upload clear image/PDF of GST registration certificate. Accepted: JPG, PNG, PDF • Max: 5MB"></i>
+                            </label>
+                            <input type="file" class="form-control" name="gst_document" accept="image/jpeg,image/jpg,image/png,application/pdf">
+                            <div class="form-text">
+                                <strong>Accepted formats:</strong> JPG, PNG, PDF • <strong>Max size:</strong> 5MB<br>
+                                Upload clear image or PDF of your GST certificate
                             </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label class="form-label">
-                            GST Certificate (Optional)
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Upload clear image/PDF of GST registration certificate. Accepted: JPG, PNG, PDF • Max: 5MB"></i>
-                        </label>
-                        <input type="file" class="form-control" name="gst_document" accept="image/jpeg,image/jpg,image/png,application/pdf">
-                        <div class="form-text">
-                            <strong>Accepted formats:</strong> JPG, PNG, PDF • <strong>Max size:</strong> 5MB<br>
-                            Upload clear image or PDF of your GST certificate
+                            
+                            {% if business and business.gst_document %}
+                                <div class="mt-2">
+                                    <div class="d-flex align-items-center">
+                                        <a href="{{ business.gst_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                            <i class="bi bi-eye me-1"></i> View Certificate
+                                        </a>
+                                        <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Uploaded</span>
+                                    </div>
+                                    <p class="mt-1 mb-0 small text-muted">You can upload a new file to replace it</p>
+                                </div>
+                            {% endif %}
                         </div>
-                        
-                        {% if business and business.gst_document %}
-                            <div class="mt-2">
-                                <div class="d-flex align-items-center">
-                                    <a href="{{ business.gst_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
-                                        <i class="bi bi-eye me-1"></i> View Certificate
-                                    </a>
-                                    <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Uploaded</span>
-                                </div>
-                                <p class="mt-1 mb-0 small text-muted">You can upload a new file to replace it</p>
-                            </div>
-                        {% endif %}
                     </div>
+                </div>
+                
+                <!-- Help Text -->
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Verification Benefits:</strong> Upload documents to get verification badges, improve search rankings, and build customer trust.
                 </div>
             </div>
         </div>
@@ -809,6 +817,77 @@ function updateLocationFields(data) {
 // Form validation
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('businessForm');
+    
+    // Conditional upload sections
+    const registrationNumberInput = document.querySelector('input[name="registration_number"]');
+    const gstNumberInput = document.querySelector('input[name="gst_number"]');
+    const registrationUploadSection = document.getElementById('registration-upload-section');
+    const gstUploadSection = document.getElementById('gst-upload-section');
+    
+    // Show/hide registration upload based on registration number
+    if (registrationNumberInput) {
+        registrationNumberInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            if (value.length >= 4) {
+                registrationUploadSection.style.display = 'block';
+                registrationUploadSection.style.animation = 'fadeIn 0.3s ease-in';
+                console.log('✅ Registration upload section shown');
+            } else {
+                registrationUploadSection.style.display = 'none';
+                console.log('❌ Registration upload section hidden');
+            }
+        });
+    }
+    
+    // Show/hide GST upload based on GST number
+    if (gstNumberInput) {
+        gstNumberInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            if (value.length >= 10) {
+                gstUploadSection.style.display = 'block';
+                gstUploadSection.style.animation = 'fadeIn 0.3s ease-in';
+                console.log('✅ GST upload section shown');
+            } else {
+                gstUploadSection.style.display = 'none';
+                console.log('❌ GST upload section hidden');
+            }
+        });
+    }
+    
+    // File validation for both uploads
+    const fileInputs = document.querySelectorAll('input[type="file"][name$="_document"]');
+    fileInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const file = this.files[0];
+            if (!file) return;
+            
+            // File size validation (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                this.value = '';
+                return;
+            }
+            
+            // File type validation
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Please upload JPG, PNG images or PDF documents only');
+                this.value = '';
+                return;
+            }
+            
+            // Success feedback
+            const fileType = file.type.includes('pdf') ? 'PDF' : 'Image';
+            const documentType = this.name.includes('registration') ? 'Registration' : 'GST';
+            console.log(`✅ ${documentType} ${fileType} selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+            
+            // Add visual feedback
+            this.style.borderColor = '#198754';
+            this.style.backgroundColor = '#d1e7dd';
+        });
+    });
+    
+    // Form submission validation
     if (form) {
         form.addEventListener('submit', function(e) {
             const lat = document.getElementById('latitude').value;
@@ -818,6 +897,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 alert('Please select a location on the map before submitting.');
                 document.getElementById('location_search').focus();
+                return false;
+            }
+            
+            // Check if registration number is entered but no document uploaded
+            const regNumber = registrationNumberInput.value.trim();
+            const regDocument = document.querySelector('input[name="registration_document"]').files[0];
+            const hasExistingRegDoc = document.querySelector('a[href*="registration_document"]');
+            
+            if (regNumber.length >= 4 && !regDocument && !hasExistingRegDoc) {
+                e.preventDefault();
+                alert('Please upload your registration certificate document.');
+                registrationUploadSection.scrollIntoView({ behavior: 'smooth' });
+                return false;
+            }
+            
+            // Check if GST number is entered but no document uploaded
+            const gstNumber = gstNumberInput.value.trim();
+            const gstDocument = document.querySelector('input[name="gst_document"]').files[0];
+            const hasExistingGstDoc = document.querySelector('a[href*="gst_document"]');
+            
+            if (gstNumber.length >= 10 && !gstDocument && !hasExistingGstDoc) {
+                e.preventDefault();
+                alert('Please upload your GST certificate document.');
+                gstUploadSection.scrollIntoView({ behavior: 'smooth' });
                 return false;
             }
         });
@@ -832,6 +935,33 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
+
+<style>
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-control.valid-file {
+    border-color: #198754 !important;
+    background-color: #d1e7dd !important;
+}
+
+.upload-section-hidden {
+    display: none !important;
+}
+
+.upload-section-visible {
+    display: block !important;
+    animation: fadeIn 0.3s ease-in;
+}
+</style>
 
 {% with subscription=business.subscription %}
     <!-- Basic business info section (always visible) -->
