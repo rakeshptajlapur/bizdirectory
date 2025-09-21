@@ -111,11 +111,52 @@ def verify_payments(modeladmin, request, queryset):
 
 @admin.register(UserSubscription)
 class UserSubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('user', 'plan', 'start_date', 'expiry_date', 'payment_status', 'is_active')
+    list_display = ('user', 'plan', 'start_date', 'expiry_date', 'payment_status', 'is_active', 'has_payment_screenshot')
     list_filter = ('plan', 'payment_status', 'is_active')
     search_fields = ('user__username', 'user__email')
     actions = [verify_payments]
     
+    # Enhanced fields display
+    fields = (
+        'user', 'plan', 'business', 'affiliate_code',
+        'start_date', 'expiry_date', 
+        'payment_status', 'is_active',
+        'payment_screenshot_display', 'payment_screenshot'
+    )
+    
+    readonly_fields = ('start_date', 'payment_screenshot_display')
+    
     def has_payment_screenshot(self, obj):
         return bool(obj.payment_screenshot)
     has_payment_screenshot.boolean = True
+    has_payment_screenshot.short_description = "Has Receipt"
+    
+    def payment_screenshot_display(self, obj):
+        if obj.payment_screenshot:
+            file_url = obj.payment_screenshot.url
+            file_name = obj.payment_screenshot.name.split('/')[-1]
+            
+            # Check if it's a PDF
+            if file_name.lower().endswith('.pdf'):
+                return format_html(
+                    '<div style="margin: 10px 0;">'
+                    '<p><strong>📄 PDF Receipt:</strong> {}</p>'
+                    '<a href="{}" target="_blank" class="button" style="background: #007cba; color: white; padding: 8px 12px; text-decoration: none; border-radius: 4px;">'
+                    '📄 Open PDF Receipt</a>'
+                    '</div>',
+                    file_name, file_url
+                )
+            else:
+                # It's an image
+                return format_html(
+                    '<div style="margin: 10px 0;">'
+                    '<p><strong>🖼️ Payment Screenshot:</strong></p>'
+                    '<img src="{}" style="max-width: 300px; max-height: 200px; border: 1px solid #ddd; border-radius: 4px;" /><br>'
+                    '<a href="{}" target="_blank" class="button" style="background: #007cba; color: white; padding: 8px 12px; text-decoration: none; border-radius: 4px; margin-top: 10px; display: inline-block;">'
+                    '🔍 View Full Size</a>'
+                    '</div>',
+                    file_url, file_url
+                )
+        return "No receipt uploaded"
+    
+    payment_screenshot_display.short_description = "Payment Receipt"

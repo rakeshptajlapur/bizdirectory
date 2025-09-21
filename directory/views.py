@@ -715,31 +715,43 @@ def business_form(request, business_id=None):
                     logger.error(f"Gallery image #{i+1} save failed: business={business.id}, error={str(e)}", exc_info=True)
             
             # Update with user feedback
-            # Add logging for registration document
+            # Handle registration document with validation
             registration_document = request.FILES.get('registration_document')
             if registration_document:
                 logger.info(f"Registration document upload: business={business.id}, file={registration_document.name}, size={registration_document.size}B, type={registration_document.content_type}")
                 try:
+                    # Validate the document
+                    form.validate_document_file(registration_document)
+                    
                     business.registration_document = registration_document
                     business.kyc_status = 'pending'  # Set KYC status to pending when new document uploaded
                     business.save()  # Save immediately to ensure the file is saved
                     logger.info(f"Registration document saved successfully: business={business.id}")
                     messages.success(request, "Registration certificate uploaded successfully. KYC verification is in progress.")
+                except ValidationError as e:
+                    logger.error(f"Registration document validation failed: business={business.id}, error={str(e)}")
+                    messages.error(request, f"Registration document upload failed: {str(e)}")
                 except Exception as e:
                     logger.error(f"Registration document save failed: business={business.id}, error={str(e)}", exc_info=True)
                     messages.error(request, "Failed to upload registration certificate. Please try again.")
 
-            # Add logging for GST document
+            # Handle GST document with validation
             gst_document = request.FILES.get('gst_document')
             if gst_document:
                 logger.info(f"GST document upload: business={business.id}, file={gst_document.name}, size={gst_document.size}B, type={gst_document.content_type}")
                 try:
+                    # Validate the document
+                    form.validate_document_file(gst_document)
+                    
                     business.gst_document = gst_document
                     if business.gst_number:
                         business.gst_verified = False  # Reset verification status when new document uploaded
                     business.save()  # Save immediately to ensure the file is saved
                     logger.info(f"GST document saved successfully: business={business.id}")
                     messages.success(request, "GST certificate uploaded successfully and will be verified shortly.")
+                except ValidationError as e:
+                    logger.error(f"GST document validation failed: business={business.id}, error={str(e)}")
+                    messages.error(request, f"GST document upload failed: {str(e)}")
                 except Exception as e:
                     logger.error(f"GST document save failed: business={business.id}, error={str(e)}", exc_info=True)
                     messages.error(request, "Failed to upload GST certificate. Please try again.")
@@ -965,14 +977,42 @@ def payment_upload(request, subscription_id):
                 messages.warning(request, "Invalid affiliate code, but your payment is still being processed.")
         
         if payment_screenshot:
-            subscription.payment_screenshot = payment_screenshot
-            subscription.payment_status = 'pending'
-            subscription.save()
-            
-            messages.success(request, "Payment proof uploaded successfully. Your subscription will be activated after verification.")
-            return redirect('directory:payment_success')
+            # ✅ Add file validation
+            try:
+                # Validate file size (5MB max)
+                max_size = 5 * 1024 * 1024  # 5MB
+                if payment_screenshot.size > max_size:
+                    messages.error(request, "File size should not exceed 5MB.")
+                    return render(request, 'directory/subscription/payment.html', {
+                        'subscription': subscription,
+                        'for_new_business': request.GET.get('for_new_business') == 'true',
+                        'for_business_id': request.GET.get('for_business_id'),
+                    })
+                
+                # Validate file type
+                allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
+                if hasattr(payment_screenshot, 'content_type') and payment_screenshot.content_type not in allowed_types:
+                    messages.error(request, "File must be a JPG, PNG image or PDF document.")
+                    return render(request, 'directory/subscription/payment.html', {
+                        'subscription': subscription,
+                        'for_new_business': request.GET.get('for_new_business') == 'true',
+                        'for_business_id': request.GET.get('for_business_id'),
+                    })
+                
+                # Save the file
+                subscription.payment_screenshot = payment_screenshot
+                subscription.payment_status = 'pending'
+                subscription.save()
+                
+                file_type = "PDF" if payment_screenshot.content_type == 'application/pdf' else "image"
+                messages.success(request, f"Payment {file_type} uploaded successfully. Your subscription will be activated after verification.")
+                return redirect('directory:payment_success')
+                
+            except Exception as e:
+                logger.error(f"Payment screenshot upload error: {e}")
+                messages.error(request, "Failed to upload payment receipt. Please try again.")
         else:
-            messages.error(request, "Please upload a payment screenshot.")
+            messages.error(request, "Please upload a payment receipt.")
     
     # Get query parameters
     for_new_business = request.GET.get('for_new_business') == 'true'

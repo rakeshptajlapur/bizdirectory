@@ -114,12 +114,12 @@
                         <label class="form-label">
                             Registration Certificate (Optional)
                             <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Upload clear image of business registration certificate. Accepted: JPG, PNG • Max: 5MB"></i>
+                               title="Upload clear image/PDF of business registration certificate. Accepted: JPG, PNG, PDF • Max: 5MB"></i>
                         </label>
-                        <input type="file" class="form-control" name="registration_document" accept="image/jpeg,image/jpg,image/png">
+                        <input type="file" class="form-control" name="registration_document" accept="image/jpeg,image/jpg,image/png,application/pdf">
                         <div class="form-text">
-                            <strong>Image formats:</strong> JPG, PNG only • <strong>Max size:</strong> 5MB<br>
-                            Upload clear image of your business registration certificate
+                            <strong>Accepted formats:</strong> JPG, PNG, PDF • <strong>Max size:</strong> 5MB<br>
+                            Upload clear image or PDF of your business registration certificate
                         </div>
                         
                         {% if business and business.registration_document %}
@@ -139,12 +139,12 @@
                         <label class="form-label">
                             GST Certificate (Optional)
                             <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Upload clear image of GST registration certificate. Accepted: JPG, PNG • Max: 5MB"></i>
+                               title="Upload clear image/PDF of GST registration certificate. Accepted: JPG, PNG, PDF • Max: 5MB"></i>
                         </label>
-                        <input type="file" class="form-control" name="gst_document" accept="image/jpeg,image/jpg,image/png">
+                        <input type="file" class="form-control" name="gst_document" accept="image/jpeg,image/jpg,image/png,application/pdf">
                         <div class="form-text">
-                            <strong>Image formats:</strong> JPG, PNG only • <strong>Max size:</strong> 5MB<br>
-                            Upload clear image of your GST certificate
+                            <strong>Accepted formats:</strong> JPG, PNG, PDF • <strong>Max size:</strong> 5MB<br>
+                            Upload clear image or PDF of your GST certificate
                         </div>
                         
                         {% if business and business.gst_document %}

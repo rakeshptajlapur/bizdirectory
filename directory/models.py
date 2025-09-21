@@ -253,7 +253,15 @@ class UserSubscription(models.Model):
     start_date = models.DateTimeField(auto_now_add=True)
     expiry_date = models.DateTimeField()
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
-    payment_screenshot = models.ImageField(upload_to='payment_screenshots/', blank=True, null=True)
+    
+    # ✅ UPDATE: Add Cloudinary storage to payment_screenshot
+    payment_screenshot = models.FileField(
+        upload_to='payment_screenshots/', 
+        blank=True, 
+        null=True,
+        storage=MediaCloudinaryStorage()  # Force Cloudinary for payment screenshots
+    )
+    
     is_active = models.BooleanField(default=False)  # Only active after admin verification
     affiliate_code = models.CharField(max_length=8, blank=True, null=True)
     

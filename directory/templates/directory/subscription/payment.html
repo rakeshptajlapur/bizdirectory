@@ -39,16 +39,16 @@
                         {% csrf_token %}
                         <div class="mb-4">
                             <label for="payment_screenshot" class="form-label">
-                                Upload Payment Screenshot <span class="text-danger">*</span>
+                                Upload Payment Receipt <span class="text-danger">*</span>
                                 <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                                   title="Upload a clear screenshot of your successful payment. Accepted: JPG, PNG • Max: 5MB"></i>
+                                   title="Upload payment receipt/screenshot. Accepted: JPG, PNG, PDF • Max: 5MB"></i>
                             </label>
                             <input class="form-control" type="file" id="payment_screenshot" name="payment_screenshot" 
-                                   accept="image/jpeg,image/jpg,image/png" required>
+                                   accept="image/jpeg,image/jpg,image/png,application/pdf" required>
                             <div class="form-text">
-                                <strong>Accepted formats:</strong> JPG, PNG images only<br>
+                                <strong>Accepted formats:</strong> JPG, PNG images or PDF documents<br>
                                 <strong>Maximum file size:</strong> 5MB<br>
-                                Ensure the screenshot shows transaction ID, amount, and success status clearly.
+                                Upload clear payment receipt showing transaction ID, amount, and success status.
                             </div>
                             <div class="invalid-feedback"></div>
                         </div>
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const spinner = submitBtn.querySelector('.spinner-border');
     const fileInput = document.getElementById('payment_screenshot');
     
-    // File validation
+    // Enhanced file validation for images and PDFs
     fileInput.addEventListener('change', function() {
         const file = this.files[0];
         const feedback = this.parentElement.querySelector('.invalid-feedback');
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!file) return;
         
         // Reset validation
-        this.classList.remove('is-invalid');
+        this.classList.remove('is-invalid', 'is-valid');
         feedback.textContent = '';
         
         // Size check (5MB)
@@ -110,11 +110,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Type check
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        // Type check - Support images and PDFs
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
         if (!allowedTypes.includes(file.type)) {
             this.classList.add('is-invalid');
-            feedback.textContent = 'Please upload JPG or PNG images only';
+            feedback.textContent = 'Please upload JPG, PNG images or PDF documents only';
             this.value = '';
             return;
         }
@@ -123,7 +123,10 @@ document.addEventListener('DOMContentLoaded', function() {
         this.classList.add('is-valid');
         const successDiv = this.parentElement.querySelector('.success-feedback') || document.createElement('div');
         successDiv.className = 'success-feedback text-success small mt-1';
-        successDiv.innerHTML = '<i class="bi bi-check-circle me-1"></i>Screenshot ready to upload (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+        
+        const fileType = file.type.includes('pdf') ? 'PDF' : 'Image';
+        successDiv.innerHTML = `<i class="bi bi-check-circle me-1"></i>${fileType} ready to upload (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+        
         if (!this.parentElement.querySelector('.success-feedback')) {
             this.parentElement.appendChild(successDiv);
         }
