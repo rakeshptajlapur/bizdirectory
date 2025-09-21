@@ -4,568 +4,618 @@
 
 {% block dashboard_content %}
 <div class="container-fluid py-4">
-    <h1 class="mb-4">{% if is_edit %}Edit{% else %}Add New{% endif %} Business</h1>
-
-    <form method="post" enctype="multipart/form-data" class="needs-validation" id="businessForm">
-        {% csrf_token %}
-
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}
-                    {{ error }}
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <!-- Basic Information Card -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="border-bottom pb-2 mb-3">
-                    <i class="bi bi-info-circle me-2"></i>Basic Information
-                </h5>
-                
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="{{ form.name.id_for_label }}" class="form-label">
-                            Business Name <span class="text-danger">*</span>
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Business name should be 3-100 characters. Can include letters, numbers, spaces, and common symbols like &, -, etc."></i>
-                        </label>
-                        {{ form.name }}
-                        {% if form.name.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.name.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">Enter your official business name (3-100 characters)</div>
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Progress Bar -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h1 class="mb-4">{% if is_edit %}Edit{% else %}Add New{% endif %} Business</h1>
                     
-                    <div class="col-md-6">
-                        <label for="{{ form.category.id_for_label }}" class="form-label">
-                            Category <span class="text-danger">*</span>
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Select the category that best describes your business"></i>
-                        </label>
-                        {{ form.category }}
-                        {% if form.category.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.category.errors.0 }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="col-12">
-                        <label for="{{ form.description.id_for_label }}" class="form-label">
-                            Business Description <span class="text-danger">*</span>
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Describe your business in 50-1000 characters. Include services, specialties, and what makes you unique"></i>
-                        </label>
-                        {{ form.description }}
-                        {% if form.description.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.description.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">Describe your business, services offered, unique selling points, etc. (50-1000 characters)</div>
+                    <!-- Step Progress -->
+                    <div class="step-progress mb-4">
+                        <div class="step-item active" data-step="1">
+                            <div class="step-circle">1</div>
+                            <div class="step-label">Basic Info</div>
+                        </div>
+                        <div class="step-item" data-step="2">
+                            <div class="step-circle">2</div>
+                            <div class="step-label">Verification</div>
+                        </div>
+                        <div class="step-item" data-step="3">
+                            <div class="step-circle">3</div>
+                            <div class="step-label">Contact & Media</div>
+                        </div>
+                        <div class="step-item" data-step="4">
+                            <div class="step-circle">4</div>
+                            <div class="step-label">Location</div>
+                        </div>
+                        <div class="step-item" data-step="5">
+                            <div class="step-circle">5</div>
+                            <div class="step-label">Services & Review</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- KYC & Registration Card -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="border-bottom pb-2 mb-3">
-                    <i class="bi bi-shield-check me-2"></i>Business Verification Details
-                </h5>
-                
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="{{ form.registration_number.id_for_label }}" class="form-label">
-                            Registration Number <span class="text-danger">*</span>
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Business registration number: 4-20 characters, can be alphanumeric (e.g., U12345MH2020PTC123456)"></i>
-                        </label>
-                        {{ form.registration_number }}
-                        {% if form.registration_number.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.registration_number.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">Business registration/CIN number (4-20 characters)</div>
-                        
-                        <!-- Conditional Registration Document Upload -->
-                        <div id="registration-upload-section" class="mt-3" style="display: {% if business.registration_number %}block{% else %}none{% endif %};">
-                            <label class="form-label">
-                                Registration Certificate <span class="text-danger">*</span>
-                                <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                                   title="Upload clear image/PDF of business registration certificate. Accepted: JPG, PNG, PDF • Max: 5MB"></i>
-                            </label>
-                            <input type="file" class="form-control" name="registration_document" accept="image/jpeg,image/jpg,image/png,application/pdf">
-                            <div class="form-text">
-                                <strong>Accepted formats:</strong> JPG, PNG, PDF • <strong>Max size:</strong> 5MB<br>
-                                Upload clear image or PDF of your business registration certificate
-                            </div>
-                            
-                            {% if business and business.registration_document %}
-                                <div class="mt-2">
-                                    <div class="d-flex align-items-center">
-                                        <a href="{{ business.registration_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
-                                            <i class="bi bi-eye me-1"></i> View Certificate
-                                        </a>
-                                        <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Uploaded</span>
-                                    </div>
-                                    <p class="mt-1 mb-0 small text-muted">You can upload a new file to replace it</p>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
+            <form method="post" enctype="multipart/form-data" class="needs-validation" id="businessForm">
+                {% csrf_token %}
 
-                    <div class="col-md-6">
-                        <label for="{{ form.gst_number.id_for_label }}" class="form-label">
-                            GST Number (Optional)
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="15-character GST number (e.g., 27AAPFU0939F1ZV). Format: 2 digits + 10 chars + 1 char + 1 char + Z + 1 char"></i>
-                        </label>
-                        {{ form.gst_number }}
-                        {% if form.gst_number.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.gst_number.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">15-character GST number (e.g., 27AAPFU0939F1ZV)</div>
-                        
-                        <!-- Conditional GST Document Upload -->
-                        <div id="gst-upload-section" class="mt-3" style="display: {% if business.gst_number %}block{% else %}none{% endif %};">
-                            <label class="form-label">
-                                GST Certificate <span class="text-danger">*</span>
-                                <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                                   title="Upload clear image/PDF of GST registration certificate. Accepted: JPG, PNG, PDF • Max: 5MB"></i>
-                            </label>
-                            <input type="file" class="form-control" name="gst_document" accept="image/jpeg,image/jpg,image/png,application/pdf">
-                            <div class="form-text">
-                                <strong>Accepted formats:</strong> JPG, PNG, PDF • <strong>Max size:</strong> 5MB<br>
-                                Upload clear image or PDF of your GST certificate
-                            </div>
-                            
-                            {% if business and business.gst_document %}
-                                <div class="mt-2">
-                                    <div class="d-flex align-items-center">
-                                        <a href="{{ business.gst_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
-                                            <i class="bi bi-eye me-1"></i> View Certificate
-                                        </a>
-                                        <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Uploaded</span>
-                                    </div>
-                                    <p class="mt-1 mb-0 small text-muted">You can upload a new file to replace it</p>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Help Text -->
-                <div class="alert alert-info mt-3">
-                    <i class="bi bi-info-circle me-2"></i>
-                    <strong>Verification Benefits:</strong> Upload documents to get verification badges, improve search rankings, and build customer trust.
-                </div>
-            </div>
-        </div>
-
-        <!-- Contact Information Card -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="border-bottom pb-2 mb-3">
-                    <i class="bi bi-telephone me-2"></i>Contact Information
-                </h5>
-                
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="{{ form.phone.id_for_label }}" class="form-label">
-                            Phone Number <span class="text-danger">*</span>
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Enter 10-digit mobile number without country code (e.g., 9876543210)"></i>
-                        </label>
-                        {{ form.phone }}
-                        {% if form.phone.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.phone.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">10-digit mobile number (e.g., 9876543210)</div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label for="{{ form.email.id_for_label }}" class="form-label">
-                            Email Address <span class="text-danger">*</span>
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Valid business email address (e.g., info@business.com)"></i>
-                        </label>
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.email.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">Business email for customer inquiries</div>
-                    </div>
-                    
-                    <div class="col-md-12">
-                        <label for="{{ form.website.id_for_label }}" class="form-label">
-                            Website (Optional)
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Enter complete website URL starting with http:// or https:// (e.g., https://mybusiness.com)"></i>
-                        </label>
-                        {{ form.website }}
-                        {% if form.website.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.website.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">Complete URL including http:// or https:// (e.g., https://example.com)</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Image Upload Card -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="border-bottom pb-2 mb-3">
-                    <i class="bi bi-images me-2"></i>Business Images
-                </h5>
-                
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">
-                            Primary Business Image {% if not business %}<span class="text-danger">*</span>{% endif %}
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="High-quality image representing your business. Accepted: JPG, PNG • Max: 5MB • Recommended: 1200x800px"></i>
-                        </label>
-                        <input type="file" class="form-control" name="primary_image" accept="image/jpeg,image/jpg,image/png" {% if not business %}required{% endif %}>
-                        <div class="form-text">
-                            <strong>Image formats:</strong> JPG, PNG only • <strong>Max size:</strong> 5MB<br>
-                            <strong>Recommended:</strong> High-quality, well-lit photo of your business exterior/interior
-                        </div>
-                        
-                        {% if business and business.get_primary_image %}
-                            <div class="mt-2">
-                                <img src="{{ business.get_primary_image.image.url }}" alt="Primary Image" class="img-thumbnail" style="height: 100px;">
-                                <p class="mt-1 mb-0 small text-muted">Current primary image</p>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Business Hours Card -->
-        {% with subscription=request.user|get_subscription %}
-            {% if subscription.plan.price > 0 %}
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-body">
-                        <h5 class="border-bottom pb-2 mb-3">
-                            <i class="bi bi-clock me-2"></i>Business Hours
-                        </h5>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Day</th>
-                                        <th>Status</th>
-                                        <th>Opening Time</th>
-                                        <th>Closing Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for day in days_of_week %}
-                                        {% with day_hours=business_hours|get_item:day.number %}
-                                        <tr>
-                                            <td>
-                                                <label class="form-label mb-0">{{ day.name }}</label>
-                                            </td>
-                                            <td>
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input business-day-toggle" type="checkbox" 
-                                                           id="closed_{{ day.number }}" name="closed_{{ day.number }}"
-                                                           data-target="time-row-{{ day.number }}"
-                                                           {% if day_hours.is_closed %}checked{% endif %}>
-                                                    <label class="form-check-label" for="closed_{{ day.number }}">
-                                                        Closed
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div id="time-row-{{ day.number }}" class="{% if day_hours.is_closed %}d-none{% endif %}">
-                                                    <input type="time" class="form-control" name="open_time_{{ day.number }}" 
-                                                           value="{{ day_hours.open_time|default:'09:00' }}"
-                                                           {% if day_hours.is_closed %}disabled{% endif %}>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="{% if day_hours.is_closed %}d-none{% endif %}" id="close-time-{{ day.number }}">
-                                                    <input type="time" class="form-control" name="close_time_{{ day.number }}" 
-                                                           value="{{ day_hours.close_time|default:'17:00' }}"
-                                                           {% if day_hours.is_closed %}disabled{% endif %}>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {% endwith %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-        {% endwith %}
-
-        <!-- Services Card -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="border-bottom pb-2 mb-3">
-                    <i class="bi bi-tag me-2"></i>Services Offered
-                </h5>
-                
-                <div id="services-container">
-                    {% if services %}
-                        {% for service in services %}
-                        <div class="row g-3 mb-3 service-row">
-                            <div class="col-md-5">
-                                <label class="form-label">
-                                    Service Name
-                                    <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                                       title="Service name: 2-100 characters, letters and numbers allowed (e.g., Web Development, AC Repair)"></i>
-                                </label>
-                                <input type="text" class="form-control service-name" name="service_name" value="{{ service.name }}" maxlength="100">
-                                <div class="form-text">2-100 characters, letters and numbers</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">
-                                    Short Description (Optional)
-                                    <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                                       title="Brief description of the service: up to 200 characters"></i>
-                                </label>
-                                <input type="text" class="form-control service-description" name="service_description" value="{{ service.description }}" maxlength="200">
-                                <div class="form-text">Up to 200 characters</div>
-                            </div>
-                            <div class="col-md-1 d-flex align-items-end">
-                                <button type="button" class="btn btn-outline-danger remove-service-btn">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </div>
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
                         {% endfor %}
-                    {% else %}
-                        <div class="row g-3 mb-3 service-row">
-                            <div class="col-md-5">
-                                <label class="form-label">
-                                    Service Name
-                                    <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                                       title="Service name: 2-100 characters, letters and numbers allowed (e.g., Web Development, AC Repair)"></i>
-                                </label>
-                                <input type="text" class="form-control service-name" name="service_name" maxlength="100">
-                                <div class="form-text">2-100 characters, letters and numbers</div>
+                    </div>
+                {% endif %}
+
+                <!-- Step 1: Basic Information -->
+                <div class="step-content" id="step-1">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-info-circle me-2"></i>Basic Information
+                            </h5>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.name.id_for_label }}" class="form-label">
+                                        Business Name <span class="text-danger">*</span>
+                                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                           title="Business name should be 3-100 characters. Can include letters, numbers, spaces, and common symbols like &, -, etc."></i>
+                                    </label>
+                                    {{ form.name }}
+                                    {% if form.name.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.name.errors.0 }}</div>
+                                    {% endif %}
+                                    <div class="form-text">Enter your official business name (3-100 characters)</div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="{{ form.category.id_for_label }}" class="form-label">
+                                        Category <span class="text-danger">*</span>
+                                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                           title="Select the category that best describes your business"></i>
+                                    </label>
+                                    {{ form.category }}
+                                    {% if form.category.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.category.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label for="{{ form.description.id_for_label }}" class="form-label">
+                                        Business Description <span class="text-danger">*</span>
+                                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                           title="Describe your business in 50-1000 characters. Include services, specialties, and what makes you unique"></i>
+                                    </label>
+                                    {{ form.description }}
+                                    {% if form.description.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.description.errors.0 }}</div>
+                                    {% endif %}
+                                    <div class="form-text">Describe your business, services offered, unique selling points, etc. (50-1000 characters)</div>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">
-                                    Short Description (Optional)
-                                    <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                                       title="Brief description of the service: up to 200 characters"></i>
-                                </label>
-                                <input type="text" class="form-control service-description" name="service_description" maxlength="200">
-                                <div class="form-text">Up to 200 characters</div>
-                            </div>
-                            <div class="col-md-1 d-flex align-items-end">
-                                <button type="button" class="btn btn-outline-danger remove-service-btn">
-                                    <i class="bi bi-trash"></i>
+
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+                                    Save & Continue <i class="bi bi-arrow-right ms-1"></i>
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Business Verification -->
+                <div class="step-content d-none" id="step-2">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-shield-check me-2"></i>Business Verification Details
+                            </h5>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.registration_number.id_for_label }}" class="form-label">
+                                        Registration Number <span class="text-danger">*</span>
+                                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                           title="Business registration number: 4-20 characters, can be alphanumeric (e.g., U12345MH2020PTC123456)"></i>
+                                    </label>
+                                    {{ form.registration_number }}
+                                    {% if form.registration_number.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.registration_number.errors.0 }}</div>
+                                    {% endif %}
+                                    <div class="form-text">Business registration/CIN number (4-20 characters)</div>
+                                    
+                                    <!-- Conditional Registration Document Upload -->
+                                    <div id="registration-upload-section" class="mt-3" style="display: {% if business.registration_number %}block{% else %}none{% endif %};">
+                                        <label class="form-label">
+                                            Registration Certificate <span class="text-danger">*</span>
+                                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                               title="Upload clear image/PDF of business registration certificate. Accepted: JPG, PNG, PDF • Max: 5MB"></i>
+                                        </label>
+                                        <input type="file" class="form-control" name="registration_document" accept="image/jpeg,image/jpg,image/png,application/pdf">
+                                        <div class="form-text">
+                                            <strong>Accepted formats:</strong> JPG, PNG, PDF • <strong>Max size:</strong> 5MB<br>
+                                            Upload clear image or PDF of your business registration certificate
+                                        </div>
+                                        
+                                        {% if business and business.registration_document %}
+                                            <div class="mt-2">
+                                                <div class="d-flex align-items-center">
+                                                    <a href="{{ business.registration_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                                        <i class="bi bi-eye me-1"></i> View Certificate
+                                                    </a>
+                                                    <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Uploaded</span>
+                                                </div>
+                                                <p class="mt-1 mb-0 small text-muted">You can upload a new file to replace it</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="{{ form.gst_number.id_for_label }}" class="form-label">
+                                        GST Number (Optional)
+                                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                           title="15-character GST number (e.g., 27AAPFU0939F1ZV). Format: 2 digits + 10 chars + 1 char + 1 char + Z + 1 char"></i>
+                                    </label>
+                                    {{ form.gst_number }}
+                                    {% if form.gst_number.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.gst_number.errors.0 }}</div>
+                                    {% endif %}
+                                    <div class="form-text">15-character GST number (e.g., 27AAPFU0939F1ZV)</div>
+                                    
+                                    <!-- Conditional GST Document Upload -->
+                                    <div id="gst-upload-section" class="mt-3" style="display: {% if business.gst_number %}block{% else %}none{% endif %};">
+                                        <label class="form-label">
+                                            GST Certificate <span class="text-danger">*</span>
+                                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                               title="Upload clear image/PDF of GST registration certificate. Accepted: JPG, PNG, PDF • Max: 5MB"></i>
+                                        </label>
+                                        <input type="file" class="form-control" name="gst_document" accept="image/jpeg,image/jpg,image/png,application/pdf">
+                                        <div class="form-text">
+                                            <strong>Accepted formats:</strong> JPG, PNG, PDF • <strong>Max size:</strong> 5MB<br>
+                                            Upload clear image or PDF of your GST certificate
+                                        </div>
+                                        
+                                        {% if business and business.gst_document %}
+                                            <div class="mt-2">
+                                                <div class="d-flex align-items-center">
+                                                    <a href="{{ business.gst_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                                        <i class="bi bi-eye me-1"></i> View Certificate
+                                                    </a>
+                                                    <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Uploaded</span>
+                                                </div>
+                                                <p class="mt-1 mb-0 small text-muted">You can upload a new file to replace it</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Help Text -->
+                            <div class="alert alert-info mt-3">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>Verification Benefits:</strong> Upload documents to get verification badges, improve search rankings, and build customer trust.
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary" onclick="prevStep(1)">
+                                    <i class="bi bi-arrow-left me-1"></i> Previous
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep(3)">
+                                    Save & Continue <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Contact Information & Media -->
+                <div class="step-content d-none" id="step-3">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-telephone me-2"></i>Contact Information
+                            </h5>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.phone.id_for_label }}" class="form-label">
+                                        Phone Number <span class="text-danger">*</span>
+                                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                           title="Enter 10-digit mobile number without country code (e.g., 9876543210)"></i>
+                                    </label>
+                                    {{ form.phone }}
+                                    {% if form.phone.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>
+                                    {% endif %}
+                                    <div class="form-text">10-digit mobile number (e.g., 9876543210)</div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="{{ form.email.id_for_label }}" class="form-label">
+                                        Email Address <span class="text-danger">*</span>
+                                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                           title="Valid business email address (e.g., info@business.com)"></i>
+                                    </label>
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                                    {% endif %}
+                                    <div class="form-text">Business email for customer inquiries</div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label for="{{ form.website.id_for_label }}" class="form-label">
+                                        Website (Optional)
+                                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                           title="Enter complete website URL starting with http:// or https:// (e.g., https://mybusiness.com)"></i>
+                                    </label>
+                                    {{ form.website }}
+                                    {% if form.website.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.website.errors.0 }}</div>
+                                    {% endif %}
+                                    <div class="form-text">Complete URL including http:// or https:// (e.g., https://example.com)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Upload Section -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-images me-2"></i>Business Images
+                            </h5>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Primary Business Image {% if not business %}<span class="text-danger">*</span>{% endif %}
+                                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                           title="High-quality image representing your business. Accepted: JPG, PNG • Max: 5MB • Recommended: 1200x800px"></i>
+                                    </label>
+                                    <input type="file" class="form-control" name="primary_image" accept="image/jpeg,image/jpg,image/png" {% if not business %}required{% endif %}>
+                                    <div class="form-text">
+                                        <strong>Image formats:</strong> JPG, PNG only • <strong>Max size:</strong> 5MB<br>
+                                        <strong>Recommended:</strong> High-quality, well-lit photo of your business exterior/interior
+                                    </div>
+                                    
+                                    {% if business and business.get_primary_image %}
+                                        <div class="mt-2">
+                                            <img src="{{ business.get_primary_image.image.url }}" alt="Primary Image" class="img-thumbnail" style="height: 100px;">
+                                            <p class="mt-1 mb-0 small text-muted">Current primary image</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary" onclick="prevStep(2)">
+                                    <i class="bi bi-arrow-left me-1"></i> Previous
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep(4)">
+                                    Save & Continue <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Location -->
+                <div class="step-content d-none" id="step-4">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-geo-alt me-2"></i>Business Location
+                            </h5>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-12">
+                                    <div class="alert alert-info">
+                                        <h6><i class="bi bi-lightbulb me-2"></i>How to Set Your Location:</h6>
+                                        <ol class="mb-0">
+                                            <li>Search for your business name or address in the search box</li>
+                                            <li>Click on the suggested location from dropdown</li>
+                                            <li>OR click directly on the map where your business is located</li>
+                                            <li>All location details will be filled automatically</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 mb-3">
+                                    <label for="location_search" class="form-label">
+                                        <i class="bi bi-search me-1"></i>Search Your Business Location <span class="text-danger">*</span>
+                                        <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                           title="Search by business name, address, or landmark. Click on suggestions or map to set location"></i>
+                                    </label>
+                                    <input type="text" 
+                                           id="location_search" 
+                                           class="form-control" 
+                                           placeholder="Start typing your business address..."
+                                           autocomplete="off">
+                                    <div class="form-text">
+                                        Type your business name, full address, or nearby landmark
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <div id="map" style="height: 400px; border-radius: 8px; border: 2px solid #e9ecef;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Hidden Location Fields -->
+                            <input type="hidden" name="latitude" id="latitude" value="{{ business.latitude|default:'' }}">
+                            <input type="hidden" name="longitude" id="longitude" value="{{ business.longitude|default:'' }}">
+                            <input type="hidden" name="place_id" id="place_id" value="{{ business.place_id|default:'' }}">
+                            <input type="hidden" name="location_name" id="location_name" value="{{ business.location_name|default:'' }}">
+                            <input type="hidden" name="formatted_address" id="formatted_address" value="{{ business.formatted_address|default:'' }}">
+                            
+                            <!-- Auto-populated Display Fields -->
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        <i class="bi bi-geo me-1"></i>Full Address
+                                        <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled from location"></i>
+                                    </label>
+                                    <textarea class="form-control bg-light" 
+                                              name="address" 
+                                              id="address_display" 
+                                              rows="3" 
+                                              readonly>{{ business.formatted_address|default:business.address }}</textarea>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-building me-1"></i>City
+                                        <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control bg-light" 
+                                           name="city" 
+                                           id="city_display" 
+                                           value="{{ business.city|default:'' }}" 
+                                           readonly>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-mailbox me-1"></i>Pincode
+                                        <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control bg-light" 
+                                           name="pincode" 
+                                           id="pincode_display" 
+                                           value="{{ business.pincode|default:'' }}" 
+                                           readonly>
+                                </div>
+                                
+                                <div class="col-6">
+                                    <label class="form-label">
+                                        <i class="bi bi-map me-1"></i>State
+                                        <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control bg-light" 
+                                           name="state" 
+                                           id="state_display" 
+                                           value="{{ business.state|default:'' }}" 
+                                           readonly>
+                                </div>
+                                
+                                <div class="col-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-geo-alt me-1"></i>Latitude
+                                        <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control bg-light" 
+                                           id="lat_display" 
+                                           value="{{ business.latitude|default:'' }}" 
+                                           readonly>
+                                </div>
+                                
+                                <div class="col-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-geo-alt me-1"></i>Longitude
+                                        <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control bg-light" 
+                                           id="lng_display" 
+                                           value="{{ business.longitude|default:'' }}" 
+                                           readonly>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary" onclick="prevStep(3)">
+                                    <i class="bi bi-arrow-left me-1"></i> Previous
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep(5)">
+                                    Save & Continue <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Services & Final Review -->
+                <div class="step-content d-none" id="step-5">
+                    <!-- Services Section -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-list-check me-2"></i>Services Offered
+                            </h5>
+                            
+                            <div id="services-container">
+                                {% if services %}
+                                    {% for service in services %}
+                                        <div class="row g-3 mb-3 service-row">
+                                            <div class="col-md-5">
+                                                <label class="form-label">
+                                                    Service Name
+                                                    <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                                       title="Service name: 2-100 characters, letters and numbers allowed (e.g., Web Development, AC Repair)"></i>
+                                                </label>
+                                                <input type="text" class="form-control service-name" name="service_name" value="{{ service.name }}" maxlength="100">
+                                                <div class="form-text">2-100 characters, letters and numbers</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">
+                                                    Short Description (Optional)
+                                                    <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                                       title="Brief description of the service: up to 200 characters"></i>
+                                                </label>
+                                                <input type="text" class="form-control service-description" name="service_description" value="{{ service.description }}" maxlength="200">
+                                                <div class="form-text">Up to 200 characters</div>
+                                            </div>
+                                            <div class="col-md-1 d-flex align-items-end">
+                                                <button type="button" class="btn btn-outline-danger remove-service-btn">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="row g-3 mb-3 service-row">
+                                        <div class="col-md-5">
+                                            <label class="form-label">
+                                                Service Name
+                                                <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                                   title="Service name: 2-100 characters, letters and numbers allowed (e.g., Web Development, AC Repair)"></i>
+                                            </label>
+                                            <input type="text" class="form-control service-name" name="service_name" maxlength="100">
+                                            <div class="form-text">2-100 characters, letters and numbers</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">
+                                                Short Description (Optional)
+                                                <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                                                   title="Brief description of the service: up to 200 characters"></i>
+                                            </label>
+                                            <input type="text" class="form-control service-description" name="service_description" maxlength="200">
+                                            <div class="form-text">Up to 200 characters</div>
+                                        </div>
+                                        <div class="col-md-1 d-flex align-items-end">
+                                            <button type="button" class="btn btn-outline-danger remove-service-btn">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mt-3">
+                                <button type="button" id="add-service-btn" class="btn btn-outline-primary">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Another Service
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Business Hours Section -->
+                    {% if business %}
+                        {% with business_hours=business.business_hours.all %}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body">
+                                <h5 class="border-bottom pb-2 mb-3">
+                                    <i class="bi bi-clock me-2"></i>Business Hours
+                                </h5>
+                                
+                                <div class="table-responsive">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 20%;">Day</th>
+                                                <th style="width: 15%;">Status</th>
+                                                <th style="width: 25%;">Open Time</th>
+                                                <th style="width: 25%;">Close Time</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for day in days_of_week %}
+                                                {% with day_hours=business_hours|get_item:day.number %}
+                                                <tr>
+                                                    <td class="fw-medium">{{ day.name }}</td>
+                                                    <td>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input hours-toggle" type="checkbox" 
+                                                                   name="is_open_{{ day.number }}" value="1"
+                                                                   {% if not day_hours.is_closed %}checked{% endif %}
+                                                                   onchange="toggleHours({{ day.number }})">
+                                                            <label class="form-check-label">
+                                                                <span class="open-label {% if day_hours.is_closed %}d-none{% endif %}">Open</span>
+                                                                <span class="closed-label {% if not day_hours.is_closed %}d-none{% endif %}">Closed</span>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="time-input-group">
+                                                            <input type="time" class="form-control" name="open_time_{{ day.number }}" 
+                                                                   value="{{ day_hours.open_time|default:'09:00' }}"
+                                                                   {% if day_hours.is_closed %}disabled{% endif %}>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="time-input-group">
+                                                            <input type="time" class="form-control" name="close_time_{{ day.number }}" 
+                                                                   value="{{ day_hours.close_time|default:'17:00' }}"
+                                                                   {% if day_hours.is_closed %}disabled{% endif %}>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                {% endwith %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        {% endwith %}
                     {% endif %}
-                </div>
-                
-                <div class="mt-3">
-                    <button type="button" id="add-service-btn" class="btn btn-outline-primary">
-                        <i class="bi bi-plus-circle me-1"></i>Add Another Service
-                    </button>
-                </div>
-            </div>
-        </div>
 
-        <!-- Enhanced Location Section with Google Maps -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="border-bottom pb-2 mb-3">
-                    <i class="bi bi-geo-alt me-2"></i>Business Location
-                </h5>
-                
-                <!-- Location Help -->
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle me-2"></i>
-                    <strong>How to set your location:</strong>
-                    <ol class="mb-0 mt-2">
-                        <li>Type your business address in the search box below</li>
-                        <li>Select the correct address from suggestions</li>
-                        <li>Fine-tune the marker position on the map if needed</li>
-                        <li>All location details will be filled automatically</li>
-                    </ol>
-                </div>
-                
-                <div class="row g-3">
-                    <!-- Location Search Input -->
-                    <div class="col-12">
-                        <label for="location_search" class="form-label">
-                            <i class="bi bi-search me-1"></i>Search Your Business Location <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" 
-                               class="form-control form-control-lg" 
-                               id="location_search" 
-                               placeholder="Start typing your business address..."
-                               value="{{ business.location_name|default:'' }}">
-                        <div class="form-text">
-                            <i class="bi bi-lightbulb me-1"></i>
-                            Try: "Shop 123, ABC Market, Sector 15, Gurgaon" or "Near Metro Station, Delhi"
-                        </div>
-                    </div>
-                    
-                    <!-- Interactive Map -->
-                    <div class="col-12">
-                        <label class="form-label">
-                            <i class="bi bi-pin-map me-1"></i>Adjust Location on Map
-                        </label>
-                        <div class="alert alert-secondary small">
-                            <i class="bi bi-cursor me-1"></i>
-                            Drag the red marker to fine-tune your exact business location
-                        </div>
-                        <div id="map" style="height: 400px; width: 100%; border-radius: 8px; border: 2px solid #e9ecef;"></div>
-                    </div>
-                    
-                    <!-- Auto-populated Hidden Fields -->
-                    <input type="hidden" name="latitude" id="latitude" value="{{ business.latitude|default:'' }}">
-                    <input type="hidden" name="longitude" id="longitude" value="{{ business.longitude|default:'' }}">
-                    <input type="hidden" name="place_id" id="place_id" value="{{ business.place_id|default:'' }}">
-                    <input type="hidden" name="location_name" id="location_name" value="{{ business.location_name|default:'' }}">
-                    <input type="hidden" name="formatted_address" id="formatted_address" value="{{ business.formatted_address|default:'' }}">
-                    
-                    <!-- Auto-populated Display Fields (Readonly) -->
-                    <div class="col-md-6">
-                        <label class="form-label">
-                            <i class="bi bi-geo me-1"></i>Full Address
-                            <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled from location"></i>
-                        </label>
-                        <textarea class="form-control bg-light" 
-                                  name="address" 
-                                  id="address_display" 
-                                  rows="3" 
-                                  readonly>{{ business.formatted_address|default:'' }}</textarea>
-                        <div class="form-text text-muted">
-                            <i class="bi bi-info-circle me-1"></i>This will be auto-filled when you select a location
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="form-label">
-                                    <i class="bi bi-building me-1"></i>City
-                                    <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
-                                </label>
-                                <input type="text" 
-                                       class="form-control bg-light" 
-                                       name="city" 
-                                       id="city_display" 
-                                       value="{{ business.city|default:'' }}" 
-                                       readonly>
-                            </div>
+                    <!-- Final Review & Submit -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-check-circle me-2"></i>Review & Submit
+                            </h5>
                             
-                            <div class="col-6">
-                                <label class="form-label">
-                                    <i class="bi bi-mailbox me-1"></i>Pincode
-                                    <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
-                                </label>
-                                <input type="text" 
-                                       class="form-control bg-light" 
-                                       name="pincode" 
-                                       id="pincode_display" 
-                                       value="{{ business.pincode|default:'' }}" 
-                                       readonly>
+                            <div class="alert alert-success">
+                                <h6><i class="bi bi-info-circle me-2"></i>Ready to Submit!</h6>
+                                <p class="mb-0">Review all information above and click submit when ready. You can always edit your listing later from the dashboard.</p>
                             </div>
-                            
-                            <div class="col-6">
-                                <label class="form-label">
-                                    <i class="bi bi-map me-1"></i>State
-                                    <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
-                                </label>
-                                <input type="text" 
-                                       class="form-control bg-light" 
-                                       name="state" 
-                                       id="state_display" 
-                                       value="{{ business.state|default:'' }}" 
-                                       readonly>
-                            </div>
-                            
-                            <div class="col-6">
-                                <label class="form-label">
-                                    <i class="bi bi-geo-alt me-1"></i>Latitude
-                                    <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
-                                </label>
-                                <input type="text" 
-                                       class="form-control bg-light" 
-                                       id="lat_display" 
-                                       value="{{ business.latitude|default:'' }}" 
-                                       readonly>
-                            </div>
-                            
-                            <div class="col-6">
-                                <label class="form-label">
-                                    <i class="bi bi-geo-alt me-1"></i>Longitude
-                                    <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
-                                </label>
-                                <input type="text" 
-                                       class="form-control bg-light" 
-                                       id="lng_display" 
-                                       value="{{ business.longitude|default:'' }}" 
-                                       readonly>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary" onclick="prevStep(4)">
+                                    <i class="bi bi-arrow-left me-1"></i> Previous
+                                </button>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" name="action" value="draft" class="btn btn-outline-primary">
+                                        <i class="bi bi-save me-1"></i> Save as Draft
+                                    </button>
+                                    <button type="submit" name="action" value="submit" class="btn btn-success">
+                                        <i class="bi bi-check-circle me-1"></i> Submit for Approval
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
-
-        <!-- DEBUG SECTION - Remove after testing -->
-        <div class="card border-warning mb-4" style="background: #fff3cd;">
-            <div class="card-body">
-                <h6 class="text-warning">DEBUG: Current Business Data</h6>
-                <small>
-                    <strong>DB Values:</strong><br>
-                    Latitude: {{ business.latitude|default:"None" }}<br>
-                    Longitude: {{ business.longitude|default:"None" }}<br>
-                    City: {{ business.city|default:"None" }}<br>
-                    <!-- REMOVED: District: {{ business.district|default:"None" }}<br> -->
-                    State: {{ business.state|default:"None" }}<br>
-                    Pincode: {{ business.pincode|default:"None" }}<br>
-                    Location Name: {{ business.location_name|default:"None" }}<br>
-                    Formatted Address: {{ business.formatted_address|default:"None" }}
-                </small>
-            </div>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="d-flex gap-2 mb-5">
-            <button type="submit" name="action" value="draft" class="btn btn-outline-primary">Save as Draft</button>
-            <button type="submit" name="action" value="submit" class="btn btn-primary">Submit for Approval</button>
-            <a href="{% url 'directory:dashboard_listings' %}" class="btn btn-outline-secondary ms-auto">Cancel</a>
-        </div>
-    </form>
+    </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 {{ block.super }}
 <script>
-// ✅ BETTER FIX: Pass document status from Django template
+// ✅ Pass document status from Django template
 const businessDocumentStatus = {
     hasRegistrationDoc: {% if business.registration_document %}true{% else %}false{% endif %},
     hasGstDoc: {% if business.gst_document %}true{% else %}false{% endif %},
@@ -573,8 +623,72 @@ const businessDocumentStatus = {
     gstNumber: '{{ business.gst_number|default:"" }}'
 };
 
-console.log('📄 Document status:', businessDocumentStatus);
+// Multi-Step Form Variables
+let currentStep = 1;
+const totalSteps = 5;
 
+// Step navigation functions
+function nextStep(step) {
+    if (validateCurrentStep()) {
+        showStep(step);
+    }
+}
+
+function prevStep(step) {
+    showStep(step);
+}
+
+function showStep(step) {
+    // Hide all steps
+    document.querySelectorAll('.step-content').forEach(stepContent => {
+        stepContent.classList.add('d-none');
+    });
+    
+    // Show current step
+    document.getElementById(`step-${step}`).classList.remove('d-none');
+    
+    // Update progress bar
+    document.querySelectorAll('.step-item').forEach((item, index) => {
+        item.classList.toggle('active', index + 1 <= step);
+        item.classList.toggle('completed', index + 1 < step);
+    });
+    
+    currentStep = step;
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateCurrentStep() {
+    const currentStepElement = document.getElementById(`step-${currentStep}`);
+    const requiredFields = currentStepElement.querySelectorAll('input[required], select[required], textarea[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            field.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            field.classList.remove('is-invalid');
+            field.classList.add('is-valid');
+        }
+    });
+    
+    // Special validation for step 4 (location)
+    if (currentStep === 4) {
+        const lat = document.getElementById('latitude').value;
+        const lng = document.getElementById('longitude').value;
+        
+        if (!lat || !lng) {
+            alert('Please select a location on the map before continuing.');
+            isValid = false;
+        }
+    }
+    
+    return isValid;
+}
+
+// Google Maps Variables
 let map;
 let marker;
 let autocomplete;
@@ -591,242 +705,221 @@ function initMap() {
         return;
     }
     
-    // Get existing coordinates if editing
-    const existingLat = document.getElementById('latitude').value;
-    const existingLng = document.getElementById('longitude').value;
-    const existingLocationName = document.getElementById('location_name').value;
+    // Default location (Hyderabad, India)
+    const defaultLocation = { lat: 17.3850, lng: 78.4867 };
     
-    console.log('Existing coordinates:', existingLat, existingLng);
+    // Get business location if editing
+    const businessLat = parseFloat('{{ business.latitude|default:"" }}');
+    const businessLng = parseFloat('{{ business.longitude|default:"" }}');
     
-    // Default location (India center)
-    const defaultLocation = { lat: 20.5937, lng: 78.9629 };
+    const initialLocation = (businessLat && businessLng) ? 
+        { lat: businessLat, lng: businessLng } : defaultLocation;
     
-    const center = (existingLat && existingLng) ? 
-        { lat: parseFloat(existingLat), lng: parseFloat(existingLng) } : 
-        defaultLocation;
+    // Initialize map
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: businessLat && businessLng ? 16 : 12,
+        center: initialLocation,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: true
+    });
     
-    try {
-        // Initialize map
-        map = new google.maps.Map(document.getElementById('map'), {
-            zoom: existingLat ? 15 : 5,
-            center: center,
-            mapTypeControl: false,
-            streetViewControl: false,
-            fullscreenControl: true,
+    // Initialize geocoder
+    geocoder = new google.maps.Geocoder();
+    
+    // Create marker
+    marker = new google.maps.Marker({
+        position: initialLocation,
+        map: map,
+        draggable: true,
+        title: 'Business Location'
+    });
+    
+    // If editing and has location, update fields
+    if (businessLat && businessLng) {
+        updateLocationFields({
+            latitude: businessLat,
+            longitude: businessLng,
+            address: '{{ business.formatted_address|default:business.address|escapejs }}',
+            city: '{{ business.city|default:""|escapejs }}',
+            state: '{{ business.state|default:""|escapejs }}',
+            pincode: '{{ business.pincode|default:""|escapejs }}'
         });
+    }
+    
+    // Hide marker if no business location set
+    if (!businessLat || !businessLng) {
+        marker.setVisible(false);
+    }
+    
+    // Set up autocomplete
+    setupAutocomplete();
+    
+    // Map click handler
+    map.addListener('click', function(e) {
+        const lat = e.latLng.lat();
+        const lng = e.latLng.lng();
         
-        // Initialize marker
-        marker = new google.maps.Marker({
-            position: center,
-            map: map,
-            draggable: true,
-            title: 'Your Business Location',
-            icon: {
-                url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
-                scaledSize: new google.maps.Size(32, 32)
+        console.log('Map clicked:', lat, lng);
+        
+        // Update marker position
+        marker.setPosition(e.latLng);
+        marker.setVisible(true);
+        
+        // Reverse geocode to get address
+        geocoder.geocode({ location: e.latLng }, function(results, status) {
+            if (status === 'OK' && results[0]) {
+                const addressData = extractAddressData(results[0]);
+                addressData.latitude = lat;
+                addressData.longitude = lng;
+                updateLocationFields(addressData);
+                
+                // Update search box
+                document.getElementById('location_search').value = results[0].formatted_address;
             }
         });
+    });
+    
+    // Marker drag handler
+    marker.addListener('dragend', function(e) {
+        const lat = e.latLng.lat();
+        const lng = e.latLng.lng();
         
-        // Hide marker if no existing location
-        if (!existingLat) {
-            marker.setVisible(false);
-        }
+        console.log('Marker dragged:', lat, lng);
         
-        // Initialize geocoder
-        geocoder = new google.maps.Geocoder();
+        // Reverse geocode
+        geocoder.geocode({ location: e.latLng }, function(results, status) {
+            if (status === 'OK' && results[0]) {
+                const addressData = extractAddressData(results[0]);
+                addressData.latitude = lat;
+                addressData.longitude = lng;
+                updateLocationFields(addressData);
+                
+                // Update search box
+                document.getElementById('location_search').value = results[0].formatted_address;
+            }
+        });
+    });
+}
+
+// Setup autocomplete
+function setupAutocomplete() {
+    const input = document.getElementById('location_search');
+    
+    autocomplete = new google.maps.places.Autocomplete(input, {
+        componentRestrictions: { country: 'in' },
+        fields: ['place_id', 'geometry', 'name', 'formatted_address', 'address_components']
+    });
+    
+    autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
         
-        // Initialize autocomplete with error handling
-        const input = document.getElementById('location_search');
-        
-        // Check if Places service is available
-        if (typeof google.maps.places === 'undefined') {
-            console.error('Google Places API is not available. Please enable Places API in Google Cloud Console.');
-            input.placeholder = 'Please enable Google Places API to use search';
-            input.disabled = true;
+        if (!place.geometry) {
+            console.warn('No geometry for place');
             return;
         }
         
-        autocomplete = new google.maps.places.Autocomplete(input, {
-            types: ['establishment', 'geocode'],
-            componentRestrictions: { country: 'IN' },
-            fields: ['formatted_address', 'geometry', 'name', 'place_id', 'address_components']
-        });
+        console.log('Place selected:', place);
         
-        // Autocomplete place selection
-        autocomplete.addListener('place_changed', function() {
-            const place = autocomplete.getPlace();
-            
-            console.log('Place selected:', place);
-            
-            if (!place.geometry) {
-                alert('No location details available for this search. Please try a different search term.');
-                return;
-            }
-            
-            updateLocationFromPlace(place);
-        });
+        const lat = place.geometry.location.lat();
+        const lng = place.geometry.location.lng();
         
-        // Map event listeners
-        marker.addListener('dragend', function() {
-            const position = marker.getPosition();
-            reverseGeocode(position.lat(), position.lng());
-        });
+        // Update map and marker
+        map.setCenter(place.geometry.location);
+        map.setZoom(16);
+        marker.setPosition(place.geometry.location);
+        marker.setVisible(true);
         
-        map.addListener('click', function(event) {
-            marker.setPosition(event.latLng);
-            marker.setVisible(true);
-            reverseGeocode(event.latLng.lat(), event.latLng.lng());
-        });
-        
-        // Pre-populate search field if editing
-        if (existingLocationName) {
-            input.value = existingLocationName;
-            console.log('Pre-populated search field with:', existingLocationName);
-        }
-        
-        console.log('✅ Google Maps initialized successfully');
-        
-    } catch (error) {
-        console.error('Error initializing Google Maps:', error);
-        document.getElementById('map').innerHTML = '<div class="alert alert-danger">Error loading map: ' + error.message + '</div>';
-    }
-}
-
-// Update location from place selection
-function updateLocationFromPlace(place) {
-    const location = place.geometry.location;
-    
-    // Update map and marker
-    map.setCenter(location);
-    map.setZoom(15);
-    marker.setPosition(location);
-    marker.setVisible(true);
-    
-    // Extract address components
-    const addressComponents = extractAddressComponents(place.address_components);
-    
-    // Enhanced location name handling
-    let locationName = place.name || place.formatted_address;
-    
-    // If place.name exists and is different from formatted_address, use it
-    if (place.name && place.name !== place.formatted_address) {
-        locationName = place.name;
-    } else {
-        // Extract a meaningful name from the formatted address
-        const addressParts = place.formatted_address.split(',');
-        locationName = addressParts[0].trim(); // Use the first part as location name
-    }
-    
-    console.log('Location name extracted:', locationName);
-    
-    // Update all fields
-    updateLocationFields({
-        latitude: location.lat(),
-        longitude: location.lng(),
-        place_id: place.place_id,
-        location_name: locationName,
-        formatted_address: place.formatted_address,
-        ...addressComponents
+        // Extract and update address data
+        const addressData = extractAddressData(place);
+        addressData.latitude = lat;
+        addressData.longitude = lng;
+        updateLocationFields(addressData);
     });
 }
 
-// Reverse geocode coordinates to address
-function reverseGeocode(lat, lng) {
-    geocoder.geocode({
-        location: { lat: lat, lng: lng }
-    }, function(results, status) {
-        if (status === 'OK' && results[0]) {
-            const place = results[0];
-            const addressComponents = extractAddressComponents(place.address_components);
-            
-            updateLocationFields({
-                latitude: lat,
-                longitude: lng,
-                place_id: place.place_id,
-                location_name: place.formatted_address,
-                formatted_address: place.formatted_address,
-                ...addressComponents
-            });
-            
-            // Update search input
-            document.getElementById('location_search').value = place.formatted_address;
-        }
-    });
-}
-
-// Extract useful address components - SIMPLIFIED (no district)
-function extractAddressComponents(components) {
-    const result = {
+// Extract address data from Google Places result
+function extractAddressData(place) {
+    const data = {
+        place_id: place.place_id || '',
+        formatted_address: place.formatted_address || '',
+        location_name: place.name || '',
+        address: '',
         city: '',
         state: '',
-        pincode: '',
-        country: ''
-        // REMOVED: district: '',
+        pincode: ''
     };
     
-    components.forEach(component => {
-        const types = component.types;
-        const longName = component.long_name;
-        
-        // City - multiple fallbacks
-        if (types.includes('locality')) {
-            result.city = longName;
-        } else if (types.includes('sublocality_level_1') && !result.city) {
-            result.city = longName;
-        } else if (types.includes('administrative_area_level_3') && !result.city) {
-            result.city = longName;
-        }
-        
-        // State - reliable
-        if (types.includes('administrative_area_level_1')) {
-            result.state = longName;
-        }
-        
-        // Pincode - reliable
-        if (types.includes('postal_code')) {
-            result.pincode = longName;
-        }
-        
-        // Country - reliable
-        if (types.includes('country')) {
-            result.country = longName;
-        }
-    });
+    if (place.address_components) {
+        place.address_components.forEach(component => {
+            const types = component.types;
+            
+            if (types.includes('locality') || types.includes('administrative_area_level_2')) {
+                data.city = component.long_name;
+            }
+            if (types.includes('administrative_area_level_1')) {
+                data.state = component.long_name;
+            }
+            if (types.includes('postal_code')) {
+                data.pincode = component.long_name;
+            }
+        });
+    }
     
-    console.log('🎯 Extracted components:', result);
-    return result;
+    data.address = data.formatted_address;
+    
+    return data;
 }
 
-// Update all location fields - REMOVED DISTRICT
+// Update location fields
 function updateLocationFields(data) {
-    console.log('🔄 Updating location fields with data:', data);
+    console.log('Updating location fields:', data);
     
-    // Hidden fields for form submission
+    // Update hidden fields
     document.getElementById('latitude').value = data.latitude || '';
     document.getElementById('longitude').value = data.longitude || '';
     document.getElementById('place_id').value = data.place_id || '';
     document.getElementById('location_name').value = data.location_name || '';
     document.getElementById('formatted_address').value = data.formatted_address || '';
     
-    // Display fields - REMOVED DISTRICT
-    document.getElementById('address_display').value = data.formatted_address || '';
+    // Update display fields
+    document.getElementById('address_display').value = data.address || data.formatted_address || '';
     document.getElementById('city_display').value = data.city || '';
     document.getElementById('state_display').value = data.state || '';
     document.getElementById('pincode_display').value = data.pincode || '';
-    // REMOVED: document.getElementById('district_display').value = data.district || '';
     document.getElementById('lat_display').value = data.latitude ? data.latitude.toFixed(6) : '';
     document.getElementById('lng_display').value = data.longitude ? data.longitude.toFixed(6) : '';
     
-    console.log('✅ Fields updated:');
-    console.log('  City:', data.city);
-    console.log('  State:', data.state);
-    console.log('  Pincode:', data.pincode);
-    // REMOVED: console.log('  District:', data.district);
+    console.log('✅ Fields updated');
 }
 
-// Form validation
+// Business Hours Toggle
+function toggleHours(dayNumber) {
+    const checkbox = document.querySelector(`input[name="is_open_${dayNumber}"]`);
+    const openTime = document.querySelector(`input[name="open_time_${dayNumber}"]`);
+    const closeTime = document.querySelector(`input[name="close_time_${dayNumber}"]`);
+    const openLabel = checkbox.parentElement.querySelector('.open-label');
+    const closedLabel = checkbox.parentElement.querySelector('.closed-label');
+    
+    if (checkbox.checked) {
+        openTime.disabled = false;
+        closeTime.disabled = false;
+        openLabel.classList.remove('d-none');
+        closedLabel.classList.add('d-none');
+    } else {
+        openTime.disabled = true;
+        closeTime.disabled = true;
+        openLabel.classList.add('d-none');
+        closedLabel.classList.remove('d-none');
+    }
+}
+
+// Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('businessForm');
+    console.log('🚀 Initializing business form...');
+    
+    // Initialize first step
+    showStep(1);
     
     // Conditional upload sections
     const registrationNumberInput = document.querySelector('input[name="registration_number"]');
@@ -898,6 +991,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Form submission validation
+    const form = document.getElementById('businessForm');
     if (form) {
         form.addEventListener('submit', function(e) {
             const lat = document.getElementById('latitude').value;
@@ -906,30 +1000,33 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!lat || !lng) {
                 e.preventDefault();
                 alert('Please select a location on the map before submitting.');
+                showStep(4); // Go to location step
                 document.getElementById('location_search').focus();
                 return false;
             }
             
-            // ✅ IMPROVED: Check if registration number is entered but no document uploaded
-            const regNumber = registrationNumberInput.value.trim();
+            // Check if registration number is entered but no document uploaded
+            const regNumber = registrationNumberInput ? registrationNumberInput.value.trim() : '';
             const regDocument = document.querySelector('input[name="registration_document"]').files[0];
             const hasExistingRegDoc = businessDocumentStatus.hasRegistrationDoc;
             
             if (regNumber.length >= 4 && !regDocument && !hasExistingRegDoc) {
                 e.preventDefault();
                 alert('Please upload your registration certificate document.');
+                showStep(2); // Go to verification step
                 registrationUploadSection.scrollIntoView({ behavior: 'smooth' });
                 return false;
             }
             
-            // ✅ IMPROVED: Check if GST number is entered but no document uploaded
-            const gstNumber = gstNumberInput.value.trim();
+            // Check if GST number is entered but no document uploaded
+            const gstNumber = gstNumberInput ? gstNumberInput.value.trim() : '';
             const gstDocument = document.querySelector('input[name="gst_document"]').files[0];
             const hasExistingGstDoc = businessDocumentStatus.hasGstDoc;
             
             if (gstNumber.length >= 10 && !gstDocument && !hasExistingGstDoc) {
                 e.preventDefault();
                 alert('Please upload your GST certificate document.');
+                showStep(2); // Go to verification step
                 gstUploadSection.scrollIntoView({ behavior: 'smooth' });
                 return false;
             }
@@ -945,7 +1042,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Phone validation
     if (phoneInput) {
         phoneInput.addEventListener('input', function() {
-            // Remove non-digits
             this.value = this.value.replace(/\D/g, '');
             
             const phoneRegex = /^[6-9][0-9]{9}$/;
@@ -986,7 +1082,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // GST validation
     if (gstInput) {
         gstInput.addEventListener('input', function() {
-            // Convert to uppercase and remove spaces
             this.value = this.value.toUpperCase().replace(/\s/g, '');
             
             const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
@@ -1023,6 +1118,47 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Services functionality
+    const servicesContainer = document.getElementById('services-container');
+    const addServiceBtn = document.getElementById('add-service-btn');
+    
+    if (addServiceBtn) {
+        addServiceBtn.addEventListener('click', function() {
+            const serviceRow = document.createElement('div');
+            serviceRow.className = 'row g-3 mb-3 service-row';
+            serviceRow.innerHTML = `
+                <div class="col-md-5">
+                    <label class="form-label">Service Name</label>
+                    <input type="text" class="form-control service-name" name="service_name" maxlength="100">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Short Description (Optional)</label>
+                    <input type="text" class="form-control service-description" name="service_description" maxlength="200">
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="button" class="btn btn-outline-danger remove-service-btn">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            `;
+            servicesContainer.appendChild(serviceRow);
+        });
+    }
+    
+    // Service removal (using event delegation)
+    if (servicesContainer) {
+        servicesContainer.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-service-btn')) {
+                const serviceRow = e.target.closest('.service-row');
+                if (servicesContainer.children.length > 1) {
+                    serviceRow.remove();
+                } else {
+                    alert('At least one service is required.');
+                }
+            }
+        });
+    }
+    
     // Initialize Bootstrap tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -1037,9 +1173,78 @@ document.addEventListener('DOMContentLoaded', function() {
     document.head.appendChild(script);
 });
 </script>
-{% endblock %}
 
+<!-- Multi-Step CSS -->
 <style>
+.step-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.step-progress::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e9ecef;
+    z-index: 1;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    background: white;
+    padding: 0 1rem;
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e9ecef;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.step-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.step-item.active .step-circle {
+    background: #0d6efd;
+    color: white;
+}
+
+.step-item.active .step-label {
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+.step-item.completed .step-circle {
+    background: #198754;
+    color: white;
+}
+
+.step-item.completed .step-label {
+    color: #198754;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -1054,15 +1259,6 @@ document.addEventListener('DOMContentLoaded', function() {
 .form-control.valid-file {
     border-color: #198754 !important;
     background-color: #d1e7dd !important;
-}
-
-.upload-section-hidden {
-    display: none !important;
-}
-
-.upload-section-visible {
-    display: block !important;
-    animation: fadeIn 0.3s ease-in;
 }
 
 /* Fix Tooltip Styling */
@@ -1103,59 +1299,16 @@ document.addEventListener('DOMContentLoaded', function() {
     background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
 }
 
-.invalid-feedback {
-    width: 100%;
-    margin-top: 0.25rem;
-    font-size: 0.875rem;
-    color: #dc3545;
-}
-
-.valid-feedback {
-    width: 100%;
-    margin-top: 0.25rem;
-    font-size: 0.875rem;
-    color: #198754;
+@media (max-width: 768px) {
+    .step-label {
+        font-size: 0.75rem;
+    }
+    
+    .step-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 0.875rem;
+    }
 }
 </style>
-
-{% with subscription=business.subscription %}
-    <!-- Basic business info section (always visible) -->
-    <!-- ... -->
-
-    <!-- Premium features - only show if paid plan -->
-    {% if business.has_premium_features %}
-        <!-- Business Hours Card -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="border-bottom pb-2 mb-3">Business Hours</h5>
-                <!-- Hours content -->
-            </div>
-        </div>
-        
-        <!-- Additional images gallery -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="border-bottom pb-2 mb-3">Image Gallery</h5>
-                <!-- Gallery content -->
-            </div>
-        </div>
-    {% else %}
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body text-center">
-                <h5 class="border-bottom pb-2 mb-3">Premium Features</h5>
-                <p class="text-muted">
-                    <i class="bi bi-lock"></i> Unlock advanced features with our Premium plan:
-                </p>
-                <ul class="list-unstyled mb-4">
-                    <li><i class="bi bi-check-circle me-2"></i> Business hours management</li>
-                    <li><i class="bi bi-check-circle me-2"></i> Multiple image gallery</li>
-                    <li><i class="bi bi-check-circle me-2"></i> Verification badges</li>
-                    <li><i class="bi bi-check-circle me-2"></i> Advanced analytics</li>
-                </ul>
-                <a href="{% url 'directory:subscription_plans' %}?for_business={{ business.id }}" class="btn btn-primary">
-                    Upgrade to Premium
-                </a>
-            </div>
-        </div>
-    {% endif %}
-{% endwith %}
+{% endblock %}
