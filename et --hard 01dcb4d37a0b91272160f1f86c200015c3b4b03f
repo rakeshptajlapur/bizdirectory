@@ -1,0 +1,23 @@
+[33mcommit 01dcb4d37a0b91272160f1f86c200015c3b4b03f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m
+Author: Rakesh Kumar T <rakeshptajlapur@gmail.com>
+Date:   Sun Sep 21 16:07:56 2025 +0530
+
+    Partial multistep business form mplementation - timehours needs testing
+
+[33mcommit 365ce521740ddcd0721fee7688fe640b34dee402[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: Rakesh Kumar T <rakeshptajlapur@gmail.com>
+Date:   Sun Sep 21 14:47:24 2025 +0530
+
+    Form validations updated on business fomr backend
+
+[33mcommit 0e2e03b47514bb73edd68bdc6079cd70b9efa781[m
+Author: Rakesh Kumar T <rakeshptajlapur@gmail.com>
+Date:   Sun Sep 21 14:22:30 2025 +0530
+
+    conditional file upload field when respective reg/gst numers are entered
+
+[33mcommit b757aa0048f975c317ae8f785bf61cff2610d4df[m
+Author: Rakesh Kumar T <rakeshptajlapur@gmail.com>
+Date:   Sun Sep 21 14:12:40 2025 +0530
+
+    pdf upload to cloudinary for registration&gst cert update + fixed payment proof pdf & django admin check pdf payment proof as well
