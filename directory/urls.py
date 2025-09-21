@@ -9,6 +9,7 @@ urlpatterns = [
     path('', views.coming_soon, name='home'),           # Public sees coming soon
     path('dev-home/', views.home, name='dev_home'),     # Developers access full site
     path('listings/', views.listings, name='listings'), # All filters work normally
+    path('listings/ajax/', views.listings_ajax, name='listings_ajax'),  # Add this line
     path('business/<int:pk>/', views.business_detail, name='business_detail'),
     path('business/<int:business_id>/add-review/', views.add_review, name='add_review'),
     path('business/<int:business_id>/send-enquiry/', views.send_enquiry, name='send_enquiry'),

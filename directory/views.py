@@ -1054,3 +1054,82 @@ def refund_policy(request):
 def contact(request):
     """Contact Us page"""
     return render(request, 'directory/contact.html')
+
+# Add this new view for AJAX requests
+from django.views.decorators.http import require_http_methods
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+
+@require_http_methods(["GET"])
+def listings_ajax(request):
+    """AJAX endpoint for infinite scroll"""
+    page = request.GET.get('page', 1)
+    
+    # Same filtering logic as your main listings view
+    businesses = Business.objects.filter(is_active=True).select_related('category', 'owner').prefetch_related('services', 'reviews')
+    
+    businesses = businesses.annotate(
+        avg_rating=Avg('reviews__rating', filter=Q(reviews__is_approved=True)),
+        approved_reviews_count=Count('reviews', filter=Q(reviews__is_approved=True))
+    )
+    
+    # Apply same filters as main view
+    category_id = request.GET.get('category')
+    if category_id:
+        businesses = businesses.filter(category_id=category_id)
+    
+    search_query = request.GET.get('query')
+    if search_query:
+        businesses = businesses.filter(
+            Q(name__icontains=search_query) | 
+            Q(description__icontains=search_query) |
+            Q(services__name__icontains=search_query)
+        ).distinct()
+    
+    rating = request.GET.get('rating')
+    if rating:
+        businesses = businesses.filter(reviews__rating__gte=int(rating)).distinct()
+    
+    pincode = request.GET.get('pincode')
+    if pincode:
+        businesses = businesses.filter(pincode__startswith=pincode)
+    
+    trust_filter = request.GET.get('trust')
+    if trust_filter == 'gst':
+        businesses = businesses.filter(gst_verified=True)
+    elif trust_filter == 'kyc':
+        businesses = businesses.filter(kyc_status='completed')
+    elif trust_filter == 'both':
+        businesses = businesses.filter(gst_verified=True, kyc_status='completed')
+    
+    # Pagination for AJAX
+    paginator = Paginator(businesses, 10)  # 10 items per load
+    page_obj = paginator.get_page(page)
+    
+    # Prepare business data
+    business_data = []
+    for business in page_obj.object_list:
+        business_data.append({
+            'id': business.id,
+            'name': business.name,
+            'description': business.description,
+            'category': business.category.name,
+            'city': business.city,
+            'pincode': business.pincode,
+            'image_url': business.get_primary_image_url(),
+            'avg_rating': business.avg_rating or 0,
+            'approved_reviews_count': business.approved_reviews_count,
+            'gst_verified': business.gst_verified,
+            'kyc_status': business.kyc_status,
+            'owner_name': business.owner.get_full_name() or business.owner.username,
+            'services': [service.name for service in business.services.all()[:5]],
+            'services_count': business.services.count(),
+        })
+    
+    return JsonResponse({
+        'businesses': business_data,
+        'has_next': page_obj.has_next(),
+        'current_page': page_obj.number,
+        'total_pages': paginator.num_pages,
+        'total_count': paginator.count
+    })
