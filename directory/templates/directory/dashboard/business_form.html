@@ -72,107 +72,6 @@
             </div>
         </div>
 
-        <!-- Contact Information Card -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="border-bottom pb-2 mb-3">
-                    <i class="bi bi-geo-alt me-2"></i>Location & Contact Details
-                </h5>
-                
-                <div class="row g-3">
-                    <div class="col-md-12">
-                        <label for="{{ form.address.id_for_label }}" class="form-label">
-                            Address <span class="text-danger">*</span>
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Enter your complete business address with landmarks if any (10-200 characters)"></i>
-                        </label>
-                        {{ form.address }}
-                        {% if form.address.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.address.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">Complete business address with landmarks (10-200 characters)</div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label for="{{ form.city.id_for_label }}" class="form-label">
-                            City <span class="text-danger">*</span>
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="City name should contain only letters and spaces. No numbers allowed"></i>
-                        </label>
-                        {{ form.city }}
-                        {% if form.city.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.city.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">City name (letters and spaces only)</div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label for="{{ form.pincode.id_for_label }}" class="form-label">
-                            Pincode <span class="text-danger">*</span>
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Enter valid 6-digit Indian postal code (e.g., 110001)"></i>
-                        </label>
-                        {{ form.pincode }}
-                        {% if form.pincode.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.pincode.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">6-digit postal code (e.g., 110001)</div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label for="{{ form.phone.id_for_label }}" class="form-label">
-                            Phone Number <span class="text-danger">*</span>
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Enter 10-digit mobile number without country code (e.g., 9876543210)"></i>
-                        </label>
-                        {{ form.phone }}
-                        {% if form.phone.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.phone.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">10-digit mobile number (e.g., 9876543210)</div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label for="{{ form.email.id_for_label }}" class="form-label">
-                            Email Address <span class="text-danger">*</span>
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Valid business email address (e.g., info@business.com)"></i>
-                        </label>
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.email.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">Business email for customer inquiries</div>
-                    </div>
-                    
-                    <div class="col-md-12">
-                        <label for="{{ form.website.id_for_label }}" class="form-label">
-                            Website (Optional)
-                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
-                               title="Enter complete website URL starting with http:// or https:// (e.g., https://mybusiness.com)"></i>
-                        </label>
-                        {{ form.website }}
-                        {% if form.website.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.website.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">Complete URL including http:// or https:// (e.g., https://example.com)</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- KYC & Registration Card -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
@@ -259,6 +158,62 @@
                                 <p class="mt-1 mb-0 small text-muted">You can upload a new file to replace it</p>
                             </div>
                         {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information Card -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="border-bottom pb-2 mb-3">
+                    <i class="bi bi-telephone me-2"></i>Contact Information
+                </h5>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.phone.id_for_label }}" class="form-label">
+                            Phone Number <span class="text-danger">*</span>
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Enter 10-digit mobile number without country code (e.g., 9876543210)"></i>
+                        </label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.phone.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">10-digit mobile number (e.g., 9876543210)</div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            Email Address <span class="text-danger">*</span>
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Valid business email address (e.g., info@business.com)"></i>
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.email.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Business email for customer inquiries</div>
+                    </div>
+                    
+                    <div class="col-md-12">
+                        <label for="{{ form.website.id_for_label }}" class="form-label">
+                            Website (Optional)
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Enter complete website URL starting with http:// or https:// (e.g., https://mybusiness.com)"></i>
+                        </label>
+                        {{ form.website }}
+                        {% if form.website.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.website.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Complete URL including http:// or https:// (e.g., https://example.com)</div>
                     </div>
                 </div>
             </div>
@@ -430,6 +385,165 @@
             </div>
         </div>
 
+        <!-- Enhanced Location Section with Google Maps -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="border-bottom pb-2 mb-3">
+                    <i class="bi bi-geo-alt me-2"></i>Business Location
+                </h5>
+                
+                <!-- Location Help -->
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>How to set your location:</strong>
+                    <ol class="mb-0 mt-2">
+                        <li>Type your business address in the search box below</li>
+                        <li>Select the correct address from suggestions</li>
+                        <li>Fine-tune the marker position on the map if needed</li>
+                        <li>All location details will be filled automatically</li>
+                    </ol>
+                </div>
+                
+                <div class="row g-3">
+                    <!-- Location Search Input -->
+                    <div class="col-12">
+                        <label for="location_search" class="form-label">
+                            <i class="bi bi-search me-1"></i>Search Your Business Location <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               class="form-control form-control-lg" 
+                               id="location_search" 
+                               placeholder="Start typing your business address..."
+                               value="{{ business.location_name|default:'' }}">
+                        <div class="form-text">
+                            <i class="bi bi-lightbulb me-1"></i>
+                            Try: "Shop 123, ABC Market, Sector 15, Gurgaon" or "Near Metro Station, Delhi"
+                        </div>
+                    </div>
+                    
+                    <!-- Interactive Map -->
+                    <div class="col-12">
+                        <label class="form-label">
+                            <i class="bi bi-pin-map me-1"></i>Adjust Location on Map
+                        </label>
+                        <div class="alert alert-secondary small">
+                            <i class="bi bi-cursor me-1"></i>
+                            Drag the red marker to fine-tune your exact business location
+                        </div>
+                        <div id="map" style="height: 400px; width: 100%; border-radius: 8px; border: 2px solid #e9ecef;"></div>
+                    </div>
+                    
+                    <!-- Auto-populated Hidden Fields -->
+                    <input type="hidden" name="latitude" id="latitude" value="{{ business.latitude|default:'' }}">
+                    <input type="hidden" name="longitude" id="longitude" value="{{ business.longitude|default:'' }}">
+                    <input type="hidden" name="place_id" id="place_id" value="{{ business.place_id|default:'' }}">
+                    <input type="hidden" name="location_name" id="location_name" value="{{ business.location_name|default:'' }}">
+                    <input type="hidden" name="formatted_address" id="formatted_address" value="{{ business.formatted_address|default:'' }}">
+                    
+                    <!-- Auto-populated Display Fields (Readonly) -->
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="bi bi-geo me-1"></i>Full Address
+                            <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled from location"></i>
+                        </label>
+                        <textarea class="form-control bg-light" 
+                                  name="address" 
+                                  id="address_display" 
+                                  rows="3" 
+                                  readonly>{{ business.formatted_address|default:'' }}</textarea>
+                        <div class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>This will be auto-filled when you select a location
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">
+                                    <i class="bi bi-building me-1"></i>City
+                                    <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
+                                </label>
+                                <input type="text" 
+                                       class="form-control bg-light" 
+                                       name="city" 
+                                       id="city_display" 
+                                       value="{{ business.city|default:'' }}" 
+                                       readonly>
+                            </div>
+                            
+                            <div class="col-6">
+                                <label class="form-label">
+                                    <i class="bi bi-mailbox me-1"></i>Pincode
+                                    <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
+                                </label>
+                                <input type="text" 
+                                       class="form-control bg-light" 
+                                       name="pincode" 
+                                       id="pincode_display" 
+                                       value="{{ business.pincode|default:'' }}" 
+                                       readonly>
+                            </div>
+                            
+                            <div class="col-6">
+                                <label class="form-label">
+                                    <i class="bi bi-map me-1"></i>State
+                                    <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
+                                </label>
+                                <input type="text" 
+                                       class="form-control bg-light" 
+                                       name="state" 
+                                       id="state_display" 
+                                       value="{{ business.state|default:'' }}" 
+                                       readonly>
+                            </div>
+                            
+                            <div class="col-6">
+                                <label class="form-label">
+                                    <i class="bi bi-geo-alt me-1"></i>Latitude
+                                    <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
+                                </label>
+                                <input type="text" 
+                                       class="form-control bg-light" 
+                                       id="lat_display" 
+                                       value="{{ business.latitude|default:'' }}" 
+                                       readonly>
+                            </div>
+                            
+                            <div class="col-6">
+                                <label class="form-label">
+                                    <i class="bi bi-geo-alt me-1"></i>Longitude
+                                    <i class="bi bi-lock-fill text-muted ms-1" title="Auto-filled"></i>
+                                </label>
+                                <input type="text" 
+                                       class="form-control bg-light" 
+                                       id="lng_display" 
+                                       value="{{ business.longitude|default:'' }}" 
+                                       readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DEBUG SECTION - Remove after testing -->
+        <div class="card border-warning mb-4" style="background: #fff3cd;">
+            <div class="card-body">
+                <h6 class="text-warning">DEBUG: Current Business Data</h6>
+                <small>
+                    <strong>DB Values:</strong><br>
+                    Latitude: {{ business.latitude|default:"None" }}<br>
+                    Longitude: {{ business.longitude|default:"None" }}<br>
+                    City: {{ business.city|default:"None" }}<br>
+                    <!-- REMOVED: District: {{ business.district|default:"None" }}<br> -->
+                    State: {{ business.state|default:"None" }}<br>
+                    Pincode: {{ business.pincode|default:"None" }}<br>
+                    Location Name: {{ business.location_name|default:"None" }}<br>
+                    Formatted Address: {{ business.formatted_address|default:"None" }}
+                </small>
+            </div>
+        </div>
+
         <!-- Form Actions -->
         <div class="d-flex gap-2 mb-5">
             <button type="submit" name="action" value="draft" class="btn btn-outline-primary">Save as Draft</button>
@@ -441,290 +555,266 @@
 {% endblock %}
 
 {% block extra_js %}
+{{ block.super }}
 <script>
+let map;
+let marker;
+let autocomplete;
+let geocoder;
+
+// Initialize Google Maps
+function initMap() {
+    console.log('Initializing Google Maps...');
+    
+    // Check if Google Maps loaded properly
+    if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+        console.error('Google Maps API failed to load');
+        document.getElementById('map').innerHTML = '<div class="alert alert-danger">Google Maps failed to load. Please check your API configuration.</div>';
+        return;
+    }
+    
+    // Get existing coordinates if editing
+    const existingLat = document.getElementById('latitude').value;
+    const existingLng = document.getElementById('longitude').value;
+    const existingLocationName = document.getElementById('location_name').value;
+    
+    console.log('Existing coordinates:', existingLat, existingLng);
+    
+    // Default location (India center)
+    const defaultLocation = { lat: 20.5937, lng: 78.9629 };
+    
+    const center = (existingLat && existingLng) ? 
+        { lat: parseFloat(existingLat), lng: parseFloat(existingLng) } : 
+        defaultLocation;
+    
+    try {
+        // Initialize map
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: existingLat ? 15 : 5,
+            center: center,
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: true,
+        });
+        
+        // Initialize marker
+        marker = new google.maps.Marker({
+            position: center,
+            map: map,
+            draggable: true,
+            title: 'Your Business Location',
+            icon: {
+                url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                scaledSize: new google.maps.Size(32, 32)
+            }
+        });
+        
+        // Hide marker if no existing location
+        if (!existingLat) {
+            marker.setVisible(false);
+        }
+        
+        // Initialize geocoder
+        geocoder = new google.maps.Geocoder();
+        
+        // Initialize autocomplete with error handling
+        const input = document.getElementById('location_search');
+        
+        // Check if Places service is available
+        if (typeof google.maps.places === 'undefined') {
+            console.error('Google Places API is not available. Please enable Places API in Google Cloud Console.');
+            input.placeholder = 'Please enable Google Places API to use search';
+            input.disabled = true;
+            return;
+        }
+        
+        autocomplete = new google.maps.places.Autocomplete(input, {
+            types: ['establishment', 'geocode'],
+            componentRestrictions: { country: 'IN' },
+            fields: ['formatted_address', 'geometry', 'name', 'place_id', 'address_components']
+        });
+        
+        // Autocomplete place selection
+        autocomplete.addListener('place_changed', function() {
+            const place = autocomplete.getPlace();
+            
+            console.log('Place selected:', place);
+            
+            if (!place.geometry) {
+                alert('No location details available for this search. Please try a different search term.');
+                return;
+            }
+            
+            updateLocationFromPlace(place);
+        });
+        
+        // Map event listeners
+        marker.addListener('dragend', function() {
+            const position = marker.getPosition();
+            reverseGeocode(position.lat(), position.lng());
+        });
+        
+        map.addListener('click', function(event) {
+            marker.setPosition(event.latLng);
+            marker.setVisible(true);
+            reverseGeocode(event.latLng.lat(), event.latLng.lng());
+        });
+        
+        // Pre-populate search field if editing
+        if (existingLocationName) {
+            input.value = existingLocationName;
+            console.log('Pre-populated search field with:', existingLocationName);
+        }
+        
+        console.log('✅ Google Maps initialized successfully');
+        
+    } catch (error) {
+        console.error('Error initializing Google Maps:', error);
+        document.getElementById('map').innerHTML = '<div class="alert alert-danger">Error loading map: ' + error.message + '</div>';
+    }
+}
+
+// Update location from place selection
+function updateLocationFromPlace(place) {
+    const location = place.geometry.location;
+    
+    // Update map and marker
+    map.setCenter(location);
+    map.setZoom(15);
+    marker.setPosition(location);
+    marker.setVisible(true);
+    
+    // Extract address components
+    const addressComponents = extractAddressComponents(place.address_components);
+    
+    // Update all fields
+    updateLocationFields({
+        latitude: location.lat(),
+        longitude: location.lng(),
+        place_id: place.place_id,
+        location_name: place.name || place.formatted_address,
+        formatted_address: place.formatted_address,
+        ...addressComponents
+    });
+}
+
+// Reverse geocode coordinates to address
+function reverseGeocode(lat, lng) {
+    geocoder.geocode({
+        location: { lat: lat, lng: lng }
+    }, function(results, status) {
+        if (status === 'OK' && results[0]) {
+            const place = results[0];
+            const addressComponents = extractAddressComponents(place.address_components);
+            
+            updateLocationFields({
+                latitude: lat,
+                longitude: lng,
+                place_id: place.place_id,
+                location_name: place.formatted_address,
+                formatted_address: place.formatted_address,
+                ...addressComponents
+            });
+            
+            // Update search input
+            document.getElementById('location_search').value = place.formatted_address;
+        }
+    });
+}
+
+// Extract useful address components - SIMPLIFIED (no district)
+function extractAddressComponents(components) {
+    const result = {
+        city: '',
+        state: '',
+        pincode: '',
+        country: ''
+        // REMOVED: district: '',
+    };
+    
+    components.forEach(component => {
+        const types = component.types;
+        const longName = component.long_name;
+        
+        // City - multiple fallbacks
+        if (types.includes('locality')) {
+            result.city = longName;
+        } else if (types.includes('sublocality_level_1') && !result.city) {
+            result.city = longName;
+        } else if (types.includes('administrative_area_level_3') && !result.city) {
+            result.city = longName;
+        }
+        
+        // State - reliable
+        if (types.includes('administrative_area_level_1')) {
+            result.state = longName;
+        }
+        
+        // Pincode - reliable
+        if (types.includes('postal_code')) {
+            result.pincode = longName;
+        }
+        
+        // Country - reliable
+        if (types.includes('country')) {
+            result.country = longName;
+        }
+    });
+    
+    console.log('🎯 Extracted components:', result);
+    return result;
+}
+
+// Update all location fields - REMOVED DISTRICT
+function updateLocationFields(data) {
+    console.log('🔄 Updating location fields with data:', data);
+    
+    // Hidden fields for form submission
+    document.getElementById('latitude').value = data.latitude || '';
+    document.getElementById('longitude').value = data.longitude || '';
+    document.getElementById('place_id').value = data.place_id || '';
+    document.getElementById('location_name').value = data.location_name || '';
+    document.getElementById('formatted_address').value = data.formatted_address || '';
+    
+    // Display fields - REMOVED DISTRICT
+    document.getElementById('address_display').value = data.formatted_address || '';
+    document.getElementById('city_display').value = data.city || '';
+    document.getElementById('state_display').value = data.state || '';
+    document.getElementById('pincode_display').value = data.pincode || '';
+    // REMOVED: document.getElementById('district_display').value = data.district || '';
+    document.getElementById('lat_display').value = data.latitude ? data.latitude.toFixed(6) : '';
+    document.getElementById('lng_display').value = data.longitude ? data.longitude.toFixed(6) : '';
+    
+    console.log('✅ Fields updated:');
+    console.log('  City:', data.city);
+    console.log('  State:', data.state);
+    console.log('  Pincode:', data.pincode);
+    // REMOVED: console.log('  District:', data.district);
+}
+
+// Form validation
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Bootstrap tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-    
-    // Business name validation
-    const nameInput = document.querySelector('input[name="name"]');
-    nameInput.addEventListener('input', function() {
-        const nameRegex = /^[a-zA-Z0-9\s\-&.,()]+$/;
-        if (this.value.length < 3) {
-            setValidationError(this, 'Business name must be at least 3 characters');
-        } else if (this.value.length > 100) {
-            setValidationError(this, 'Business name cannot exceed 100 characters');
-        } else if (!nameRegex.test(this.value)) {
-            setValidationError(this, 'Business name can only contain letters, numbers, spaces, and common symbols');
-        } else if (/^\d+$/.test(this.value)) {
-            setValidationError(this, 'Business name cannot be numbers only');
-        } else {
-            clearValidationError(this);
-        }
-    });
-    
-    // Description validation
-    const descriptionInput = document.querySelector('textarea[name="description"]');
-    descriptionInput.addEventListener('input', function() {
-        if (this.value.length < 50) {
-            setValidationError(this, 'Description should be at least 50 characters');
-        } else if (this.value.length > 1000) {
-            setValidationError(this, 'Description cannot exceed 1000 characters');
-        } else {
-            clearValidationError(this);
-        }
-    });
-    
-    // Address validation
-    const addressInput = document.querySelector('textarea[name="address"]');
-    addressInput.addEventListener('input', function() {
-        if (this.value.length < 10) {
-            setValidationError(this, 'Address should be at least 10 characters');
-        } else if (this.value.length > 200) {
-            setValidationError(this, 'Address cannot exceed 200 characters');
-        } else {
-            clearValidationError(this);
-        }
-    });
-    
-    // City validation (letters and spaces only)
-    const cityInput = document.querySelector('input[name="city"]');
-    cityInput.addEventListener('input', function() {
-        const cityRegex = /^[a-zA-Z\s]+$/;
-        if (this.value.length < 2) {
-            setValidationError(this, 'City name must be at least 2 characters');
-        } else if (!cityRegex.test(this.value)) {
-            setValidationError(this, 'City name can only contain letters and spaces');
-        } else {
-            clearValidationError(this);
-        }
-    });
-    
-    // Pincode validation
-    const pincodeInput = document.querySelector('input[name="pincode"]');
-    pincodeInput.addEventListener('input', function() {
-        const pincodeRegex = /^[0-9]{6}$/;
-        if (!pincodeRegex.test(this.value)) {
-            setValidationError(this, 'Please enter a valid 6-digit pincode');
-        } else {
-            clearValidationError(this);
-        }
-    });
-    
-    // Phone number validation
-    const phoneInput = document.querySelector('input[name="phone"]');
-    phoneInput.addEventListener('input', function() {
-        const phoneRegex = /^[6-9][0-9]{9}$/;
-        if (!phoneRegex.test(this.value)) {
-            setValidationError(this, 'Please enter a valid 10-digit mobile number starting with 6-9');
-        } else {
-            clearValidationError(this);
-        }
-    });
-    
-    // Email validation
-    const emailInput = document.querySelector('input[name="email"]');
-    emailInput.addEventListener('input', function() {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(this.value)) {
-            setValidationError(this, 'Please enter a valid email address');
-        } else {
-            clearValidationError(this);
-        }
-    });
-    
-    // Website validation (optional field)
-    const websiteInput = document.querySelector('input[name="website"]');
-    websiteInput.addEventListener('input', function() {
-        if (this.value) {
-            const urlRegex = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
-            if (!urlRegex.test(this.value)) {
-                setValidationError(this, 'Please enter a valid website URL (e.g., https://example.com)');
-            } else {
-                clearValidationError(this);
-            }
-        } else {
-            clearValidationError(this);
-        }
-    });
-    
-    // Registration number validation
-    const regNumInput = document.querySelector('input[name="registration_number"]');
-    regNumInput.addEventListener('input', function() {
-        const regRegex = /^[A-Z0-9]+$/;
-        if (this.value.length < 4 || this.value.length > 20) {
-            setValidationError(this, 'Registration number must be 4-20 characters');
-        } else if (!regRegex.test(this.value.toUpperCase())) {
-            setValidationError(this, 'Registration number can only contain letters and numbers');
-        } else {
-            clearValidationError(this);
-        }
-    });
-    
-    // GST number validation
-    const gstInput = document.querySelector('input[name="gst_number"]');
-    if (gstInput) {
-        gstInput.addEventListener('input', function() {
-            if (this.value) {
-                const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
-                if (!gstRegex.test(this.value.toUpperCase())) {
-                    setValidationError(this, 'Please enter a valid GST number (e.g., 27AAPFU0939F1ZV)');
-                } else {
-                    clearValidationError(this);
-                }
-            } else {
-                clearValidationError(this);
-            }
-        });
-    }
-    
-    // File validation function
-    function validateImageFile(input, fieldName) {
-        const file = input.files[0];
-        if (!file) return true;
-        
-        // Size check (5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            setValidationError(input, `${fieldName} size must be less than 5MB`);
-            input.value = '';
-            return false;
-        }
-        
-        // Type check
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        if (!allowedTypes.includes(file.type)) {
-            setValidationError(input, `${fieldName} must be JPG or PNG image`);
-            input.value = '';
-            return false;
-        }
-        
-        clearValidationError(input);
-        return true;
-    }
-    
-    // File input validations
-    const fileInputs = document.querySelectorAll('input[type="file"]');
-    fileInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            let fieldName = 'File';
-            if (this.name === 'primary_image') fieldName = 'Business image';
-            else if (this.name === 'registration_document') fieldName = 'Registration certificate';
-            else if (this.name === 'gst_document') fieldName = 'GST certificate';
+    const form = document.getElementById('businessForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const lat = document.getElementById('latitude').value;
+            const lng = document.getElementById('longitude').value;
             
-            validateImageFile(this, fieldName);
-        });
-    });
-    
-    // Service validation
-    function validateService(serviceRow) {
-        const nameInput = serviceRow.querySelector('.service-name');
-        const descInput = serviceRow.querySelector('.service-description');
-        
-        if (nameInput.value.trim()) {
-            const serviceRegex = /^[a-zA-Z0-9\s\-&.,()]+$/;
-            if (nameInput.value.length < 2) {
-                setValidationError(nameInput, 'Service name must be at least 2 characters');
-            } else if (!serviceRegex.test(nameInput.value)) {
-                setValidationError(nameInput, 'Service name can only contain letters, numbers, spaces, and common symbols');
-            } else {
-                clearValidationError(nameInput);
+            if (!lat || !lng) {
+                e.preventDefault();
+                alert('Please select a location on the map before submitting.');
+                document.getElementById('location_search').focus();
+                return false;
             }
-        }
-        
-        if (descInput.value.trim() && descInput.value.length > 200) {
-            setValidationError(descInput, 'Description cannot exceed 200 characters');
-        } else {
-            clearValidationError(descInput);
-        }
+        });
     }
     
-    // Validation helper functions
-    function setValidationError(input, message) {
-        input.classList.add('is-invalid');
-        input.classList.remove('is-valid');
-        
-        let feedback = input.parentElement.querySelector('.invalid-feedback');
-        if (!feedback) {
-            feedback = document.createElement('div');
-            feedback.className = 'invalid-feedback';
-            input.parentElement.appendChild(feedback);
-        }
-        feedback.textContent = message;
-    }
-    
-    function clearValidationError(input) {
-        input.classList.remove('is-invalid');
-        input.classList.add('is-valid');
-        
-        const feedback = input.parentElement.querySelector('.invalid-feedback');
-        if (feedback) {
-            feedback.remove();
-        }
-    }
-    
-    // Business hours toggle
-    document.querySelectorAll('.business-day-toggle').forEach(function(toggle) {
-        toggle.addEventListener('change', function() {
-            const targetId = this.dataset.target;
-            const timeInputs = document.querySelectorAll('#' + targetId + ' input, #close-time-' + targetId.split('-')[2] + ' input');
-            const timeRows = document.querySelectorAll('#' + targetId + ', #close-time-' + targetId.split('-')[2]);
-            
-            if (this.checked) {
-                timeRows.forEach(row => row.classList.add('d-none'));
-                timeInputs.forEach(input => input.disabled = true);
-            } else {
-                timeRows.forEach(row => row.classList.remove('d-none'));
-                timeInputs.forEach(input => input.disabled = false);
-            }
-        });
-    });
-    
-    // Add service
-    document.getElementById('add-service-btn').addEventListener('click', function() {
-        const servicesContainer = document.getElementById('services-container');
-        const serviceRow = document.querySelector('.service-row').cloneNode(true);
-        
-        // Clear inputs and reset validation
-        serviceRow.querySelectorAll('input').forEach(input => {
-            input.value = '';
-            input.classList.remove('is-valid', 'is-invalid');
-        });
-        serviceRow.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
-        
-        // Add validation to new inputs
-        const nameInput = serviceRow.querySelector('.service-name');
-        const descInput = serviceRow.querySelector('.service-description');
-        
-        nameInput.addEventListener('input', () => validateService(serviceRow));
-        descInput.addEventListener('input', () => validateService(serviceRow));
-        
-        // Add remove event listener
-        serviceRow.querySelector('.remove-service-btn').addEventListener('click', function() {
-            if (document.querySelectorAll('.service-row').length > 1) {
-                this.closest('.service-row').remove();
-            }
-        });
-        
-        servicesContainer.appendChild(serviceRow);
-    });
-    
-    // Initial setup for remove service buttons and validation
-    document.querySelectorAll('.service-row').forEach(function(row) {
-        const nameInput = row.querySelector('.service-name');
-        const descInput = row.querySelector('.service-description');
-        
-        nameInput.addEventListener('input', () => validateService(row));
-        descInput.addEventListener('input', () => validateService(row));
-        
-        row.querySelector('.remove-service-btn').addEventListener('click', function() {
-            if (document.querySelectorAll('.service-row').length > 1) {
-                this.closest('.service-row').remove();
-            }
-        });
-    });
+    // Load Google Maps API
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initMap`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
 });
 </script>
 {% endblock %}

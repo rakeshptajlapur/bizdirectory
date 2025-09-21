@@ -42,6 +42,14 @@ class Business(models.Model):
     address = models.TextField()
     pincode = models.CharField(max_length=6)
     city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100, blank=True, default='')
+    
+    # Google Maps location fields
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    location_name = models.CharField(max_length=255, blank=True, default='')
+    place_id = models.CharField(max_length=255, blank=True, default='')
+    formatted_address = models.TextField(blank=True, default='')
     
     # Contact Info
     phone = models.CharField(max_length=15)

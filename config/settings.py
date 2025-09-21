@@ -121,6 +121,8 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
                 'directory.context_processors.cloudinary_settings',  # Add this
+                'directory.context_processors.google_maps_key',  # Add this line
+
             ],
             'debug': True,  # Enable template debugging
         },
@@ -308,5 +310,8 @@ REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
 # For debug, allow long timeout
 CELERY_TASK_SOFT_TIME_LIMIT = 300
 CELERY_TASK_TIME_LIMIT = 600
+
+# Google Maps Configuration
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', '')
 
 

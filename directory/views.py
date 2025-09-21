@@ -621,6 +621,30 @@ def business_form(request, business_id=None):
         if form.is_valid():
             business = form.save(commit=False)
             
+            # ✅ Handle location data from Google Maps FIRST
+            business.latitude = request.POST.get('latitude') or None
+            business.longitude = request.POST.get('longitude') or None
+            business.place_id = request.POST.get('place_id', '')
+            business.location_name = request.POST.get('location_name', '')
+            business.formatted_address = request.POST.get('formatted_address', '')
+            
+            # ✅ Auto-populated location fields - REMOVED DISTRICT
+            business.address = request.POST.get('formatted_address', '') or business.address
+            business.city = request.POST.get('city', '') or business.city
+            business.pincode = request.POST.get('pincode', '') or business.pincode
+            # REMOVED: business.district = request.POST.get('district', '') or business.district  
+            business.state = request.POST.get('state', '') or business.state
+            
+            # ✅ Debug logging - REMOVED DISTRICT
+            print(f"Location data being saved:")
+            print(f"  Latitude: {business.latitude}")
+            print(f"  Longitude: {business.longitude}")
+            print(f"  City: {business.city}")
+            # REMOVED: print(f"  District: {business.district}")
+            print(f"  State: {business.state}")
+            print(f"  Pincode: {business.pincode}")
+            print(f"  Formatted Address: {business.formatted_address}")
+            
             if not is_edit:
                 business.owner = request.user
                 # Auto-assign free plan for new businesses
@@ -649,7 +673,7 @@ def business_form(request, business_id=None):
                 business.kyc_status = 'pending'
                 status_message = 'Business listing submitted for approval successfully!'
             
-            business.save()
+            business.save()  # ✅ This will now save location data too
             
             # Add logging for primary image
             primary_image = request.FILES.get('primary_image')

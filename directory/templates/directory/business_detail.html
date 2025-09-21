@@ -1479,22 +1479,45 @@
                     <div class="card info-card mb-4">
                         <div class="card-body">
                             <h4 class="card-title border-bottom pb-2 mb-3">
-                                <i class="bi bi-geo-alt me-2"></i>Location
+                                <i class="bi bi-geo-alt me-2"></i>Location & Map
                             </h4>
+                            
                             <address class="mb-3">
-                                {{ business.address|linebreaks }}
-                                {{ business.city }}, {{ business.pincode }}
+                                <strong>{{ business.location_name|default:business.name }}</strong><br>
+                                {{ business.formatted_address|default:business.address|linebreaks }}
+                                {% if not business.formatted_address %}
+                                    {{ business.city }}, {{ business.pincode }}
+                                {% endif %}
                             </address>
                             
-                            {% if user.is_authenticated %}
-                                <a href="https://maps.google.com/?q={{ business.address|urlencode }},{{ business.city|urlencode }},{{ business.pincode }}" 
-                                   class="btn btn-outline-primary w-100" target="_blank">
-                                    <i class="bi bi-box-arrow-up-right me-1"></i>Open in Google Maps
-                                </a>
+                            {% if business.latitude and business.longitude %}
+                                <!-- Interactive Map -->
+                                <div id="business-map" style="height: 300px; border-radius: 8px; margin-bottom: 1rem;" class="border"></div>
+                                
+                                <!-- Map Actions -->
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="https://maps.google.com/?q={{ business.latitude }},{{ business.longitude }}" 
+                                       class="btn btn-outline-primary" target="_blank">
+                                        <i class="bi bi-box-arrow-up-right me-1"></i>Open in Google Maps
+                                    </a>
+                                    
+                                    <a href="https://maps.google.com/maps/dir/?api=1&destination={{ business.latitude }},{{ business.longitude }}" 
+                                       class="btn btn-primary" target="_blank">
+                                        <i class="bi bi-navigation me-1"></i>Get Directions
+                                    </a>
+                                </div>
                             {% else %}
-                                <button class="btn btn-outline-primary w-100" disabled>
-                                    <i class="bi bi-lock me-1"></i>Login to View Map
-                                </button>
+                                <!-- Fallback for businesses without lat/lng -->
+                                {% if user.is_authenticated %}
+                                    <a href="https://maps.google.com/?q={{ business.address|urlencode }},{{ business.city|urlencode }},{{ business.pincode }}" 
+                                       class="btn btn-outline-primary w-100" target="_blank">
+                                        <i class="bi bi-box-arrow-up-right me-1"></i>Open in Google Maps
+                                    </a>
+                                {% else %}
+                                    <button class="btn btn-outline-primary w-100" disabled>
+                                        <i class="bi bi-lock me-1"></i>Login to View Map
+                                    </button>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>
@@ -1835,3 +1858,120 @@ function scrollToContactForm() {
     </div>
 </div>
 {% endif %}
+
+{% if business.latitude and business.longitude %}
+<script>
+function initBusinessMap() {
+    const location = { 
+        lat: {{ business.latitude }}, 
+        lng: {{ business.longitude }} 
+    };
+    
+    const map = new google.maps.Map(document.getElementById('business-map'), {
+        zoom: 15,
+        center: location,
+        mapTypeControl: false,
+        streetViewControl: true,
+        fullscreenControl: true,
+    });
+    
+    const marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        title: '{{ business.name|escapejs }}',
+        icon: {
+            url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+            scaledSize: new google.maps.Size(32, 32)
+        }
+    });
+    
+    const infoWindow = new google.maps.InfoWindow({
+        content: `
+            <div style="max-width: 250px;">
+                <h6 class="mb-1">{{ business.name|escapejs }}</h6>
+                <p class="mb-1 small">{{ business.formatted_address|default:business.address|escapejs }}</p>
+                <small class="text-muted">{{ business.city }}, {{ business.pincode }}</small>
+            </div>
+        `
+    });
+    
+    marker.addListener('click', function() {
+        infoWindow.open(map, marker);
+    });
+    
+    // Auto-open info window after a short delay
+    setTimeout(() => {
+        infoWindow.open(map, marker);
+    }, 1000);
+}
+
+// Load map when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof google !== 'undefined') {
+        initBusinessMap();
+    } else {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initBusinessMap`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+    }
+});
+</script>
+{% endif %}
+
+<script>
+// Extract useful address components
+function extractAddressComponents(components) {
+    const result = {
+        city: '',
+        state: '',
+        pincode: '',
+        district: '',
+        country: ''
+    };
+    
+    components.forEach(component => {
+        const types = component.types;
+        
+        // City - try multiple location types
+        if (types.includes('locality')) {
+            result.city = component.long_name;
+        } else if (types.includes('sublocality_level_1') && !result.city) {
+            result.city = component.long_name;
+        } else if (types.includes('administrative_area_level_3') && !result.city) {
+            result.city = component.long_name;
+        }
+        
+        // District - try multiple administrative levels  
+        if (types.includes('administrative_area_level_2')) {
+            result.district = component.long_name;
+        } else if (types.includes('administrative_area_level_3') && !result.district) {
+            result.district = component.long_name;
+        }
+        
+        // State
+        if (types.includes('administrative_area_level_1')) {
+            result.state = component.long_name;
+        }
+        
+        // Pincode
+        if (types.includes('postal_code')) {
+            result.pincode = component.long_name;
+        }
+        
+        // Country
+        if (types.includes('country')) {
+            result.country = component.long_name;
+        }
+    });
+    
+    // Debug logging
+    console.log('Extracted components:', result);
+    console.log('Raw components:', components);
+    
+    return result;
+}
+</script>
+
+
