@@ -6,8 +6,11 @@
 <div class="container-fluid py-4">
     <h1 class="mb-4">{% if is_edit %}Edit{% else %}Add New{% endif %} Business</h1>
 
-    <form method="post" enctype="multipart/form-data" class="needs-validation" id="businessForm">
-        {% csrf_token %}
+{% if is_edit and business.pk %}
+    <form method="post" action="{% url 'directory:edit_business' business.pk %}" enctype="multipart/form-data" class="needs-validation" id="businessForm">
+{% else %}
+    <form method="post" action="{% url 'directory:add_business' %}" enctype="multipart/form-data" class="needs-validation" id="businessForm">
+{% endif %}        {% csrf_token %}
 
         {% if form.non_field_errors %}
             <div class="alert alert-danger">
@@ -1036,6 +1039,59 @@ document.addEventListener('DOMContentLoaded', function() {
     script.defer = true;
     document.head.appendChild(script);
 });
+
+
+// 🚨 EMERGENCY DEBUG CODE - Add this to see what's happening
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('businessForm');
+    console.log('🔍 Form element found:', form);
+    
+    if (form) {
+        // Log all form data before submission
+        form.addEventListener('submit', function(e) {
+            console.log('🚨 FORM SUBMISSION STARTED');
+            console.log('📝 Form action:', form.action);
+            console.log('📝 Form method:', form.method);
+            
+            // Log all form data
+            const formData = new FormData(form);
+            console.log('📄 Form data:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`  ${key}:`, value);
+            }
+            
+            // Check required fields
+            const requiredFields = ['name', 'category', 'description', 'phone', 'email', 'registration_number'];
+            let missingFields = [];
+            
+            requiredFields.forEach(fieldName => {
+                const field = form.querySelector(`[name="${fieldName}"]`);
+                if (field && !field.value.trim()) {
+                    missingFields.push(fieldName);
+                }
+            });
+            
+            if (missingFields.length > 0) {
+                console.error('❌ Missing required fields:', missingFields);
+                e.preventDefault();
+                alert(`Missing required fields: ${missingFields.join(', ')}`);
+                return false;
+            }
+            
+            console.log('✅ All required fields filled');
+            console.log('🚀 Form submitting...');
+        });
+        
+        // Also check for any validation errors
+        const errorElements = form.querySelectorAll('.invalid-feedback');
+        if (errorElements.length > 0) {
+            console.warn('⚠️ Found validation errors on page load:', errorElements);
+        }
+    } else {
+        console.error('❌ Form element not found!');
+    }
+});
+
 </script>
 {% endblock %}
 
