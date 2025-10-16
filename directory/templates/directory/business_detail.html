@@ -7,6 +7,244 @@
 {% block extra_css %}
 {{ block.super }}
 <style>
+    /* STICKY TAB SECTION - ALL DEVICES */
+.business-tabs-container {
+    position: sticky;
+    top: 70px; /* Offset for sticky navbar */
+    z-index: 1020; /* Below navbar (1030) but above other content */
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
+}
+
+/* Add smooth transition when becoming sticky */
+.business-tabs-container.sticky-active {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Ensure tab content has proper spacing when tabs are sticky */
+.tab-content {
+    margin-top: 0;
+    background: white;
+    min-height: 400px;
+    padding-top: 1rem; /* ADD THIS - gives content breathing room */
+
+}
+
+/* Fix content getting hidden behind sticky tabs */
+@media (max-width: 767.98px) {
+    .tab-pane {
+        margin-top: 1rem; /* Push content down */
+    }
+    
+    .tab-pane h4,
+    .tab-pane h5 {
+        margin-top: 60px !important; /* Override global mobile h4 margin removal */
+    }
+    
+    /* First h4/h5 in each tab should have extra space */
+    .tab-pane > h4:first-child,
+    .tab-pane > h5:first-child,
+    .tab-pane > div > h4:first-child,
+    .tab-pane > div > h5:first-child {
+        margin-top: 80px !important;
+    }
+}
+
+/* Add MORE padding when tabs are sticky on mobile */
+@media (max-width: 767.98px) {
+    .tab-content {
+        padding-top: 1.5rem; /* More padding on mobile */
+    }
+    
+    .sticky-active + .card-body .tab-content {
+        padding-top: 2rem; /* Even more when sticky */
+    }
+}
+
+/* Add slight padding to tab content when sticky */
+.sticky-active + .card-body .tab-content {
+    padding-top: 1rem;
+}
+
+/* Tab Navigation Styling */
+.responsive-tabs {
+    border-bottom: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    display: flex; /* ADD THIS - Forces horizontal layout */
+    flex-wrap: nowrap; /* ADD THIS - Prevents wrapping */
+}
+
+.responsive-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.responsive-tabs .nav-item {
+    flex-shrink: 0; /* KEEP THIS - Prevents tab shrinking */
+}
+
+.responsive-tabs .nav-link {
+    border: none;
+    border-radius: 0;
+    border-bottom: 3px solid transparent;
+    padding: 1rem 1.5rem;
+    color: #6c757d;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.responsive-tabs .nav-link:hover {
+    color: #0d6efd;
+    border-bottom-color: #0d6efd;
+    background: rgba(13, 110, 253, 0.1);
+}
+
+.responsive-tabs .nav-link.active {
+    color: #0d6efd;
+    border-bottom-color: #0d6efd;
+    background: rgba(13, 110, 253, 0.1);
+}
+
+.tab-pane {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Verification Items */
+.verification-item {
+    padding: 0.5rem 0;
+}
+
+/* Hours Schedule */
+.hours-item {
+    transition: all 0.2s ease;
+}
+
+.hours-item:hover {
+    background-color: #f8f9fa !important;
+}
+
+/* Service Items */
+.service-item {
+    transition: all 0.2s ease;
+    border: 1px solid #e9ecef !important;
+}
+
+.service-item:hover {
+    border-color: #0d6efd !important;
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
+}
+
+/* Review Cards */
+.review-card {
+    transition: all 0.2s ease;
+}
+
+.review-card:hover {
+    border-color: #0d6efd !important;
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
+}
+
+/* Rating Stars */
+.rating-star {
+    color: #dee2e6;
+    transition: color 0.2s ease;
+}
+
+.rating-star:hover,
+.rating-star.active {
+    color: #ffc107;
+}
+
+/* Mobile Responsive Tabs - KEEP BOTH ICONS AND TEXT */
+@media (max-width: 767.98px) {
+    .business-tabs-container {
+        top: 90px; /* Account for mobile navbar height */
+    }
+    
+    .responsive-tabs .nav-link {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        min-width: 85px;
+    }
+    
+    .responsive-tabs .nav-link i {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .tab-text {
+        font-size: 0.7rem;
+        line-height: 1.1;
+        white-space: nowrap;
+        /* REMOVE display: none - THIS WAS HIDING TEXT */
+    }
+    
+    /* Stack tab content vertically on mobile */
+    .tab-pane .row {
+        --bs-gutter-y: 1rem;
+    }
+    
+    .tab-pane .col-lg-4,
+    .tab-pane .col-lg-8 {
+        width: 100%;
+    }
+}
+
+/* Extra small screens - smaller tabs but keep text */
+@media (max-width: 575.98px) {
+    .responsive-tabs .nav-link {
+        padding: 0.5rem 0.4rem;
+        min-width: 75px;
+    }
+    
+    .responsive-tabs .nav-link i {
+        font-size: 0.9rem;
+    }
+    
+    .tab-text {
+        font-size: 0.65rem;
+        /* KEEP TEXT VISIBLE */
+    }
+}
+
+/* Landscape phones - adjust for limited height */
+@media (max-width: 767.98px) and (orientation: landscape) {
+    .business-tabs-container {
+        top: 50px;
+    }
+    
+    .responsive-tabs .nav-link {
+        padding: 0.4rem 0.8rem;
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .responsive-tabs .nav-link i {
+        margin-bottom: 0;
+        margin-right: 0.25rem;
+        font-size: 0.9rem;
+    }
+    
+    .tab-text {
+        font-size: 0.75rem;
+    }
+}
     /* Fix for mobile header padding and scroll behavior */
 @media (max-width: 767.98px) {
     
@@ -652,6 +890,17 @@
             padding-bottom: 1rem !important;
         }
         
+        /* UPDATED: Don't remove h4 margins inside tab content */
+        h4:not(.tab-pane h4):not(.tab-pane * h4) {
+            margin-top: 0.5rem !important; /* Only for non-tab h4s */
+        }
+        
+        /* Keep tab content h4s with proper spacing */
+        .tab-pane h4,
+        .tab-pane h5 {
+            margin-top: 60px !important;
+        }
+        
         /* Login gate modal - better mobile sizing */
         .login-gate-modal {
             margin: 0.5rem;
@@ -1132,31 +1381,34 @@
     color: #ffc107;
 }
 
-/* Mobile Responsive Tabs */
+/* Mobile Tab Scroll Indicators */
 @media (max-width: 767.98px) {
-    .responsive-tabs .nav-link {
-        padding: 0.75rem 1rem;
-        font-size: 0.9rem;
+    .business-tabs-container {
+        position: relative;
     }
     
-    .tab-text {
-        display: none;
+    .business-tabs-container::before,
+    .business-tabs-container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 20px;
+        pointer-events: none;
+        z-index: 1;
     }
     
-    .responsive-tabs .nav-link i {
-        font-size: 1.1rem;
+    .business-tabs-container::before {
+        left: 0;
+        background: linear-gradient(to right, rgba(255,255,255,1), rgba(255,255,255,0));
     }
     
-    /* Stack tab content vertically on mobile */
-    .tab-pane .row {
-        --bs-gutter-y: 1rem;
-    }
-    
-    .tab-pane .col-lg-4,
-    .tab-pane .col-lg-8 {
-        width: 100%;
+    .business-tabs-container::after {
+        right: 0;
+        background: linear-gradient(to left, rgba(255,255,255,1), rgba(255,255,255,0));
     }
 }
+
 
 /* Extra small screens */
 @media (max-width: 575.98px) {
@@ -1408,62 +1660,63 @@
         </div>
     {% endif %}
 
-    <!-- Tabbed Content Section -->
-    <div class="container-fluid px-3 px-lg-4 mb-4">
-        <div class="container">
-            <!-- Tab Navigation -->
-            <div class="card border-0 shadow-sm">
-                <!-- Tab Headers -->
-                <div class="card-header bg-white border-bottom">
-                    <ul class="nav nav-tabs card-header-tabs responsive-tabs" id="businessTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" 
-                                    type="button" role="tab" aria-controls="about" aria-selected="true">
-                                <i class="bi bi-info-circle me-1"></i>
-                                <span class="tab-text">About</span>
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" 
-                                    type="button" role="tab" aria-controls="services" aria-selected="false">
-                                <i class="bi bi-tools me-1"></i>
-                                <span class="tab-text">Services</span>
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="availability-tab" data-bs-toggle="tab" data-bs-target="#availability" 
-                                    type="button" role="tab" aria-controls="availability" aria-selected="false">
-                                <i class="bi bi-clock me-1"></i>
-                                <span class="tab-text">Availability</span>
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="location-tab" data-bs-toggle="tab" data-bs-target="#location" 
-                                    type="button" role="tab" aria-controls="location" aria-selected="false">
-                                <i class="bi bi-geo-alt me-1"></i>
-                                <span class="tab-text">Location</span>
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" 
-                                    type="button" role="tab" aria-controls="reviews" aria-selected="false">
-                                <i class="bi bi-star me-1"></i>
-                                <span class="tab-text">Reviews</span>
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" 
-                                    type="button" role="tab" aria-controls="enquiry" aria-selected="false">
-                                <i class="bi bi-envelope me-1"></i>
-                                <span class="tab-text">Enquiry</span>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+<!-- Tabbed Content Section -->
+<div class="container-fluid px-3 px-lg-4 mb-4">
+    <div class="container">
+        <!-- Tab Navigation with Sticky Container -->
+        <div class="card border-0 shadow-sm">
+            <!-- Tab Headers - Sticky Container for ALL devices -->
+            <div class="card-header bg-white border-bottom business-tabs-container" id="businessTabsContainer">
+                <ul class="nav nav-tabs card-header-tabs responsive-tabs" id="businessTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" 
+                                type="button" role="tab" aria-controls="about" aria-selected="true">
+                            <i class="bi bi-info-circle"></i>
+                            <span class="tab-text">About</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" 
+                                type="button" role="tab" aria-controls="services" aria-selected="false">
+                            <i class="bi bi-tools"></i>
+                            <span class="tab-text">Services</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="availability-tab" data-bs-toggle="tab" data-bs-target="#availability" 
+                                type="button" role="tab" aria-controls="availability" aria-selected="false">
+                            <i class="bi bi-clock"></i>
+                            <span class="tab-text">Availability</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="location-tab" data-bs-toggle="tab" data-bs-target="#location" 
+                                type="button" role="tab" aria-controls="location" aria-selected="false">
+                            <i class="bi bi-geo-alt"></i>
+                            <span class="tab-text">Location</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" 
+                                type="button" role="tab" aria-controls="reviews" aria-selected="false">
+                            <i class="bi bi-star"></i>
+                            <span class="tab-text">Reviews</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" 
+                                type="button" role="tab" aria-controls="enquiry" aria-selected="false">
+                            <i class="bi bi-envelope"></i>
+                            <span class="tab-text">Enquiry</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
 
-                <!-- Tab Content -->
-                <div class="card-body">
-                    <div class="tab-content" id="businessTabsContent">
+            <!-- Tab Content -->
+            <div class="card-body">
+                <div class="tab-content" id="businessTabsContent">
+                    <!-- All existing tab content stays the same -->
                         
                         <!-- About Tab -->
                         <div class="tab-pane fade show active" id="about" role="tabpanel" aria-labelledby="about-tab">
@@ -1686,178 +1939,187 @@
                             </div>
                         </div>
 
-                        <!-- Reviews Tab -->
-                        <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-                            <div class="row">
-                                <div class="col-lg-8">
-                                    <h4 class="border-bottom pb-2 mb-4">Customer Reviews</h4>
-                                    
-                                    <!-- Reviews List -->
-                                    <div class="reviews-list">
-                                        {% for review in business.reviews.all %}
-                    {% if review.is_approved or review.email == request.session.reviewer_email %}
-                    <div class="review-card border rounded-3 p-3 mb-3">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div class="reviewer-info">
-                                <h6 class="mb-1">{{ review.user.get_full_name|default:review.user.username }}</h6>
-                                <div class="stars mb-1">
-                                    {% for i in "12345"|make_list %}
-                                        <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %} text-warning"></i>
-                                    {% endfor %}
+                        <!-- Reviews Tab - RESTRICT TO PREMIUM -->
+<div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+    {% if business.has_premium_features and user.is_authenticated %}
+        <div class="row">
+            <div class="col-lg-8">
+                <h4 class="border-bottom pb-2 mb-4">Customer Reviews</h4>
+                
+                <!-- Reviews List -->
+                <div class="reviews-list">
+                    {% for review in business.reviews.all %}
+                        {% if review.is_approved or review.email == request.session.reviewer_email %}
+                        <div class="review-card border rounded-3 p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="reviewer-info">
+                                    <h6 class="mb-1">{{ review.user.get_full_name|default:review.user.username }}</h6>
+                                    <div class="stars mb-1">
+                                        {% for i in "12345"|make_list %}
+                                            <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %} text-warning"></i>
+                                        {% endfor %}
+                                    </div>
                                 </div>
+                                <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
                             </div>
-                            <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                            <p class="review-text mb-0">{{ review.comment }}</p>
                         </div>
-                        <p class="review-text mb-0">{{ review.comment }}</p>
+                        {% endif %}
+                    {% empty %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-chat-square-text text-muted fs-1"></i>
+                        <p class="text-muted mt-3">No reviews yet. Be the first to review!</p>
                     </div>
-                    {% endif %}
-                {% empty %}
-                <div class="text-center py-5">
-                    <i class="bi bi-chat-square-text text-muted fs-1"></i>
-                    <p class="text-muted mt-3">No reviews yet. Be the first to review!</p>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-                                    </div>
-                                </div>
-                                
-                                <!-- Review Form Sidebar -->
-                                <div class="col-lg-4">
-                                    {% if user.is_authenticated %}
-                                        {% if not user_review %}
-                                        <div class="review-form-card border rounded-3 p-3">
-                                            <h5 class="mb-3">Write a Review</h5>
-                                            <form method="post" action="{% url 'directory:add_review' business.pk %}">
-                                                {% csrf_token %}
-                                                <div class="mb-3">
-                                                    <label class="form-label">Your Rating</label>
-                                                    <div class="rating-stars mb-2">
-                                                        {% for i in "12345"|make_list %}
-                                                            <i class="bi bi-star rating-star" data-rating="{{ forloop.counter }}" style="cursor: pointer; font-size: 1.5rem;"></i>
-                                                        {% endfor %}
-                                                    </div>
-                                                    <input type="hidden" name="rating" id="ratingInput" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="comment" class="form-label">Your Review</label>
-                                                    <textarea class="form-control" name="comment" id="comment" rows="4" 
-                                                             placeholder="Share your experience..." required></textarea>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary w-100">Submit Review</button>
-                                            </form>
-                                        </div>
-                                        {% else %}
-                                        <div class="alert alert-info">
-                                            <i class="bi bi-info-circle me-2"></i>
-                                            You have already reviewed this business.
-                                            {% if not user_review.is_approved %}
-                                                Your review is pending approval.
-                                            {% endif %}
-                                        </div>
-                                        {% endif %}
-                                    {% else %}
-                                    <div class="text-center p-4 border rounded-3">
-                                        <i class="bi bi-person-plus fs-1 text-muted mb-3"></i>
-                                        <p class="text-muted">Please login to write a review</p>
-                                        <a href="{% url 'account_login' %}" class="btn btn-primary">Login</a>
-                                    </div>
-                                    {% endif %}
-                                </div>
+            </div>
+            
+            <!-- Review Form Sidebar -->
+            <div class="col-lg-4">
+                {% if not user_review %}
+                <div class="review-form-card border rounded-3 p-3">
+                    <h5 class="mb-3">Write a Review</h5>
+                    <form method="post" action="{% url 'directory:add_review' business.pk %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Your Rating</label>
+                            <div class="rating-stars mb-2">
+                                {% for i in "12345"|make_list %}
+                                    <i class="bi bi-star rating-star" data-rating="{{ forloop.counter }}" style="cursor: pointer; font-size: 1.5rem;"></i>
+                                {% endfor %}
                             </div>
+                            <input type="hidden" name="rating" id="ratingInput" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="comment" class="form-label">Your Review</label>
+                            <textarea class="form-control" name="comment" id="comment" rows="4" 
+                                     placeholder="Share your experience..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Submit Review</button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    You have already reviewed this business.
+                    {% if not user_review.is_approved %}
+                        Your review is pending approval.
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-lock text-muted fs-1"></i>
+            <p class="text-muted mt-3">
+                {% if not user.is_authenticated %}
+                    Please login to view and write reviews
+                {% else %}
+                    Reviews are available for premium listings only
+                {% endif %}
+            </p>
+        </div>
+    {% endif %}
+</div>
 
-                        <!-- Enquiry Tab -->
-                        <div class="tab-pane fade" id="enquiry" role="tabpanel" aria-labelledby="enquiry-tab">
-                            <div class="row">
-                                <div class="col-lg-8">
-                                    <h4 class="border-bottom pb-2 mb-4">Send Enquiry</h4>
-                                    
-                                    {% if user.is_authenticated %}
-                                        {% if messages %}
-                                            {% for message in messages %}
-                                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                                {{ message }}
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                            </div>
-                                            {% endfor %}
-                                        {% endif %}
-                                        
-                                        <form method="post" action="{% url 'directory:send_enquiry' business.pk %}">
-                                            {% csrf_token %}
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <label for="name" class="form-label">Your Name</label>
-                                                    <input type="text" class="form-control" id="name" name="name" 
-                                                           value="{{ user.get_full_name|default:user.username }}" readonly>
-                                                    <div class="form-text">Name from your account profile</div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label for="email" class="form-label">Email Address</label>
-                                                    <input type="email" class="form-control" id="email" name="email" 
-                                                           value="{{ user.email }}" readonly>
-                                                    <div class="form-text">Email from your account</div>
-                                                </div>
-                                                <div class="col-12">
-                                                    <label for="phone" class="form-label">Phone Number</label>
-                                                    <input type="tel" class="form-control" id="phone" name="phone" 
-                                                           value="{{ user.profile.phone|default:'' }}" readonly>
-                                                    <div class="form-text">
-                                                        Phone from your profile
-                                                        {% if not user.profile.phone %}
-                                                            - <a href="{% url 'accounts:profile' %}">Add phone in profile</a>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                                <div class="col-12">
-                                                    <label for="message" class="form-label">Your Message</label>
-                                                    <textarea class="form-control" id="message" name="message" rows="5" 
-                                                             placeholder="Describe your requirements..." required></textarea>
-                                                </div>
-                                                <div class="col-12">
-                                                    <button type="submit" class="btn btn-primary btn-lg">
-                                                        <i class="bi bi-send me-2"></i>Send Enquiry
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    {% else %}
-                                    <div class="text-center p-5 border rounded-3">
-                                        <i class="bi bi-person-plus fs-1 text-muted mb-3"></i>
-                                        <h5>Login Required</h5>
-                                        <p class="text-muted">Please login to send an enquiry to this business</p>
-                                        <a href="{% url 'account_login' %}" class="btn btn-primary">Login to Continue</a>
-                                    </div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="col-lg-4">
-                                    <div class="contact-sidebar">
-                                        <h5 class="mb-3">Quick Contact</h5>
-                                        <div class="contact-options">
-                                            {% if business.phone %}
-                                            <a href="tel:{{ business.phone }}" class="btn btn-outline-primary w-100 mb-2">
-                                                <i class="bi bi-telephone me-2"></i>Call Now
-                                            </a>
-                                            {% endif %}
-                                            
-                                            {% if business.website %}
-                                            <a href="{{ business.website }}" target="_blank" class="btn btn-outline-secondary w-100 mb-2">
-                                                <i class="bi bi-globe me-2"></i>Visit Website
-                                            </a>
-                                            {% endif %}
-                                            
-                                            <div class="business-info mt-4 p-3 bg-light rounded-3">
-                                                <h6>Business Information</h6>
-                                                <p class="small mb-1"><strong>Category:</strong> {{ business.category.name }}</p>
-                                                <p class="small mb-1"><strong>Listed:</strong> {{ business.created_at|date:"M d, Y" }}</p>
-                                                {% if business.avg_rating > 0 %}
-                                                <p class="small mb-0"><strong>Rating:</strong> {{ business.avg_rating|floatformat:1 }}/5</p>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+<!-- Enquiry Tab - RESTRICT TO PREMIUM -->
+<div class="tab-pane fade" id="enquiry" role="tabpanel" aria-labelledby="enquiry-tab">
+    {% if business.has_premium_features and user.is_authenticated %}
+        <div class="row">
+            <div class="col-lg-8">
+                <h4 class="border-bottom pb-2 mb-4">Send Enquiry</h4>
+                
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <form method="post" action="{% url 'directory:send_enquiry' business.pk %}">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="{{ user.get_full_name|default:user.username }}" readonly>
+                            <div class="form-text">Name from your account profile</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="{{ user.email }}" readonly>
+                            <div class="form-text">Email from your account</div>
+                        </div>
+                        <div class="col-12">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   value="{{ user.profile.phone|default:'' }}" readonly>
+                            <div class="form-text">
+                                Phone from your profile
+                                {% if not user.profile.phone %}
+                                    - <a href="{% url 'accounts:profile' %}">Add phone in profile</a>
+                                {% endif %}
                             </div>
                         </div>
+                        <div class="col-12">
+                            <label for="message" class="form-label">Your Message</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" 
+                                     placeholder="Describe your requirements..." required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-send me-2"></i>Send Enquiry
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="contact-sidebar">
+                    <h5 class="mb-3">Quick Contact</h5>
+                    <div class="contact-options">
+                        {% if business.phone %}
+                        <a href="tel:{{ business.phone }}" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="bi bi-telephone me-2"></i>Call Now
+                        </a>
+                        {% endif %}
+                        
+                        {% if business.website %}
+                        <a href="{{ business.website }}" target="_blank" class="btn btn-outline-secondary w-100 mb-2">
+                            <i class="bi bi-globe me-2"></i>Visit Website
+                        </a>
+                        {% endif %}
+                        
+                        <div class="business-info mt-4 p-3 bg-light rounded-3">
+                            <h6>Business Information</h6>
+                            <p class="small mb-1"><strong>Category:</strong> {{ business.category.name }}</p>
+                            <p class="small mb-1"><strong>Listed:</strong> {{ business.created_at|date:"M d, Y" }}</p>
+                            {% if business.avg_rating > 0 %}
+                            <p class="small mb-0"><strong>Rating:</strong> {{ business.avg_rating|floatformat:1 }}/5</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-lock text-muted fs-1"></i>
+            <p class="text-muted mt-3">
+                {% if not user.is_authenticated %}
+                    Please login to send enquiries
+                {% else %}
+                    Contact form is available for premium listings only
+                {% endif %}
+            </p>
+        </div>
+    {% endif %}
+</div>
                     </div>
                 </div>
             </div>
@@ -2056,7 +2318,7 @@ function scrollToContactForm() {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Rating stars functionality
+    // Rating stars functionality (existing code)
     const stars = document.querySelectorAll('.rating-star');
     const ratingInput = document.getElementById('ratingInput');
     
@@ -2079,16 +2341,50 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Smooth scroll for tab changes
+    // Enhanced tab switching with sticky behavior for ALL devices
     document.querySelectorAll('.nav-link[data-bs-toggle="tab"]').forEach(tab => {
         tab.addEventListener('shown.bs.tab', function(e) {
-            // Smooth scroll to top of tab content
-            document.querySelector('.tab-content').scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            // Don't auto-scroll when tabs are sticky - let user control scrolling
+            // Just add a subtle highlight to indicate active state
+            const tabContainer = document.getElementById('businessTabsContainer');
+            if (tabContainer) {
+                tabContainer.classList.add('sticky-active');
+                
+                // Remove highlight after a moment
+                setTimeout(() => {
+                    tabContainer.classList.remove('sticky-active');
+                }, 1000);
+            }
         });
     });
+    
+    // Sticky tabs visual enhancement for ALL devices
+    const tabsContainer = document.getElementById('businessTabsContainer');
+    if (tabsContainer) {
+        // Determine navbar height based on screen size
+        const getNavbarHeight = () => window.innerWidth < 768 ? 60 : 70;
+        
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    tabsContainer.classList.remove('sticky-active');
+                } else {
+                    tabsContainer.classList.add('sticky-active');
+                }
+            },
+            { 
+                rootMargin: `-${getNavbarHeight()}px 0px 0px 0px`
+            }
+        );
+        
+        observer.observe(tabsContainer);
+        
+        // Update observer on resize for responsive navbar height
+        window.addEventListener('resize', () => {
+            observer.disconnect();
+            observer.observe(tabsContainer);
+        });
+    }
 });
 </script>
 
