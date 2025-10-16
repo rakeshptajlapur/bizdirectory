@@ -34,21 +34,12 @@
 
 /* Fix content getting hidden behind sticky tabs */
 @media (max-width: 767.98px) {
-    .tab-pane {
-        margin-top: 1rem; /* Push content down */
-    }
-    
-    .tab-pane h4,
-    .tab-pane h5 {
-        margin-top: 60px !important; /* Override global mobile h4 margin removal */
-    }
-    
+
     /* First h4/h5 in each tab should have extra space */
     .tab-pane > h4:first-child,
     .tab-pane > h5:first-child,
     .tab-pane > div > h4:first-child,
     .tab-pane > div > h5:first-child {
-        margin-top: 80px !important;
     }
 }
 
@@ -170,7 +161,7 @@
 /* Mobile Responsive Tabs - KEEP BOTH ICONS AND TEXT */
 @media (max-width: 767.98px) {
     .business-tabs-container {
-        top: 90px; /* Account for mobile navbar height */
+        top: 0px; /* Account for mobile navbar height */
     }
     
     .responsive-tabs .nav-link {
@@ -882,7 +873,6 @@
         
         /* Remove excessive Bootstrap spacing on mobile */
         .mt-4 {
-            margin-top: 1rem !important;
         }
         
         .py-4 {
@@ -892,13 +882,11 @@
         
         /* UPDATED: Don't remove h4 margins inside tab content */
         h4:not(.tab-pane h4):not(.tab-pane * h4) {
-            margin-top: 0.5rem !important; /* Only for non-tab h4s */
         }
         
         /* Keep tab content h4s with proper spacing */
         .tab-pane h4,
         .tab-pane h5 {
-            margin-top: 60px !important;
         }
         
         /* Login gate modal - better mobile sizing */
