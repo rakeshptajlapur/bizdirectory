@@ -387,6 +387,13 @@
                             <a href="{% url 'directory:subscription_dashboard' %}" class="list-group-item list-group-item-action {% if active_tab == 'subscription' %}active{% endif %}">
                                 <i class="bi bi-credit-card me-2"></i> Subscription
                             </a>
+                            <!-- Add this link in the Business Owner section -->
+                            <a href="{% url 'directory:dashboard_coupons' %}" class="list-group-item list-group-item-action {% if active_tab == 'coupons' %}active{% endif %}">
+                                <i class="bi bi-ticket me-2"></i> Coupon Requests
+                                {% if pending_coupons_count > 0 %}
+                                    <span class="badge bg-warning ms-auto">{{ pending_coupons_count }}</span>
+                                {% endif %}
+                            </a>
                         {% else %}
                             <!-- Regular User - Show Upgrade Option -->
                             <a href="{% url 'accounts:upgrade_to_business' %}" class="list-group-item list-group-item-action {% if active_tab == 'upgrade' %}active{% endif %} text-success">

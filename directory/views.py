@@ -341,39 +341,39 @@ def request_coupon(request, business_id):
     """Handle coupon form submissions for authenticated users"""
     business = get_object_or_404(Business, pk=business_id)
     
-    # Ensure user is authenticated
     if not request.user.is_authenticated:
         messages.error(request, "Please login to request a coupon.")
         return redirect('account_login')
     
+    # Check if coupons are enabled for this business
+    if not business.coupon_enabled:
+        messages.error(request, "Coupons are currently not available for this business.")
+        return redirect('directory:business_detail', pk=business_id)
+    
     if request.method == 'POST':
-        # Use authenticated user's email
         email = request.user.email
         
         try:
-            # Check if this user already requested a coupon
             existing_coupon = CouponRequest.objects.filter(business=business, email=email).first()
             if existing_coupon:
                 messages.info(request, f"You've already requested a coupon. Your code is: {existing_coupon.coupon_code}")
             else:
-                # Generate a unique coupon code
                 import random
                 import string
                 code_chars = string.ascii_uppercase + string.digits
                 coupon_code = ''.join(random.choice(code_chars) for _ in range(8))
                 
-                # Create coupon request
                 CouponRequest.objects.create(
                     business=business,
                     email=email,
                     coupon_code=coupon_code,
+                    discount_percentage=business.coupon_discount,
                     is_sent=True
                 )
-                messages.success(request, f"Success! Your discount code is: {coupon_code}. Check your email for details.")
+                messages.success(request, f"Success! Your {business.coupon_discount}% discount code is: {coupon_code}")
                 
         except Exception as e:
             messages.error(request, "Sorry, something went wrong. Please try again later.")
-            print(f"Error processing coupon request: {str(e)}")
         
     return redirect('directory:business_detail', pk=business_id)
 
@@ -1203,3 +1203,93 @@ def listings_ajax(request):
         'total_pages': paginator.num_pages,
         'total_count': paginator.count
     })
+
+# In directory/views.py - Add this new view
+@login_required
+def dashboard_coupons(request):
+    """Dashboard coupon requests view"""
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_business_owner:
+        messages.error(request, "You don't have permission to access this page.")
+        return redirect('directory:home')
+    
+    # Get user's businesses (only premium ones for coupon settings)
+    user_businesses = Business.objects.filter(owner=request.user)
+    premium_businesses = [b for b in user_businesses if b.has_premium_features]
+    
+    coupon_requests = CouponRequest.objects.filter(business__owner=request.user).order_by('-created_at')
+    
+    # Statistics
+    total_coupons = coupon_requests.count()
+    pending_coupons = coupon_requests.filter(is_fulfilled=False).count()
+    fulfilled_coupons = coupon_requests.filter(is_fulfilled=True).count()
+    
+    context = {
+        'active_tab': 'coupons',
+        'user_businesses': premium_businesses,  # Add this
+        'coupon_requests': coupon_requests,
+        'total_coupons': total_coupons,
+        'pending_coupons': pending_coupons,
+        'fulfilled_coupons': fulfilled_coupons,
+    }
+    
+    return render(request, 'directory/dashboard/coupons.html', context)
+
+@login_required
+def mark_coupon_fulfilled(request):
+    """Mark a coupon as fulfilled/used"""
+    if request.method == 'POST':
+        coupon_id = request.POST.get('coupon_id')
+        coupon = get_object_or_404(CouponRequest, id=coupon_id, business__owner=request.user)
+        
+        coupon.is_fulfilled = True
+        coupon.fulfilled_at = timezone.now()
+        coupon.save()
+        
+        messages.success(request, f"Coupon {coupon.coupon_code} marked as fulfilled.")
+    
+    return redirect('directory:dashboard_coupons')
+
+@login_required
+def update_coupon_discount(request):
+    """Update coupon discount percentage"""
+    if request.method == 'POST':
+        coupon_id = request.POST.get('coupon_id')
+        discount = request.POST.get('discount_percentage', 20)
+        
+        try:
+            discount = int(discount)
+            if discount < 1 or discount > 90:
+                messages.error(request, "Discount percentage must be between 1-90%")
+                return redirect('directory:dashboard_coupons')
+        except ValueError:
+            messages.error(request, "Invalid discount percentage")
+            return redirect('directory:dashboard_coupons')
+        
+        coupon = get_object_or_404(CouponRequest, id=coupon_id, business__owner=request.user)
+        coupon.discount_percentage = discount
+        coupon.save()
+        
+        messages.success(request, f"Discount updated to {discount}% for coupon {coupon.coupon_code}")
+    
+    return redirect('directory:dashboard_coupons')
+
+# In directory/views.py
+@login_required
+def update_business_coupon_settings(request):
+    """Update coupon settings for a specific business"""
+    if request.method == 'POST':
+        business_id = request.POST.get('business_id')
+        discount = request.POST.get('discount_percentage', 20)
+        enabled = request.POST.get('coupon_enabled') == 'on'
+        
+        try:
+            business = get_object_or_404(Business, id=business_id, owner=request.user)
+            business.coupon_discount = int(discount)
+            business.coupon_enabled = enabled
+            business.save()
+            
+            messages.success(request, f"Coupon settings updated for {business.name}")
+        except Exception as e:
+            messages.error(request, "Error updating coupon settings")
+    
+    return redirect('directory:dashboard_coupons')

@@ -61,4 +61,10 @@ urlpatterns = [
     path('refund-policy/', views.refund_policy, name='refund_policy'),  # Add this line
     path('contact/', views.contact, name='contact'),  # Add this line
 
+    # Coupons URLs
+    path('dashboard/coupons/', views.dashboard_coupons, name='dashboard_coupons'),
+    path('dashboard/coupons/mark-fulfilled/', views.mark_coupon_fulfilled, name='mark_coupon_fulfilled'),
+    path('dashboard/coupons/update-discount/', views.update_coupon_discount, name='update_coupon_discount'),
+    path('dashboard/coupons/update-business-settings/', views.update_business_coupon_settings, name='update_business_coupon_settings'),
+
 ]

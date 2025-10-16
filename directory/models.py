@@ -41,7 +41,7 @@ class Business(models.Model):
     # Location Info
     address = models.TextField()
     pincode = models.CharField(max_length=6)
-    city = models.CharField(max_length=100)
+    city = models.CharField(max_length=100, blank=True, default='')  # Keep this field
     state = models.CharField(max_length=100, blank=True, default='')
     
     # Google Maps location fields
@@ -97,6 +97,11 @@ class Business(models.Model):
         related_name='businesses'
     )
     
+    # Coupon settings
+    coupon_enabled = models.BooleanField(default=True, help_text="Enable coupon requests for this business")
+    coupon_discount = models.IntegerField(default=20, help_text="Discount percentage for coupons (5-50%)", 
+                                        validators=[MinValueValidator(5), MaxValueValidator(50)])
+
     class Meta:
         verbose_name_plural = "Businesses"
         
@@ -219,11 +224,18 @@ class CouponRequest(models.Model):
     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='coupon_requests')
     email = models.EmailField()
     coupon_code = models.CharField(max_length=20, blank=True, null=True)
-    is_sent = models.BooleanField(default=False)
+    discount_percentage = models.IntegerField(default=20, help_text="Discount percentage (e.g., 20 for 20%)")
+    is_sent = models.BooleanField(default=False, help_text="Email sent to customer")
+    is_fulfilled = models.BooleanField(default=False, help_text="Coupon used by customer")
+    fulfilled_at = models.DateTimeField(null=True, blank=True, help_text="When the coupon was used")
+    notes = models.TextField(blank=True, help_text="Internal notes about this coupon")
     created_at = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        ordering = ['-created_at']
+    
     def __str__(self):
-        return f"Coupon request from {self.email} for {self.business.name}"
+        return f"Coupon {self.coupon_code} for {self.business.name} - {self.email}"
 
 # Add these new models at the end
 

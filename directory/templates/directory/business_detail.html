@@ -1233,15 +1233,16 @@
     </div>
     {% endif %}
 
-    <!-- Special Offer Banner (only for authenticated users) -->
-    {% if business.has_premium_features and user.is_authenticated %}
+    <!-- Special Offer Banner (only for authenticated users AND if coupons are enabled) -->
+    {% if business.has_premium_features and user.is_authenticated and business.coupon_enabled %}
         <div class="container-fluid px-3 px-lg-4 mb-4">
             <div class="container">
                 <div class="offer-banner mb-4">
                     <div class="container">
                         <div class="row align-items-center">
                             <div class="col-lg-6 mb-3 mb-lg-0">
-                                <h3 class="mb-2">Special Deal: 20% Off First Service</h3>
+                                <!-- Dynamic coupon percentage -->
+<h3 class="mb-2">Special Deal: {{ business.coupon_discount }}% Off First Service</h3>
                                 <p class="mb-0">Get your exclusive deal code delivered to your registered email address.</p>
                             </div>
                             <div class="col-lg-6">
