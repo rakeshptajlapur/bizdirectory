@@ -658,15 +658,36 @@ function initMap() {
         // Autocomplete place selection
         autocomplete.addListener('place_changed', function() {
             const place = autocomplete.getPlace();
-            
-            console.log('Place selected:', place);
-            
-            if (!place.geometry) {
-                alert('No location details available for this search. Please try a different search term.');
-                return;
+            if (place.geometry) {
+                const lat = place.geometry.location.lat();
+                const lng = place.geometry.location.lng();
+                
+                const position = { lat: lat, lng: lng };
+                map.setCenter(position);
+                marker.setPosition(position);
+                map.setZoom(15);
+                
+                // ENHANCED: Pass formatted address to extraction function
+                const addressComponents = extractAddressComponents(
+                    place.address_components, 
+                    place.formatted_address
+                );
+                
+                addressComponents.latitude = lat;
+                addressComponents.longitude = lng;
+                
+                updateLocationFields({
+                    latitude: lat,
+                    longitude: lng,
+                    place_id: place.place_id,
+                    location_name: place.name || place.formatted_address,
+                    formatted_address: place.formatted_address,
+                    ...addressComponents
+                });
+                
+                // Update search input
+                document.getElementById('location_search').value = place.formatted_address;
             }
-            
-            updateLocationFromPlace(place);
         });
         
         // Map event listeners
@@ -740,7 +761,12 @@ function reverseGeocode(lat, lng) {
     }, function(results, status) {
         if (status === 'OK' && results[0]) {
             const place = results[0];
-            const addressComponents = extractAddressComponents(place.address_components);
+            
+            // ENHANCED: Pass formatted address to extraction
+            const addressComponents = extractAddressComponents(
+                place.address_components,
+                place.formatted_address
+            );
             
             updateLocationFields({
                 latitude: lat,
@@ -757,46 +783,89 @@ function reverseGeocode(lat, lng) {
     });
 }
 
-// Extract useful address components - SIMPLIFIED (no district)
-function extractAddressComponents(components) {
+// Enhanced address extraction with formatted address parsing
+function extractAddressComponents(components, formatted_address) {
     const result = {
         city: '',
         state: '',
         pincode: '',
         country: ''
-        // REMOVED: district: '',
     };
     
-    components.forEach(component => {
-        const types = component.types;
-        const longName = component.long_name;
-        
-        // City - multiple fallbacks
-        if (types.includes('locality')) {
-            result.city = longName;
-        } else if (types.includes('sublocality_level_1') && !result.city) {
-            result.city = longName;
-        } else if (types.includes('administrative_area_level_3') && !result.city) {
-            result.city = longName;
-        }
-        
-        // State - reliable
-        if (types.includes('administrative_area_level_1')) {
-            result.state = longName;
-        }
-        
-        // Pincode - reliable
-        if (types.includes('postal_code')) {
-            result.pincode = longName;
-        }
-        
-        // Country - reliable
-        if (types.includes('country')) {
-            result.country = longName;
-        }
-    });
+    console.log('🔍 Processing formatted address:', formatted_address);
     
-    console.log('🎯 Extracted components:', result);
+    // PRIMARY METHOD: Parse city/district from formatted address
+    if (formatted_address) {
+        const addressParts = formatted_address.split(',').map(part => part.trim());
+        console.log('📝 Address parts:', addressParts);
+        
+        // Find the part with State and Pincode pattern
+        let statePincodeIndex = -1;
+        for (let i = addressParts.length - 1; i >= 0; i--) {
+            // Match patterns like "Karnataka 585401", "Telangana 501106", or just "585401"
+            if (/[A-Za-z]+\s+\d{6}/.test(addressParts[i]) || /^\d{6}$/.test(addressParts[i])) {
+                statePincodeIndex = i;
+                break;
+            }
+        }
+        
+        // The part BEFORE State-Pincode is the City/District
+        if (statePincodeIndex > 0) {
+            result.city = addressParts[statePincodeIndex - 1];
+            console.log('✅ City/District parsed from address:', result.city);
+        }
+        
+        // If no city found from parsing, try second-to-last part (common pattern)
+        if (!result.city && addressParts.length >= 3) {
+            result.city = addressParts[addressParts.length - 3];
+            console.log('🔄 Fallback city from address:', result.city);
+        }
+    }
+    
+    // FALLBACK METHOD: Use API components if parsing fails
+    if (!result.city && components) {
+        components.forEach(component => {
+            const types = component.types;
+            const longName = component.long_name;
+            
+            // City fallback hierarchy
+            if (types.includes('locality') && !result.city) {
+                result.city = longName;
+                console.log('🔄 City from locality:', result.city);
+            } else if (types.includes('sublocality_level_1') && !result.city) {
+                result.city = longName;
+                console.log('🔄 City from sublocality:', result.city);
+            } else if (types.includes('administrative_area_level_3') && !result.city) {
+                result.city = longName;
+                console.log('🔄 City from admin level 3:', result.city);
+            }
+        });
+    }
+    
+    // Extract other components from API (these are reliable)
+    if (components) {
+        components.forEach(component => {
+            const types = component.types;
+            const longName = component.long_name;
+            
+            // State - reliable from API
+            if (types.includes('administrative_area_level_1')) {
+                result.state = longName;
+            }
+            
+            // Pincode - reliable from API
+            if (types.includes('postal_code')) {
+                result.pincode = longName;
+            }
+            
+            // Country - reliable from API
+            if (types.includes('country')) {
+                result.country = longName;
+            }
+        });
+    }
+    
+    console.log('🎯 Final extracted data:', result);
     return result;
 }
 
