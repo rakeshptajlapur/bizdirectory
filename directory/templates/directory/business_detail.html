@@ -238,12 +238,10 @@
 }
     /* Fix for mobile header padding and scroll behavior */
 @media (max-width: 767.98px) {
-    
     /* Add padding to prevent logo and menu button touching edges */
     .navbar .container {
-        padding-left: 0px !important;
+        padding-left: 15px !important;
         padding-right: 15px !important;
-        
     }
     
     /* Ensure header stays fully visible when scrolling */
@@ -254,10 +252,10 @@
         z-index: 1050;
     }
     
-    /* Add proper body padding to prevent content from hiding under navbar */
-    body {
+    /* REMOVE THIS - was causing gap */
+    /* body {
         padding-top: 60px;
-    }
+    } */
     
     /* Fix z-index stacking for dropdown menus */
     .navbar-collapse {

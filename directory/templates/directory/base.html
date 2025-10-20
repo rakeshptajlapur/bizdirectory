@@ -983,6 +983,91 @@
         --bs-gutter-y: 2rem;
     }
 }
+
+/* Mobile Header Height Reduction - 40% less */
+@media (max-width: 767.98px) {
+    .navbar {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+        min-height: 50px !important; /* Reduced height */
+    }
+    
+    .navbar-brand {
+        font-size: 1.25rem !important;
+        padding: 0.25rem 0 !important;
+    }
+    
+    .navbar-brand i {
+        font-size: 1.1rem !important;
+    }
+    
+    .mobile-nav-toggle {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 1rem !important;
+        border-radius: 10px !important;
+    }
+    
+    /* REMOVE ALL BODY PADDING - this was causing the gap */
+    body {
+        padding-top: 0 !important;
+    }
+    
+    /* Adjust container padding inside navbar */
+    .navbar .container {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    
+    /* Update all sticky positioning offsets for smaller header */
+    .business-tabs-container {
+        top: 50px !important; /* Match new header height */
+    }
+    
+    /* Dashboard mobile offset */
+    .mobile-dashboard-btn {
+        bottom: 20px !important;
+    }
+    
+    /* Mobile filter button offset */
+    .mobile-filter-btn {
+        bottom: 20px !important;
+    }
+    
+    /* Footer mobile spacing */
+    .modern-footer {
+        padding-bottom: 80px !important;
+    }
+}
+
+/* Ultra-compact header for very small screens */
+@media (max-width: 575.98px) {
+    .navbar {
+        padding-top: 0.4rem !important;
+        padding-bottom: 0.4rem !important;
+        min-height: 45px !important;
+    }
+    
+    .navbar-brand {
+        font-size: 1.1rem !important;
+    }
+    
+    .mobile-nav-toggle {
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* NO BODY PADDING for very small screens either */
+    body {
+        padding-top: 0 !important;
+    }
+    
+    /* Update sticky offsets for very small screens */
+    .business-tabs-container {
+        top: 45px !important;
+    }
+}
         /* Your existing styles continue below - DON'T CHANGE ANYTHING ELSE */
     </style>
     {% block extra_css %}
