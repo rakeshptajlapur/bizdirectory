@@ -406,6 +406,118 @@
             padding: 0.5rem 1rem;
         }
     }
+
+    /* Mobile Dashboard Bottom Navigation */
+    .mobile-dashboard-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid #e9ecef;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        padding: 0.5rem 0.75rem;
+        z-index: 1030;
+        display: none; /* Show only on mobile */
+    }
+
+    .mobile-dashboard-nav-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+        max-width: 100%;
+    }
+
+    .mobile-nav-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 0.25rem;
+        border: none;
+        background: transparent;
+        color: #6c757d;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 0.7rem;
+        font-weight: 500;
+        min-height: 60px;
+        position: relative;
+    }
+
+    .mobile-nav-btn i {
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+        transition: all 0.3s ease;
+    }
+
+    .mobile-nav-btn span {
+        font-size: 0.65rem;
+        line-height: 1.1;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    .mobile-nav-btn:hover,
+    .mobile-nav-btn.active {
+        color: #0d6efd;
+        background: rgba(13, 110, 253, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .mobile-nav-btn:hover i,
+    .mobile-nav-btn.active i {
+        color: #0d6efd;
+        transform: scale(1.1);
+    }
+
+    /* Badge for notifications */
+    .mobile-nav-btn .badge {
+        position: absolute;
+        top: 0.25rem;
+        right: 0.25rem;
+        font-size: 0.6rem;
+        padding: 0.15rem 0.3rem;
+        border-radius: 10px;
+    }
+
+    /* Show bottom nav only on mobile */
+    @media (max-width: 991.98px) {
+        .mobile-dashboard-nav {
+            display: block;
+        }
+        
+        /* Add bottom padding to content to prevent overlap */
+        .dashboard-content {
+            padding-bottom: 80px;
+        }
+    }
+
+    /* Responsive adjustments for very small screens */
+    @media (max-width: 575.98px) {
+        .mobile-nav-btn {
+            padding: 0.4rem 0.2rem;
+            min-height: 55px;
+        }
+        
+        .mobile-nav-btn i {
+            font-size: 1rem;
+        }
+        
+        .mobile-nav-btn span {
+            font-size: 0.6rem;
+        }
+    }
+
+    /* Keep the sidebar overlay functionality but hide the button */
+    .mobile-dashboard-btn {
+        display: none !important;
+    }
 </style>
 {% endblock %}
 
@@ -538,29 +650,24 @@
 
 <!-- Mobile Dashboard Sidebar (only visible on mobile) -->
 <div class="d-lg-none">
-    <!-- Mobile Dashboard Button -->
-    <button class="mobile-dashboard-btn" id="mobileDashboardBtn">
-        <i class="bi bi-speedometer2 me-2"></i>Dashboard Menu
-    </button>
-
-    <!-- Mobile Dashboard Overlay -->
+    <!-- Mobile Dashboard Overlay (keep for menu access) -->
     <div class="mobile-dashboard-overlay" id="mobileDashboardOverlay"></div>
 
-    <!-- Mobile Dashboard Container -->
+    <!-- Mobile Dashboard Container (keep for full menu access) -->
     <div class="mobile-dashboard-container" id="mobileDashboardContainer">
         <div class="mobile-dashboard-header">
             <button class="mobile-dashboard-close" id="closeMobileDashboard">
                 <i class="bi bi-x"></i>
             </button>
-            <h6 class="mb-1">Business Dashboard</h6>
+            <h6 class="mb-1">Dashboard Menu</h6>
             <small class="opacity-75">{{ user.get_full_name|default:user.username }}</small>
         </div>
         
-        <!-- Sidebar Content (duplicate for mobile) -->
+        <!-- Full Sidebar Content (duplicate for mobile) -->
         <div class="dashboard-sidebar">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Business Dashboard</h5>
+                    <h5 class="mb-0">All Dashboard Options</h5>
                 </div>
                 <div class="list-group list-group-flush">
                     <!-- Dashboard Home for all users -->
@@ -577,7 +684,7 @@
                     </a>
                     
                     {% if user.profile.is_business_owner %}
-                        <!-- Business Owner Only Features -->
+                        <!-- Business Owner Features -->
                         <a href="{% url 'directory:dashboard_listings' %}" class="list-group-item list-group-item-action {% if active_tab == 'listings' %}active{% endif %}">
                             <i class="bi bi-building me-2"></i> My Listings
                         </a>
@@ -595,64 +702,18 @@
                         </a>
                         <a href="{% url 'directory:kyc_gst_documents' %}" class="list-group-item list-group-item-action">
                             <i class="bi bi-shield-check me-2"></i> KYC & GST
-                            {% if business and business.kyc_status == 'pending' %}
-                                <span class="badge bg-warning ms-auto">Under Review</span>
-                            {% elif business and business.kyc_status == 'completed' and business.gst_verified %}
-                                <span class="badge bg-success ms-auto">Verified</span>
-                            {% endif %}
                         </a>
                         <a href="{% url 'directory:subscription_dashboard' %}" class="list-group-item list-group-item-action {% if active_tab == 'subscription' %}active{% endif %}">
                             <i class="bi bi-credit-card me-2"></i> Subscription
                         </a>
-                        <a href="{% url 'directory:dashboard_coupons' %}" class="list-group-item list-group-item-action {% if active_tab == 'coupons' %}active{% endif %}">
-                            <i class="bi bi-ticket me-2"></i> Coupon Requests
-                            {% if pending_coupons_count > 0 %}
-                                <span class="badge bg-warning ms-auto">{{ pending_coupons_count }}</span>
-                            {% endif %}
-                        </a>
-                    {% else %}
-                        <!-- Regular User - Show Upgrade Option -->
-                        <a href="{% url 'accounts:upgrade_to_business' %}" class="list-group-item list-group-item-action {% if active_tab == 'upgrade' %}active{% endif %} text-success">
-                            <i class="bi bi-arrow-up-circle me-2"></i> Upgrade to Business
-                        </a>
                     {% endif %}
 
-                    <!-- Affiliate Program for ALL users -->
-                    <a class="list-group-item list-group-item-action {% if 'affiliate' in active_tab %}active{% endif %}" 
-                       data-bs-toggle="collapse" href="#mobileAffiliateSubmenu" role="button" 
-                       aria-expanded="{% if 'affiliate' in active_tab %}true{% else %}false{% endif %}" 
-                       aria-controls="mobileAffiliateSubmenu">
+                    <!-- Affiliate Program -->
+                    <a href="{% url 'affiliate:dashboard' %}" class="list-group-item list-group-item-action {% if active_tab == 'affiliate_dashboard' %}active{% endif %}">
                         <i class="bi bi-people me-2"></i> Affiliate Program
                     </a>
-
-                    <div class="collapse {% if 'affiliate' in active_tab %}show{% endif %}" id="mobileAffiliateSubmenu">
-                        <div class="list-group border-0 rounded-0 ms-3">
-                            <a href="{% url 'affiliate:dashboard' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_dashboard' %}active{% endif %}">
-                                <i class="bi bi-bar-chart me-2"></i> Dashboard
-                            </a>
-                            
-                            {% if user.affiliate_profile and user.affiliate_profile.status == 'approved' %}
-                                <a href="{% url 'affiliate:referrals' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_referrals' %}active{% endif %}">
-                                    <i class="bi bi-list-check me-2"></i> My Referrals
-                                </a>
-                                <a href="{% url 'affiliate:bank_details' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_bank' %}active{% endif %}">
-                                    <i class="bi bi-bank me-2"></i> Bank Details
-                                </a>
-                                <a href="{% url 'affiliate:kyc' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_kyc' %}active{% endif %}">
-                                    <i class="bi bi-file-text me-2"></i> KYC Documents
-                                </a>
-                                <a href="{% url 'affiliate:payments' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_payments' %}active{% endif %}">
-                                    <i class="bi bi-cash-coin me-2"></i> Payment History
-                                </a>
-                            {% else %}
-                                <a href="{% url 'affiliate:apply' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_apply' %}active{% endif %} text-primary">
-                                    <i class="bi bi-person-plus me-2"></i> Become an Affiliate
-                                </a>
-                            {% endif %}
-                        </div>
-                    </div>
                     
-                    <!-- Logout for all users -->
+                    <!-- Logout -->
                     <form method="post" action="{% url 'account_logout' %}" style="display: inline;">
                         {% csrf_token %}
                         <button type="submit" class="list-group-item list-group-item-action text-danger border-0 bg-transparent w-100 text-start" style="cursor: pointer;">
@@ -663,7 +724,58 @@
             </div>
         </div>
     </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="mobile-dashboard-nav">
+        <div class="mobile-dashboard-nav-grid">
+            <!-- Dashboard Menu -->
+            <a href="#" class="mobile-nav-btn" id="openMobileDashboard">
+                <i class="bi bi-grid-3x3-gap"></i>
+                <span>Menu</span>
+            </a>
+
+            <!-- My Listings -->
+            {% if user.profile.is_business_owner %}
+                <a href="{% url 'directory:dashboard_listings' %}" class="mobile-nav-btn {% if active_tab == 'listings' %}active{% endif %}">
+                    <i class="bi bi-building"></i>
+                    <span>My Listings</span>
+                </a>
+            {% else %}
+                <a href="{% url 'accounts:upgrade_to_business' %}" class="mobile-nav-btn">
+                    <i class="bi bi-arrow-up-circle"></i>
+                    <span>Upgrade</span>
+                </a>
+            {% endif %}
+
+            <!-- Manage Leads -->
+            {% if user.profile.is_business_owner %}
+                <a href="{% url 'directory:dashboard_leads' %}" class="mobile-nav-btn {% if active_tab == 'leads' %}active{% endif %}">
+                    <i class="bi bi-people"></i>
+                    <span>Leads</span>
+                    {% if unread_enquiries_count > 0 or pending_reviews_count > 0 %}
+                        <span class="badge bg-danger">{{ unread_enquiries_count|add:pending_reviews_count }}</span>
+                    {% endif %}
+                </a>
+            {% else %}
+                <a href="{% url 'directory:dashboard_home' %}" class="mobile-nav-btn {% if active_tab == 'home' %}active{% endif %}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            {% endif %}
+
+            <!-- Refer & Earn -->
+            <a href="{% url 'affiliate:dashboard' %}" class="mobile-nav-btn {% if 'affiliate' in active_tab %}active{% endif %}">
+                <i class="bi bi-currency-rupee"></i>
+                <span>Refer & Earn</span>
+                {% if user.affiliate_profile and user.affiliate_profile.status == 'approved' %}
+                    <span class="badge bg-success">Active</span>
+                {% endif %}
+            </a>
+        </div>
+    </nav>
 </div>
+
+
 
 <script>
 // Desktop smooth scrolling for sidebar links
@@ -682,16 +794,17 @@ document.querySelectorAll('.dashboard-sidebar a[href^="#"]').forEach(anchor => {
 
 // Mobile Dashboard Sidebar Functionality
 document.addEventListener('DOMContentLoaded', function() {
-    const mobileDashboardBtn = document.getElementById('mobileDashboardBtn');
+    const openMobileDashboard = document.getElementById('openMobileDashboard');
     const mobileDashboardOverlay = document.getElementById('mobileDashboardOverlay');
     const mobileDashboardContainer = document.getElementById('mobileDashboardContainer');
     const closeMobileDashboard = document.getElementById('closeMobileDashboard');
 
     // Check if elements exist before adding listeners
-    if (mobileDashboardBtn && mobileDashboardOverlay && mobileDashboardContainer && closeMobileDashboard) {
+    if (openMobileDashboard && mobileDashboardOverlay && mobileDashboardContainer && closeMobileDashboard) {
         
-        // Open mobile dashboard
-        mobileDashboardBtn.addEventListener('click', function() {
+        // Open mobile dashboard via bottom nav menu button
+        openMobileDashboard.addEventListener('click', function(e) {
+            e.preventDefault();
             mobileDashboardOverlay.style.display = 'block';
             setTimeout(() => {
                 mobileDashboardContainer.classList.add('show');
@@ -733,6 +846,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Add active state to current page button
+    const currentPath = window.location.pathname;
+    const navButtons = document.querySelectorAll('.mobile-nav-btn');
+    
+    navButtons.forEach(button => {
+        const href = button.getAttribute('href');
+        if (href && currentPath.includes(href.split('/').pop())) {
+            button.classList.add('active');
+        }
+    });
 });
 </script>
 
