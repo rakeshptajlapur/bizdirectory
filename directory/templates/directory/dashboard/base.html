@@ -307,33 +307,6 @@
 {% endblock %}
 
 {% block content %}
-<!-- Mobile Warning Modal -->
-<div class="mobile-warning-modal d-lg-none" id="mobileWarningModal">
-    <div class="mobile-warning-content">
-        <div class="mobile-warning-icon">
-            <i class="bi bi-laptop"></i>
-        </div>
-        <h4 class="mb-3">Better Experience on Desktop</h4>
-        <p class="text-muted mb-4">
-            Dashboard contains important metrics and complex workflows that are optimized for laptops and PC view for the best user experience.
-        </p>
-        <div class="d-grid gap-2">
-            <button class="btn btn-primary" onclick="dismissMobileWarning()">
-                Continue Anyway
-            </button>
-            <button class="btn btn-outline-secondary" onclick="goToHomepage()">
-                Back to Homepage
-            </button>
-        </div>
-        <div class="form-check mt-3">
-            <input class="form-check-input" type="checkbox" id="dontShowAgain">
-            <label class="form-check-label small text-muted" for="dontShowAgain">
-                Don't show this again
-            </label>
-        </div>
-    </div>
-</div>
-
 <div class="container-fluid py-4 dashboard-container">
     <div class="row g-4">
         <!-- Sticky Sidebar -->
@@ -459,50 +432,7 @@
         </div>
     </div>
 </div>
-
 <script>
-// Mobile Warning Modal Logic
-document.addEventListener('DOMContentLoaded', function() {
-    // Check if we should show the mobile warning
-    const shouldShowWarning = !localStorage.getItem('dashboardMobileWarningDismissed');
-    const isMobile = window.innerWidth < 992;
-    
-    if (isMobile && shouldShowWarning) {
-        document.getElementById('mobileWarningModal').style.display = 'flex';
-        // Prevent body scroll when modal is open
-        document.body.style.overflow = 'hidden';
-    }
-});
-
-function dismissMobileWarning() {
-    const dontShowAgain = document.getElementById('dontShowAgain').checked;
-    
-    if (dontShowAgain) {
-        localStorage.setItem('dashboardMobileWarningDismissed', 'true');
-    }
-    
-    document.getElementById('mobileWarningModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
-
-function goToHomepage() {
-    window.location.href = "{% url 'directory:home' %}";
-}
-
-// Show warning again if screen size changes from desktop to mobile
-window.addEventListener('resize', function() {
-    const isMobile = window.innerWidth < 992;
-    const shouldShowWarning = !localStorage.getItem('dashboardMobileWarningDismissed');
-    
-    if (isMobile && shouldShowWarning) {
-        const modal = document.getElementById('mobileWarningModal');
-        if (modal.style.display === 'none') {
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-    }
-});
-
 // Smooth scrolling for sidebar links
 document.querySelectorAll('.dashboard-sidebar a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -517,4 +447,5 @@ document.querySelectorAll('.dashboard-sidebar a[href^="#"]').forEach(anchor => {
     });
 });
 </script>
+
 {% endblock %}
