@@ -175,36 +175,139 @@
             max-height: none;
             margin-bottom: 2rem;
             z-index: auto;
+            display: none; /* Hide by default on mobile */
         }
         
-        .dashboard-container {
-            min-height: auto;
+        /* Mobile Dashboard Sidebar Overlay */
+        .mobile-dashboard-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+            display: none;
         }
         
-        .dashboard-content {
-            min-height: auto;
+        .mobile-dashboard-container {
+            position: fixed;
+            left: -100%;
+            top: 0;
+            width: 85%;
+            max-width: 350px;
+            height: 100%;
+            background: white;
+            z-index: 1050;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
         }
         
-        /* Make tables more mobile-friendly */
-        .table-responsive {
+        .mobile-dashboard-container.show {
+            left: 0;
+        }
+        
+        .mobile-dashboard-header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+            color: white;
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            z-index: 10;
+        }
+        
+        .mobile-dashboard-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-dashboard-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        /* Mobile sticky dashboard button */
+        .mobile-dashboard-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1030;
+            border-radius: 50px;
+            padding: 0.75rem 1.25rem;
             font-size: 0.875rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
         }
         
-        /* Compact cards on mobile */
-        .card-body {
-            padding: 1rem 0.75rem;
+        .mobile-dashboard-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+            color: white;
         }
         
-        /* Smaller buttons on mobile */
-        .btn-sm {
-            padding: 0.375rem 0.5rem;
-            font-size: 0.75rem;
+        .mobile-dashboard-btn:active {
+            transform: translateY(0);
         }
         
-        /* Stack dashboard stats vertically */
-        .dashboard-stats .col-md-3,
-        .dashboard-stats .col-md-4 {
-            margin-bottom: 1rem;
+        /* Ensure dashboard sidebar content shows properly in mobile overlay */
+        .mobile-dashboard-container .dashboard-sidebar {
+            display: block !important;
+            position: relative;
+            top: auto;
+            max-height: none;
+            margin-bottom: 0;
+            background: transparent;
+        }
+        
+        .mobile-dashboard-container .card {
+            border: none;
+            box-shadow: none;
+        }
+        
+        .mobile-dashboard-container .card-header {
+            display: none; /* Hide duplicate header */
+        }
+        
+        /* Better mobile list group styling */
+        .mobile-dashboard-container .list-group-item {
+            border-left: none;
+            border-right: none;
+            border-radius: 0;
+            padding: 1rem 1.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .mobile-dashboard-container .list-group-item:hover {
+            border-left: none;
+        }
+        
+        .mobile-dashboard-container .list-group-item.active {
+            border-left: none;
+        }
+        
+        /* Mobile affiliate submenu styling */
+        .mobile-dashboard-container #affiliateSubmenu .list-group-item {
+            padding-left: 2.5rem;
+            font-size: 0.9rem;
+            background-color: rgba(0, 123, 255, 0.05);
         }
     }
 
@@ -432,8 +535,138 @@
         </div>
     </div>
 </div>
+
+<!-- Mobile Dashboard Sidebar (only visible on mobile) -->
+<div class="d-lg-none">
+    <!-- Mobile Dashboard Button -->
+    <button class="mobile-dashboard-btn" id="mobileDashboardBtn">
+        <i class="bi bi-speedometer2 me-2"></i>Dashboard Menu
+    </button>
+
+    <!-- Mobile Dashboard Overlay -->
+    <div class="mobile-dashboard-overlay" id="mobileDashboardOverlay"></div>
+
+    <!-- Mobile Dashboard Container -->
+    <div class="mobile-dashboard-container" id="mobileDashboardContainer">
+        <div class="mobile-dashboard-header">
+            <button class="mobile-dashboard-close" id="closeMobileDashboard">
+                <i class="bi bi-x"></i>
+            </button>
+            <h6 class="mb-1">Business Dashboard</h6>
+            <small class="opacity-75">{{ user.get_full_name|default:user.username }}</small>
+        </div>
+        
+        <!-- Sidebar Content (duplicate for mobile) -->
+        <div class="dashboard-sidebar">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Business Dashboard</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <!-- Dashboard Home for all users -->
+                    <a href="{% url 'directory:dashboard_home' %}" class="list-group-item list-group-item-action {% if active_tab == 'home' %}active{% endif %}">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard Home
+                    </a>
+                    
+                    <!-- Profile and Security for ALL users -->
+                    <a href="{% url 'accounts:profile' %}" class="list-group-item list-group-item-action {% if active_tab == 'profile' %}active{% endif %}">
+                        <i class="bi bi-person me-2"></i> Profile Settings
+                    </a>
+                    <a href="{% url 'account_change_password' %}" class="list-group-item list-group-item-action {% if active_tab == 'security' %}active{% endif %}">
+                        <i class="bi bi-shield-lock me-2"></i> Security
+                    </a>
+                    
+                    {% if user.profile.is_business_owner %}
+                        <!-- Business Owner Only Features -->
+                        <a href="{% url 'directory:dashboard_listings' %}" class="list-group-item list-group-item-action {% if active_tab == 'listings' %}active{% endif %}">
+                            <i class="bi bi-building me-2"></i> My Listings
+                        </a>
+                        <a href="{% url 'directory:add_business' %}" class="list-group-item list-group-item-action {% if active_tab == 'add_business' %}active{% endif %}">
+                            <i class="bi bi-plus-circle me-2"></i> Add Listing
+                        </a>
+                        <a href="{% url 'directory:dashboard_reviews' %}" class="list-group-item list-group-item-action {% if active_tab == 'reviews' %}active{% endif %}">
+                            <i class="bi bi-star me-2"></i> Reviews
+                        </a>
+                        <a href="{% url 'directory:dashboard_enquiries' %}" class="list-group-item list-group-item-action {% if active_tab == 'enquiries' %}active{% endif %}">
+                            <i class="bi bi-envelope me-2"></i> Enquiries
+                        </a>
+                        <a href="{% url 'directory:dashboard_leads' %}" class="list-group-item list-group-item-action {% if active_tab == 'leads' %}active{% endif %}">
+                            <i class="bi bi-people me-2"></i> My Leads
+                        </a>
+                        <a href="{% url 'directory:kyc_gst_documents' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-shield-check me-2"></i> KYC & GST
+                            {% if business and business.kyc_status == 'pending' %}
+                                <span class="badge bg-warning ms-auto">Under Review</span>
+                            {% elif business and business.kyc_status == 'completed' and business.gst_verified %}
+                                <span class="badge bg-success ms-auto">Verified</span>
+                            {% endif %}
+                        </a>
+                        <a href="{% url 'directory:subscription_dashboard' %}" class="list-group-item list-group-item-action {% if active_tab == 'subscription' %}active{% endif %}">
+                            <i class="bi bi-credit-card me-2"></i> Subscription
+                        </a>
+                        <a href="{% url 'directory:dashboard_coupons' %}" class="list-group-item list-group-item-action {% if active_tab == 'coupons' %}active{% endif %}">
+                            <i class="bi bi-ticket me-2"></i> Coupon Requests
+                            {% if pending_coupons_count > 0 %}
+                                <span class="badge bg-warning ms-auto">{{ pending_coupons_count }}</span>
+                            {% endif %}
+                        </a>
+                    {% else %}
+                        <!-- Regular User - Show Upgrade Option -->
+                        <a href="{% url 'accounts:upgrade_to_business' %}" class="list-group-item list-group-item-action {% if active_tab == 'upgrade' %}active{% endif %} text-success">
+                            <i class="bi bi-arrow-up-circle me-2"></i> Upgrade to Business
+                        </a>
+                    {% endif %}
+
+                    <!-- Affiliate Program for ALL users -->
+                    <a class="list-group-item list-group-item-action {% if 'affiliate' in active_tab %}active{% endif %}" 
+                       data-bs-toggle="collapse" href="#mobileAffiliateSubmenu" role="button" 
+                       aria-expanded="{% if 'affiliate' in active_tab %}true{% else %}false{% endif %}" 
+                       aria-controls="mobileAffiliateSubmenu">
+                        <i class="bi bi-people me-2"></i> Affiliate Program
+                    </a>
+
+                    <div class="collapse {% if 'affiliate' in active_tab %}show{% endif %}" id="mobileAffiliateSubmenu">
+                        <div class="list-group border-0 rounded-0 ms-3">
+                            <a href="{% url 'affiliate:dashboard' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_dashboard' %}active{% endif %}">
+                                <i class="bi bi-bar-chart me-2"></i> Dashboard
+                            </a>
+                            
+                            {% if user.affiliate_profile and user.affiliate_profile.status == 'approved' %}
+                                <a href="{% url 'affiliate:referrals' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_referrals' %}active{% endif %}">
+                                    <i class="bi bi-list-check me-2"></i> My Referrals
+                                </a>
+                                <a href="{% url 'affiliate:bank_details' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_bank' %}active{% endif %}">
+                                    <i class="bi bi-bank me-2"></i> Bank Details
+                                </a>
+                                <a href="{% url 'affiliate:kyc' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_kyc' %}active{% endif %}">
+                                    <i class="bi bi-file-text me-2"></i> KYC Documents
+                                </a>
+                                <a href="{% url 'affiliate:payments' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_payments' %}active{% endif %}">
+                                    <i class="bi bi-cash-coin me-2"></i> Payment History
+                                </a>
+                            {% else %}
+                                <a href="{% url 'affiliate:apply' %}" class="list-group-item list-group-item-action border-0 {% if active_tab == 'affiliate_apply' %}active{% endif %} text-primary">
+                                    <i class="bi bi-person-plus me-2"></i> Become an Affiliate
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Logout for all users -->
+                    <form method="post" action="{% url 'account_logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="list-group-item list-group-item-action text-danger border-0 bg-transparent w-100 text-start" style="cursor: pointer;">
+                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-// Smooth scrolling for sidebar links
+// Desktop smooth scrolling for sidebar links
 document.querySelectorAll('.dashboard-sidebar a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -445,6 +678,61 @@ document.querySelectorAll('.dashboard-sidebar a[href^="#"]').forEach(anchor => {
             });
         }
     });
+});
+
+// Mobile Dashboard Sidebar Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileDashboardBtn = document.getElementById('mobileDashboardBtn');
+    const mobileDashboardOverlay = document.getElementById('mobileDashboardOverlay');
+    const mobileDashboardContainer = document.getElementById('mobileDashboardContainer');
+    const closeMobileDashboard = document.getElementById('closeMobileDashboard');
+
+    // Check if elements exist before adding listeners
+    if (mobileDashboardBtn && mobileDashboardOverlay && mobileDashboardContainer && closeMobileDashboard) {
+        
+        // Open mobile dashboard
+        mobileDashboardBtn.addEventListener('click', function() {
+            mobileDashboardOverlay.style.display = 'block';
+            setTimeout(() => {
+                mobileDashboardContainer.classList.add('show');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Close mobile dashboard
+        function closeMobileDashboardSidebar() {
+            mobileDashboardContainer.classList.remove('show');
+            setTimeout(() => {
+                mobileDashboardOverlay.style.display = 'none';
+            }, 300);
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close button click
+        closeMobileDashboard.addEventListener('click', closeMobileDashboardSidebar);
+
+        // Overlay click to close
+        mobileDashboardOverlay.addEventListener('click', function(e) {
+            if (e.target === mobileDashboardOverlay) {
+                closeMobileDashboardSidebar();
+            }
+        });
+
+        // Close when clicking on navigation links (for better UX)
+        const mobileNavLinks = document.querySelectorAll('#mobileDashboardContainer .list-group-item:not([data-bs-toggle])');
+        mobileNavLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                closeMobileDashboardSidebar();
+            });
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileDashboardContainer.classList.contains('show')) {
+                closeMobileDashboardSidebar();
+            }
+        });
+    }
 });
 </script>
 
