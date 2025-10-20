@@ -171,7 +171,7 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
-        min-width: 85px;
+        min-width: 60px;
     }
     
     .responsive-tabs .nav-link i {
@@ -201,7 +201,7 @@
 @media (max-width: 575.98px) {
     .responsive-tabs .nav-link {
         padding: 0.5rem 0.4rem;
-        min-width: 75px;
+        min-width: 55px;
     }
     
     .responsive-tabs .nav-link i {
@@ -1397,7 +1397,12 @@
     }
 }
 
-
+/* Hide footer on mobile for business detail page only */
+@media (max-width: 767.98px) {
+    footer {
+        display: none !important;
+    }
+}
 /* Extra small screens */
 @media (max-width: 575.98px) {
     .responsive-tabs .nav-link {
