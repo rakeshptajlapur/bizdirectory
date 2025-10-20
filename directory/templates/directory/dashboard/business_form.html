@@ -538,22 +538,7 @@
         </div>
 
         <!-- DEBUG SECTION - Remove after testing -->
-        <div class="card border-warning mb-4" style="background: #fff3cd;">
-            <div class="card-body">
-                <h6 class="text-warning">DEBUG: Current Business Data</h6>
-                <small>
-                    <strong>DB Values:</strong><br>
-                    Latitude: {{ business.latitude|default:"None" }}<br>
-                    Longitude: {{ business.longitude|default:"None" }}<br>
-                    City: {{ business.city|default:"None" }}<br>
-                    <!-- REMOVED: District: {{ business.district|default:"None" }}<br> -->
-                    State: {{ business.state|default:"None" }}<br>
-                    Pincode: {{ business.pincode|default:"None" }}<br>
-                    Location Name: {{ business.location_name|default:"None" }}<br>
-                    Formatted Address: {{ business.formatted_address|default:"None" }}
-                </small>
-            </div>
-        </div>
+
 
         <!-- Form Actions -->
         <div class="d-flex gap-2 mb-5">
@@ -1110,56 +1095,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-// 🚨 EMERGENCY DEBUG CODE - Add this to see what's happening
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('businessForm');
-    console.log('🔍 Form element found:', form);
-    
-    if (form) {
-        // Log all form data before submission
-        form.addEventListener('submit', function(e) {
-            console.log('🚨 FORM SUBMISSION STARTED');
-            console.log('📝 Form action:', form.action);
-            console.log('📝 Form method:', form.method);
-            
-            // Log all form data
-            const formData = new FormData(form);
-            console.log('📄 Form data:');
-            for (let [key, value] of formData.entries()) {
-                console.log(`  ${key}:`, value);
-            }
-            
-            // Check required fields
-            const requiredFields = ['name', 'category', 'description', 'phone', 'email', 'registration_number'];
-            let missingFields = [];
-            
-            requiredFields.forEach(fieldName => {
-                const field = form.querySelector(`[name="${fieldName}"]`);
-                if (field && !field.value.trim()) {
-                    missingFields.push(fieldName);
-                }
-            });
-            
-            if (missingFields.length > 0) {
-                console.error('❌ Missing required fields:', missingFields);
-                e.preventDefault();
-                alert(`Missing required fields: ${missingFields.join(', ')}`);
-                return false;
-            }
-            
-            console.log('✅ All required fields filled');
-            console.log('🚀 Form submitting...');
-        });
-        
-        // Also check for any validation errors
-        const errorElements = form.querySelectorAll('.invalid-feedback');
-        if (errorElements.length > 0) {
-            console.warn('⚠️ Found validation errors on page load:', errorElements);
-        }
-    } else {
-        console.error('❌ Form element not found!');
-    }
-});
+
 
 </script>
 {% endblock %}
@@ -1240,6 +1176,213 @@ document.addEventListener('DOMContentLoaded', function() {
     margin-top: 0.25rem;
     font-size: 0.875rem;
     color: #198754;
+}
+
+/* Mobile Form Optimizations */
+@media (max-width: 767.98px) {
+    /* Reduce container padding significantly */
+    .container-fluid {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+        padding-top: 1rem !important;
+    }
+    
+    /* Reduce card padding */
+    .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    /* Reduce card margins */
+    .card.mb-4 {
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Headings */
+    h1 {
+        font-size: 1.4rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    h5 {
+        font-size: 1rem !important;
+    }
+    
+    /* Form labels and text */
+    .form-label {
+        font-size: 0.85rem !important;
+        margin-bottom: 0.2rem !important;
+        font-weight: 600;
+    }
+    
+    .form-text {
+        font-size: 0.7rem !important;
+        margin-top: 0.2rem !important;
+    }
+    
+    /* Form controls */
+    .form-control,
+    .form-select {
+        padding: 0.5rem 0.6rem !important;
+        font-size: 0.85rem !important;
+        border-radius: 6px !important;
+    }
+    
+    textarea.form-control {
+        padding: 0.5rem 0.6rem !important;
+    }
+    
+    /* Buttons */
+    .btn {
+        padding: 0.5rem 0.8rem !important;
+        font-size: 0.8rem !important;
+        border-radius: 6px !important;
+    }
+    
+    .btn-sm {
+        padding: 0.35rem 0.6rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    /* Alert boxes */
+    .alert {
+        padding: 0.6rem !important;
+        font-size: 0.8rem !important;
+        border-radius: 6px !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    /* Map container */
+    #map {
+        height: 200px !important;
+        border-radius: 6px !important;
+    }
+    
+    /* Service rows - compact mobile layout */
+    .service-row {
+        margin-bottom: 1rem !important;
+        padding: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 6px;
+    }
+    
+    .service-row .col-md-1 {
+        text-align: center;
+        margin-top: 0.5rem;
+    }
+    
+    /* File upload styling */
+    input[type="file"] {
+        padding: 0.4rem !important;
+        font-size: 0.8rem !important;
+    }
+    
+    /* Action buttons container - stack and full width */
+    .d-flex.gap-2 {
+        flex-direction: column;
+        gap: 0.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .d-flex.gap-2 .btn {
+        width: 100%;
+        padding: 0.7rem 1rem !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .d-flex.gap-2 .ms-auto {
+        margin-left: 0 !important;
+        margin-top: 0;
+    }
+    
+    /* Reduce spacing between sections */
+    .mb-3 {
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .mb-5 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Border bottom styling */
+    .border-bottom {
+        padding-bottom: 0.5rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    /* Row spacing */
+    .row.g-3 {
+        --bs-gutter-y: 0.75rem;
+        --bs-gutter-x: 0.75rem;
+    }
+}
+
+/* Very small screens - ultra compact */
+@media (max-width: 575.98px) {
+    .container-fluid {
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+        padding-top: 0.75rem !important;
+    }
+    
+    .card-body {
+        padding: 0.5rem !important;
+    }
+    
+    h1 {
+        font-size: 1.2rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .form-control,
+    .form-select {
+        padding: 0.4rem 0.5rem !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .btn {
+        padding: 0.6rem 0.8rem !important;
+        font-size: 0.85rem !important;
+    }
+    
+    #map {
+        height: 180px !important;
+    }
+    
+    .service-row {
+        padding: 0.4rem;
+    }
+    
+    /* Even more compact action buttons */
+    .d-flex.gap-2 .btn {
+        padding: 0.6rem 0.8rem !important;
+        font-size: 0.85rem !important;
+    }
+}
+
+/* Extra small screens - maximum compactness */
+@media (max-width: 375px) {
+    .container-fluid {
+        padding-left: 0.125rem !important;
+        padding-right: 0.125rem !important;
+    }
+    
+    .card-body {
+        padding: 0.4rem !important;
+    }
+    
+    h1 {
+        font-size: 1.1rem !important;
+    }
+    
+    .form-control,
+    .form-select {
+        padding: 0.35rem 0.4rem !important;
+        font-size: 0.75rem !important;
+    }
 }
 </style>
 
