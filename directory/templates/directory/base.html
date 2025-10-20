@@ -760,6 +760,226 @@
             transition: transform 0.3s ease;
         }
         
+        /* Modern Footer Styles */
+.modern-footer {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-top: 1px solid #e9ecef;
+    margin-top: auto;
+}
+
+.footer-brand .brand-name {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.footer-brand .brand-description {
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.footer-title {
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 1.25rem;
+    font-size: 1.1rem;
+    position: relative;
+}
+
+.footer-title::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+    border-radius: 1px;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+    color: #6c757d;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.footer-links a:hover {
+    color: #0d6efd;
+    transform: translateX(5px);
+}
+
+.footer-links a::before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 2px;
+    background: #0d6efd;
+    transition: width 0.3s ease;
+}
+
+.footer-links a:hover::before {
+    width: 10px;
+}
+
+/* Social Links */
+.social-links {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #f8f9fa;
+    color: #6c757d;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.social-link:hover {
+    background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(13, 110, 253, 0.3);
+}
+
+/* Support Buttons */
+.support-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.support-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.whatsapp-btn {
+    background: #25d366;
+    color: white;
+}
+
+.whatsapp-btn:hover {
+    background: #1ebe5c;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.email-btn {
+    background: #f8f9fa;
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.email-btn:hover {
+    background: #0d6efd;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+.contact-text {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+    border-top: 1px solid #e9ecef;
+    padding: 1.5rem 0;
+}
+
+.copyright {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.tagline {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin: 0;
+    font-style: italic;
+}
+
+/* Mobile Responsive */
+@media (max-width: 767.98px) {
+    .modern-footer {
+        padding-bottom: 80px; /* Account for sticky mobile CTA */
+    }
+    
+    .footer-brand .brand-name {
+        font-size: 1.3rem;
+    }
+    
+    .footer-brand .brand-description {
+        font-size: 0.9rem;
+    }
+    
+    .support-buttons {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+    
+    .support-btn {
+        flex: 1;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .footer-bottom .row > div {
+        text-align: center !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+}
+
+/* Desktop spacing optimization */
+@media (min-width: 992px) {
+    .modern-footer .row.g-4 {
+        --bs-gutter-y: 2rem;
+    }
+}
         /* Your existing styles continue below - DON'T CHANGE ANYTHING ELSE */
     </style>
     {% block extra_css %}
@@ -1019,104 +1239,100 @@
         {% block content %}{% endblock %}
     </div>
 
-    <footer class="footer-glass pt-5 pb-3 position-relative">
-    <!-- Background image with overlay -->
-    <div class="footer-bg"></div>
-    
-    <div class="container position-relative">
-        <!-- Main footer content -->
-        <div class="row gy-4">
-            <!-- BizDirectory info with expanded description -->
-            <div class="col-lg-3 col-md-6">
-                <div class="mb-4">
-                    <h5 class="fw-bold mb-3 text-dark">
+    <!-- Modern Footer -->
+<footer class="modern-footer">
+    <div class="container">
+        <!-- Main Footer Content -->
+        <div class="row g-4 py-5">
+            <!-- Company Info -->
+            <div class="col-lg-4 col-md-6">
+                <div class="footer-brand">
+                    <h4 class="brand-name">
                         <i class="bi bi-building me-2"></i>BizDirectory
-                    </h5>
-                    <p class="small text-dark">
-                        Connecting local businesses with customers in your neighborhood. 
-                        Our platform helps you discover trusted services, read verified reviews, 
-                        and make informed decisions about where to spend your money locally.
-                        Support small businesses and find exactly what you need.
+                    </h4>
+                    <p class="brand-description">
+                        Connecting local businesses with customers. Discover trusted services, read verified reviews, 
+                        and support small businesses in your community.
                     </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="bi bi-twitter-x"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <!-- Quick Links -->
-            <div class="col-lg-3 col-md-6">
-                <div class="ps-lg-4">
-                    <h5 class="fw-bold mb-3 text-dark">Quick Links</h5>
-                    <ul class="list-unstyled small">
-                        <li class="mb-2"><a href="{% url 'directory:listings' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>All Listings</a></li>
-                        <li class="mb-2"><a href="{% url 'directory:categories' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Categories</a></li>
-                        <li class="mb-2"><a href="{% url 'directory:about' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>About Us</a></li>
-                        <li class="mb-2"><a href="{% url 'directory:contact' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Contact</a></li>
-                        <li class="mb-2"><a href="{% url 'directory:privacy' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Privacy Policy</a></li>
-                        <li class="mb-2"><a href="{% url 'directory:terms' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Terms & Conditions</a></li>
-                        <li class="mb-2"><a href="{% url 'directory:refund_policy' %}" class="text-decoration-none link-dark"><i class="bi bi-chevron-right me-1 small"></i>Refund Policy</a></li>
-                    </ul>
-                </div>
+            <div class="col-lg-2 col-md-3 col-6">
+                <h5 class="footer-title">Explore</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'directory:home' %}">Home</a></li>
+                    <li><a href="{% url 'directory:listings' %}">All Listings</a></li>
+                    <li><a href="{% url 'directory:categories' %}">Categories</a></li>
+                    <li><a href="{% url 'directory:about' %}">About Us</a></li>
+                </ul>
             </div>
 
             <!-- Business Links -->
-            <div class="col-lg-3 col-md-6">
-                <div class="ps-lg-4">
-                    <h5 class="fw-bold mb-3 text-dark">For Businesses</h5>
-                    <ul class="list-unstyled small">
-                        <li class="mb-2"><a href="{% url 'directory:add_listings_info' %}" class="text-decoration-none link-dark"><i class="bi bi-plus-circle me-1"></i>Add Listing</a></li>
-                        <li class="mb-2"><a href="{% url 'directory:add_listings_info' %}#pricing" class="text-decoration-none link-dark"><i class="bi bi-currency-dollar me-1"></i>Pricing</a></li>
-                        <li class="mb-2"><a href="{% url 'directory:dashboard_home' %}" class="text-decoration-none link-dark"><i class="bi bi-speedometer2 me-1"></i>Business Dashboard</a></li>
-                        <li class="mb-2"><a href="{% url 'directory:refer_earn' %}" class="text-decoration-none link-dark"><i class="bi bi-people me-1"></i>Refer & Earn</a></li>
-                    </ul>
-                </div>
+            <div class="col-lg-2 col-md-3 col-6">
+                <h5 class="footer-title">For Business</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'directory:add_listings_info' %}">Add Listing</a></li>
+                    <li><a href="{% url 'directory:subscription_plans' %}">Pricing</a></li>
+                    {% if user.is_authenticated and user.profile.is_business_owner %}
+                        <li><a href="{% url 'directory:dashboard_home' %}">Dashboard</a></li>
+                    {% endif %}
+                    {% if 'affiliate' in INSTALLED_APPS %}
+                        <li><a href="{% url 'affiliate:apply' %}">Become Partner</a></li>
+                    {% endif %}
+                </ul>
             </div>
 
-            <!-- Contact & Support Section (replacing newsletter) -->
-            <div class="col-lg-3 col-md-6">
-                <div class="ps-md-4">
-                    <h5 class="fw-bold mb-3 text-dark">Get Support</h5>
-                    <p class="small text-dark mb-3">Need help? Contact us directly for instant support.</p>
-                    
-                    <!-- WhatsApp Button -->
-                    <div class="mb-2">
-                        <a href="https://wa.me/919741456971?text=Hi%20FindNearBiz%20team,%20I%20need%20help%20with..." 
-                           target="_blank" 
-                           class="btn btn-success btn-sm w-100">
-                            <i class="bi bi-whatsapp me-2"></i>WhatsApp Chat
-                        </a>
-                    </div>
-                    
-                    <!-- Email Button -->
-                    <div class="mb-3">
-                        <a href="mailto:support@findnearbiz.com?subject=Support%20Request&body=Hi%20FindNearBiz%20team,%0D%0A%0D%0APlease%20describe%20your%20query%20here..." 
-                           class="btn btn-primary btn-sm w-100">
-                            <i class="bi bi-envelope me-2"></i>Email Support
-                        </a>
-                    </div>
-                    
-                    <!-- Social Links -->
-                    <div class="d-flex gap-3">
-                        <a href="#" class="text-decoration-none link-dark"><i class="bi bi-facebook fs-5"></i></a>
-                        <a href="#" class="text-decoration-none link-dark"><i class="bi bi-twitter-x fs-5"></i></a>
-                        <a href="#" class="text-decoration-none link-dark"><i class="bi bi-instagram fs-5"></i></a>
-                        <a href="#" class="text-decoration-none link-dark"><i class="bi bi-linkedin fs-5"></i></a>
-                    </div>
+            <!-- Support & Legal -->
+            <div class="col-lg-2 col-md-6 col-6">
+                <h5 class="footer-title">Support</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'directory:contact' %}">Contact Us</a></li>
+                    <li><a href="{% url 'directory:privacy' %}">Privacy Policy</a></li>
+                    <li><a href="{% url 'directory:terms' %}">Terms of Service</a></li>
+                    <li><a href="{% url 'directory:refund_policy' %}">Refund Policy</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact & CTA -->
+            <div class="col-lg-2 col-md-6 col-6">
+                <h5 class="footer-title">Get Support</h5>
+                <div class="support-buttons">
+                    <a href="https://wa.me/917483508433?text=Hi%20FindNearBiz%20team,%20I%20need%20help%20with..." class="support-btn whatsapp-btn" target="_blank">
+                        <i class="bi bi-whatsapp me-2"></i>WhatsApp
+                    </a>
+                    <a href="mailto:support@bizdirectory.com" class="support-btn email-btn">
+                        <i class="bi bi-envelope me-2"></i>Email Us
+                    </a>
                 </div>
+                <p class="contact-text">
+                    <i class="bi bi-geo-alt me-1"></i>
+                    Bengaluru, Karnataka, India
+                </p>
             </div>
         </div>
 
-        <!-- Separator -->
-        <hr class="mt-4 mb-3 opacity-25">
-        
-        <!-- Copyright section -->
-        <div class="row">
-            <div class="col-md-6 small">
-                <p class="mb-md-0 text-dark">&copy; 2025 BizDirectory. All rights reserved.</p>
-            </div>
-            <div class="col-md-6 text-md-end small">
-                <a href="{% url 'directory:privacy' %}" class="text-decoration-none link-dark me-3">Privacy</a>
-                <a href="{% url 'directory:terms' %}" class="text-decoration-none link-dark me-3">Terms</a>
-                <a href="{% url 'directory:refund_policy' %}" class="text-decoration-none link-dark me-3">Refund</a>
-                <a href="{% url 'directory:contact' %}" class="text-decoration-none link-dark">Contact</a>
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <p class="copyright">&copy; 2025 Kirti Directory aka FindNearBiz.com . All rights reserved. |  <a href="https://codesiddhi.agency" class="">
+                        Developed & Maintained by Codesiddhi.Agency</a></p>
+                </div>
             </div>
         </div>
     </div>
