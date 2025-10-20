@@ -5,71 +5,329 @@
 <div class="row mb-4">
     <div class="col">
         <h1 class="h3 mb-0">My Listings</h1>
+        <p class="text-muted mb-0 d-none d-md-block">Manage your business listings</p>
     </div>
     <div class="col-auto">
-        <a href="{% url 'directory:add_business' %}" class="btn btn-primary">Add New Listing</a>
+        <a href="{% url 'directory:add_business' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1 d-none d-md-inline"></i>
+            <span class="d-none d-md-inline">Add New Listing</span>
+            <i class="bi bi-plus-lg d-md-none"></i>
+        </a>
     </div>
 </div>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body">
         {% if businesses %}
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Business Name</th>
-                            <th>Category</th>
-                            <th>Plan</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for business in businesses %}
-                        <tr>
-                            <td>
-                                <a href="{% url 'directory:business_detail' business.id %}">{{ business.name }}</a>
-                            </td>
-                            <td>{{ business.category.name }}</td>
-                            <td>
-                                <!-- Replace the current code with this -->
-                                {% if business.has_premium_features %}
-                                    <span class="badge bg-primary">Premium</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">Free</span>
-                                    <a href="{% url 'directory:subscription_plans' %}?for_business={{ business.id }}" class="btn btn-sm btn-outline-primary ms-2">Upgrade</a>
-                                {% endif %}
-                            </td>
-                            <td>
+            <!-- Desktop Table View -->
+            <div class="d-none d-lg-block">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Business Name</th>
+                                <th>Category</th>
+                                <th>Plan</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for business in businesses %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'directory:business_detail' business.id %}" class="text-decoration-none">
+                                        <strong>{{ business.name }}</strong>
+                                    </a>
+                                </td>
+                                <td>{{ business.category.name }}</td>
+                                <td>
+                                    {% if business.has_premium_features %}
+                                        <span class="badge bg-primary">Premium</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Free</span>
+                                        <a href="{% url 'directory:subscription_plans' %}?for_business={{ business.id }}" class="btn btn-sm btn-outline-primary ms-2">Upgrade</a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if business.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'directory:edit_business' business.pk %}" class="btn btn-outline-primary">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+                                        <a href="{% url 'directory:business_detail' business.pk %}" class="btn btn-outline-secondary">
+                                            <i class="bi bi-eye"></i> View
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="d-lg-none">
+                {% for business in businesses %}
+                <div class="card mb-3 listing-card">
+                    <div class="card-body">
+                        <!-- Header Row -->
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="flex-grow-1">
+                                <h6 class="card-title mb-1">
+                                    <a href="{% url 'directory:business_detail' business.id %}" class="text-decoration-none text-dark">
+                                        {{ business.name }}
+                                    </a>
+                                </h6>
+                                <p class="text-muted small mb-0">
+                                    <i class="bi bi-tag me-1"></i>{{ business.category.name }}
+                                </p>
+                            </div>
+                            <!-- Status Badge -->
+                            <div class="flex-shrink-0">
                                 {% if business.is_active %}
                                     <span class="badge bg-success">Active</span>
                                 {% else %}
                                     <span class="badge bg-warning text-dark">Inactive</span>
                                 {% endif %}
-                            </td>
-                            <td>
-                                <a href="{% url 'directory:edit_business' business.pk %}" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-pencil me-1"></i>Edit
-                                </a>
-                                <a href="{% url 'directory:business_detail' business.pk %}" class="btn btn-sm btn-outline-secondary">View</a>
-                                
-                                {# Activation/deactivation now handled by admins; owner toggle removed #}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                            </div>
+                        </div>
+
+                        <!-- Plan Info Row -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                {% if business.has_premium_features %}
+                                    <span class="badge bg-primary">
+                                        <i class="bi bi-star-fill me-1"></i>Premium Plan
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-circle me-1"></i>Free Plan
+                                    </span>
+                                {% endif %}
+                            </div>
+                            
+                            {% if not business.has_premium_features %}
+                            <a href="{% url 'directory:subscription_plans' %}?for_business={{ business.id }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-arrow-up-circle me-1"></i>Upgrade
+                            </a>
+                            {% endif %}
+                        </div>
+
+                        <!-- Action Buttons Row -->
+                        <div class="d-grid gap-2 d-md-flex">
+                            <a href="{% url 'directory:edit_business' business.pk %}" class="btn btn-outline-primary btn-sm flex-fill">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                            </a>
+                            <a href="{% url 'directory:business_detail' business.pk %}" class="btn btn-outline-secondary btn-sm flex-fill">
+                                <i class="bi bi-eye me-1"></i>View
+                            </a>
+                        </div>
+
+                        <!-- Quick Stats (if available) -->
+                        <div class="row text-center mt-3 pt-3 border-top">
+                            <div class="col-4">
+                                <div class="small text-muted">Reviews</div>
+                                <div class="fw-bold">{{ business.approved_reviews_count|default:0 }}</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Rating</div>
+                                <div class="fw-bold">
+                                    {% if business.avg_rating %}
+                                        {{ business.avg_rating|floatformat:1 }}/5
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Services</div>
+                                <div class="fw-bold">{{ business.services.count|default:0 }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
+
         {% else %}
-            <div class="text-center py-4">
-                <i class="bi bi-building text-muted fs-2"></i>
-                <p class="text-muted mt-2">You don't have any listings yet. Add your first business!</p>
-                <a href="{% url 'directory:add_business' %}" class="btn btn-primary mt-2">
-                    <i class="bi bi-plus-circle me-1"></i>Add New Listing
+            <!-- Empty State -->
+            <div class="text-center py-5">
+                <i class="bi bi-building text-muted" style="font-size: 3rem;"></i>
+                <h5 class="mt-3 mb-2">No listings yet</h5>
+                <p class="text-muted mb-4">Create your first business listing to get started</p>
+                <a href="{% url 'directory:add_business' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>Add Your First Listing
                 </a>
             </div>
         {% endif %}
     </div>
 </div>
+
+<!-- Mobile CSS Enhancements -->
+<style>
+@media (max-width: 991.98px) {
+    /* Mobile card styling */
+    .listing-card {
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+    }
+    
+    .listing-card:hover {
+        border-color: #0d6efd;
+        box-shadow: 0 4px 15px rgba(13, 110, 253, 0.1);
+    }
+    
+    .listing-card .card-title a:hover {
+        color: #0d6efd !important;
+    }
+    
+    /* Badge styling */
+    .listing-card .badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    /* FIXED: Smaller mobile button styling */
+    .listing-card .btn-sm {
+        padding: 0.35rem 0.65rem !important;
+        font-size: 0.75rem !important;
+        border-radius: 6px !important;
+        font-weight: 500;
+    }
+    
+    /* Upgrade button - even smaller */
+    .listing-card .btn-outline-primary:not(.flex-fill) {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.7rem !important;
+    }
+    
+    /* Action buttons row - tighter spacing */
+    .listing-card .d-grid.gap-2 {
+        gap: 0.5rem !important;
+    }
+    
+    /* Quick stats styling */
+    .listing-card .border-top {
+        border-color: #f8f9fa !important;
+    }
+    
+    .listing-card .small {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    
+    .listing-card .fw-bold {
+        font-size: 0.85rem;
+    }
+}
+
+/* Tablet view adjustments */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .listing-card .d-md-flex {
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+    
+    .listing-card .btn-sm {
+        flex-fill: 0 !important;
+        width: auto;
+        min-width: 80px !important;
+        padding: 0.4rem 0.75rem !important;
+        font-size: 0.8rem !important;
+    }
+}
+
+/* Small mobile adjustments - even smaller buttons */
+@media (max-width: 575.98px) {
+    .row.mb-4 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .row.mb-4 h1 {
+        font-size: 1.4rem;
+    }
+    
+    .listing-card {
+        margin-bottom: 1rem !important;
+    }
+    
+    .listing-card .card-body {
+        padding: 0.875rem;
+    }
+    
+    /* EXTRA SMALL: Compact mobile buttons */
+    .listing-card .btn-sm {
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.7rem !important;
+        min-height: auto !important;
+    }
+    
+    /* Make action buttons stack horizontally but smaller */
+    .listing-card .d-grid {
+        display: flex !important;
+        gap: 0.375rem !important;
+    }
+    
+    .listing-card .flex-fill {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    /* Badge adjustments */
+    .listing-card .badge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.4rem;
+    }
+    
+    /* Plan info section - tighter spacing */
+    .listing-card .d-flex.justify-content-between.align-items-center.mb-3 {
+        margin-bottom: 1rem !important;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    /* Quick stats - smaller text */
+    .listing-card .small {
+        font-size: 0.65rem;
+    }
+    
+    .listing-card .fw-bold {
+        font-size: 0.8rem;
+    }
+}
+
+/* Extra small screens - ultra compact */
+@media (max-width: 375px) {
+    .listing-card .btn-sm {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.65rem !important;
+    }
+    
+    .listing-card .card-body {
+        padding: 0.75rem;
+    }
+    
+    .listing-card .badge {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.35rem;
+    }
+    
+    /* Stack plan info on very small screens */
+    .listing-card .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+    }
+}
+</style>
 {% endblock %}
