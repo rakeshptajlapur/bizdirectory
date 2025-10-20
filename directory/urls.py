@@ -6,8 +6,11 @@ from . import views
 app_name = 'directory'
 
 urlpatterns = [
-    path('', views.coming_soon, name='home'),           # Public sees coming soon
-    path('dev-home/', views.home, name='dev_home'),     # Developers access full site
+    #path('', views.coming_soon, name='home'),           # Public sees coming soon
+    #path('dev-home/', views.home, name='dev_home'),     # Developers access full site
+    path('', views.home, name='home'),           # Public sees real home
+
+
     path('listings/', views.listings, name='listings'), # All filters work normally
     path('listings/ajax/', views.listings_ajax, name='listings_ajax'),  # Add this line
     path('business/<int:pk>/', views.business_detail, name='business_detail'),
