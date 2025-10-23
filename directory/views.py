@@ -112,13 +112,54 @@ def search_suggestions(request):
     """Auto-suggestions for search box"""
     term = request.GET.get('term', '')
     
-    # Only include active businesses in suggestions
-    suggestions = Business.objects.filter(
-        Q(name__icontains=term) & 
-        Q(is_active=True)
-    ).values_list('name', flat=True)[:10]
+    if not term or len(term) < 2:
+        return JsonResponse([], safe=False)
     
-    return JsonResponse(list(suggestions), safe=False)
+    # Get business name suggestions
+    business_suggestions = list(Business.objects.filter(
+        Q(name__icontains=term) & Q(is_active=True)
+    ).values_list('name', flat=True)[:5])
+    
+    # Get service suggestions
+    service_suggestions = list(Service.objects.filter(
+        name__icontains=term
+    ).values_list('name', flat=True)[:5])
+    
+    # Get category suggestions
+    category_suggestions = list(Category.objects.filter(
+        name__icontains=term
+    ).values_list('name', flat=True)[:5])
+    
+    # Combine all suggestions
+    all_suggestions = business_suggestions + service_suggestions + category_suggestions
+    
+    # Remove duplicates and limit to 10
+    unique_suggestions = list(dict.fromkeys(all_suggestions))[:10]
+    
+    return JsonResponse(unique_suggestions, safe=False)
+
+def location_suggestions(request):
+    """Location suggestions for location search"""
+    term = request.GET.get('term', '')
+    
+    if not term or len(term) < 2:
+        return JsonResponse([], safe=False)
+    
+    # Get unique cities
+    cities = list(Business.objects.filter(
+        Q(city__icontains=term) & Q(is_active=True)
+    ).values_list('city', flat=True).distinct()[:5])
+    
+    # Get unique areas/localities (if you have this field)
+    areas = list(Business.objects.filter(
+        Q(address__icontains=term) & Q(is_active=True)
+    ).values_list('address', flat=True).distinct()[:5])
+    
+    # Combine and clean
+    all_locations = cities + areas
+    unique_locations = list(dict.fromkeys(all_locations))[:10]
+    
+    return JsonResponse(unique_locations, safe=False)
 
 def category_suggestions(request):
     categories = Category.objects.all().values('id', 'name')

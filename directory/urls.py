@@ -20,6 +20,7 @@ urlpatterns = [
     path('api/search-suggestions/', views.search_suggestions, name='search_suggestions'),
     path('api/category-suggestions/', views.category_suggestions, name='category_suggestions'),
     path('api/pincode-suggestions/', views.pincode_suggestions, name='pincode_suggestions'),
+    path('api/location-suggestions/', views.location_suggestions, name='location_suggestions'),
     path('search-suggestions/', views.search_suggestions, name='search_suggestions'),
     path('add-listing/', views.add_listing, name='add_listing'),
     path('pincode-suggestions/', views.pincode_suggestions, name='pincode_suggestions'),
