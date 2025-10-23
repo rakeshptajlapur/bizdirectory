@@ -708,5 +708,83 @@ $(document).ready(function() {
             padding-bottom: 0;
         }
     }
+
+    /* Header Height Reduction - 30% smaller */
+@media (min-width: 768px) {
+    .navbar {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+        min-height: 56px !important; /* Reduced from ~80px to 56px (30% reduction) */
+    }
+}
+
+@media (max-width: 767.98px) {
+    .navbar {
+        padding-top: 0.35rem !important;
+        padding-bottom: 0.35rem !important;
+        min-height: 42px !important; /* Mobile version reduced by 30% */
+    }
+}
+
+/* Logo and Brand Scaling */
+.navbar-brand {
+    font-size: 1.4rem !important; /* Reduced from 1.75rem */
+    padding: 0.2rem 0 !important;
+    letter-spacing: -0.01em !important;
+}
+
+.navbar-brand i {
+    font-size: 1.2rem !important; /* If you have an icon in brand */
+}
+
+/* Navigation Links Scaling */
+.navbar .nav-link {
+    font-size: 0.9rem !important; /* Reduced font size */
+    padding: 0.4rem 0.8rem !important;
+}
+
+/* Mobile Menu Toggle Button */
+.mobile-nav-toggle {
+    width: 38px !important; /* Reduced from 45px */
+    height: 38px !important;
+    font-size: 0.95rem !important;
+    border-radius: 10px !important;
+}
+
+/* Dropdown Menu Items */
+.navbar .dropdown-item {
+    font-size: 0.85rem !important;
+    padding: 0.4rem 1rem !important;
+}
+
+/* Container Padding Inside Navbar */
+.navbar .container {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* Very Small Screens - Extra Compact */
+@media (max-width: 575.98px) {
+    .navbar {
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
+        min-height: 38px !important;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem !important;
+    }
+    
+    .mobile-nav-toggle {
+        width: 34px !important;
+        height: 34px !important;
+        font-size: 0.85rem !important;
+    }
+    
+    .navbar .nav-link {
+        font-size: 0.85rem !important;
+        padding: 0.35rem 0.7rem !important;
+    }
+}
 </style>
 {% endblock %}
