@@ -846,7 +846,7 @@
             
             /* Add bottom padding to body to prevent content overlap */
             body {
-                padding-bottom: 80px;
+                padding-bottom: 0px;
             }
             
             /* Ensure CTAs don't interfere with business detail sticky buttons */
@@ -1127,11 +1127,8 @@
 }
 
 /* Mobile Responsive */
+/* Mobile Responsive */
 @media (max-width: 767.98px) {
-    .modern-footer {
-        padding-bottom: 80px; /* Account for sticky mobile CTA */
-    }
-    
     .footer-brand .brand-name {
         font-size: 1.3rem;
     }
@@ -1140,17 +1137,26 @@
         font-size: 0.9rem;
     }
     
-    /* FIX: Better mobile support button layout */
+    /* REMOVE EXCESSIVE PADDING - Only add when sticky CTA exists */
+    .modern-footer {
+        padding-bottom: 1rem; /* Normal footer padding */
+    }
+    
+    /* Only add extra padding when sticky CTA is actually present */
+    body.has-sticky-cta {
+        padding-bottom: 80px;
+    }
+    
     .support-buttons {
-        flex-direction: column; /* CHANGE FROM row to column */
-        gap: 0.75rem; /* INCREASE gap */
+        flex-direction: column;
+        gap: 0.75rem;
     }
     
     .support-btn {
-        width: 100%; /* FULL WIDTH */
-        justify-content: center; /* CENTER content */
-        font-size: 0.85rem; /* LARGER font */
-        padding: 0.6rem 1rem; /* MORE padding */
+        width: 100%;
+        justify-content: center;
+        font-size: 0.85rem;
+        padding: 0.6rem 1rem;
         text-align: center;
     }
     
@@ -1223,7 +1229,7 @@
     
     /* Footer mobile spacing */
     .modern-footer {
-        padding-bottom: 80px !important;
+    
     }
 }
 
@@ -1777,5 +1783,19 @@ $(document).ready(function() {
         });
     </script>
     {% endblock %}
+    <script>
+// Manage sticky CTA body class
+document.addEventListener('DOMContentLoaded', function() {
+    const stickyCTA = document.querySelector('.sticky-cta-bottom');
+    
+    if (stickyCTA && window.innerWidth <= 991) {
+        // Check if sticky CTA is actually visible
+        const styles = window.getComputedStyle(stickyCTA);
+        if (styles.display !== 'none') {
+            document.body.classList.add('has-sticky-cta');
+        }
+    }
+});
+</script>
 </body>
 </html>
