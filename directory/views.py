@@ -14,6 +14,9 @@ from .forms import BusinessForm
 from datetime import timedelta
 import os
 import logging
+import math
+from django.db.models import F, FloatField, ExpressionWrapper
+from django.db.models.functions import Sin, Cos, Radians, Power, Sqrt, ATan2
 
 # Fix missing imports
 from .models import Business, Category, Service, BusinessImage, BusinessHours, Review, Enquiry, CouponRequest, SubscriptionPlan, UserSubscription
@@ -50,15 +53,16 @@ def home(request):
     # Get top categories with business counts
     top_categories = Category.objects.annotate(
         business_count=Count('business', filter=Q(business__is_active=True))
-    ).order_by('-business_count')[:10]  # Show top 10 categories
+    ).order_by('-business_count')
     
     context = {
-        'businesses': businesses,
         'categories': categories,
+        'top_categories': top_categories,
+        'businesses': businesses[:10],  # Limit to 10 for homepage
         'search_query': search_query,
         'selected_category': selected_category,
         'selected_pincode': selected_pincode,
-        'top_categories': top_categories
+        'GOOGLE_MAPS_API_KEY': settings.GOOGLE_MAPS_API_KEY,  # ADD THIS LINE
     }
     
     return render(request, 'directory/home.html', context)
@@ -139,27 +143,56 @@ def search_suggestions(request):
     return JsonResponse(unique_suggestions, safe=False)
 
 def location_suggestions(request):
-    """Location suggestions for location search"""
+    """Enhanced location suggestions for location search"""
     term = request.GET.get('term', '')
     
     if not term or len(term) < 2:
         return JsonResponse([], safe=False)
     
-    # Get unique cities
-    cities = list(Business.objects.filter(
+    suggestions = []
+    
+    # Get unique cities with business count
+    cities = Business.objects.filter(
         Q(city__icontains=term) & Q(is_active=True)
-    ).values_list('city', flat=True).distinct()[:5])
+    ).values('city').annotate(
+        business_count=Count('id')
+    ).order_by('-business_count', 'city')[:5]
     
-    # Get unique areas/localities (if you have this field)
-    areas = list(Business.objects.filter(
+    for city in cities:
+        suggestions.append(f"{city['city']} ({city['business_count']} businesses)")
+    
+    # Get popular areas/localities from addresses
+    areas = Business.objects.filter(
         Q(address__icontains=term) & Q(is_active=True)
-    ).values_list('address', flat=True).distinct()[:5])
+    ).exclude(
+        city__icontains=term  # Don't duplicate cities
+    ).values_list('address', flat=True)[:3]
     
-    # Combine and clean
-    all_locations = cities + areas
-    unique_locations = list(dict.fromkeys(all_locations))[:10]
+    # Extract area names from addresses (simple extraction)
+    for address in areas:
+        # Try to extract area name (words that contain the search term)
+        words = address.split(',')
+        for word in words:
+            word = word.strip()
+            if term.lower() in word.lower() and len(word) > len(term):
+                suggestions.append(word[:50])  # Limit length
+                break
     
-    return JsonResponse(unique_locations, safe=False)
+    # Get states if searching for state names
+    if len(term) >= 3:
+        states = Business.objects.filter(
+            Q(state__icontains=term) & Q(is_active=True)
+        ).values('state').annotate(
+            business_count=Count('id')
+        ).order_by('-business_count', 'state')[:2]
+        
+        for state in states:
+            suggestions.append(f"{state['state']} State ({state['business_count']} businesses)")
+    
+    # Remove duplicates while preserving order
+    unique_suggestions = list(dict.fromkeys(suggestions))[:8]
+    
+    return JsonResponse(unique_suggestions, safe=False)
 
 def category_suggestions(request):
     categories = Category.objects.all().values('id', 'name')
@@ -213,13 +246,89 @@ def listings(request):
     businesses = businesses.annotate(
         avg_rating=Avg('reviews__rating', filter=Q(reviews__is_approved=True)),
         approved_reviews_count=Count('reviews', filter=Q(reviews__is_approved=True))
-    )
+    ).order_by('-created_at')  # Fixed ordering for pagination
     
     # Apply filters
     category_id = request.GET.get('category')
     if category_id:
         businesses = businesses.filter(category_id=category_id)
     
+    # NEW: Geographic Location Search with Radius
+    lat = request.GET.get('lat')
+    lng = request.GET.get('lng')
+    radius = request.GET.get('radius', 50)  # Default 50km radius
+    location_query = request.GET.get('location')
+    
+    if lat and lng:
+        # Convert to float
+        try:
+            user_lat = float(lat)
+            user_lng = float(lng)
+            search_radius = float(radius)
+            
+            # Haversine formula for distance calculation
+            businesses = businesses.filter(
+                latitude__isnull=False,
+                longitude__isnull=False
+            ).annotate(
+                distance_km=ExpressionWrapper(
+                    6371 * 2 * ATan2(
+                        Sqrt(
+                            Sin(Radians(F('latitude') - user_lat) / 2) ** 2 +
+                            Cos(Radians(user_lat)) * Cos(Radians(F('latitude'))) *
+                            Sin(Radians(F('longitude') - user_lng) / 2) ** 2
+                        ),
+                        Sqrt(1 - (
+                            Sin(Radians(F('latitude') - user_lat) / 2) ** 2 +
+                            Cos(Radians(user_lat)) * Cos(Radians(F('latitude'))) *
+                            Sin(Radians(F('longitude') - user_lng) / 2) ** 2
+                        ))
+                    ),
+                    output_field=FloatField()
+                )
+            ).filter(
+                distance_km__lte=search_radius
+            ).order_by('distance_km', '-created_at')  # Order by distance first
+            
+            print(f"Geographic search: {businesses.count()} businesses found within {radius}km of ({lat}, {lng})")
+            
+        except (ValueError, TypeError):
+            print("Invalid coordinates provided")
+    
+    elif location_query:
+        # Fallback: Text-based location search (as backup)
+        location_query = location_query.strip()
+        
+        # Search in multiple location fields for broader matching
+        location_filter = Q()
+        
+        # Split location query into words for better matching
+        location_words = location_query.split()
+        
+        for word in location_words:
+            if len(word) >= 2:  # Only search words with 2+ characters
+                location_filter |= (
+                    Q(city__icontains=word) |
+                    Q(address__icontains=word) |
+                    Q(formatted_address__icontains=word) |
+                    Q(pincode__icontains=word) |
+                    Q(state__icontains=word)
+                )
+        
+        # If no words found, search the whole query
+        if not location_words:
+            location_filter = (
+                Q(city__icontains=location_query) |
+                Q(address__icontains=location_query) |
+                Q(formatted_address__icontains=location_query) |
+                Q(pincode__icontains=location_query) |
+                Q(state__icontains=location_query)
+            )
+        
+        businesses = businesses.filter(location_filter).distinct()
+        print(f"Text-based location search: {businesses.count()} businesses found for '{location_query}'")
+    
+    # Rest of your existing filters...
     rating = request.GET.get('rating')
     if rating:
         businesses = businesses.filter(reviews__rating__gte=int(rating)).distinct()
@@ -254,7 +363,7 @@ def listings(request):
     
     # Prepare current filters for maintaining state
     current_filters = {}
-    for param in ['category', 'rating', 'pincode', 'trust', 'query']:
+    for param in ['category', 'rating', 'pincode', 'trust', 'query', 'location', 'lat', 'lng', 'radius']:
         if request.GET.get(param):
             current_filters[param] = request.GET.get(param)
     

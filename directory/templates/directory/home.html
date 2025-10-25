@@ -88,8 +88,6 @@
 {% endblock %}
 
 {% block content %}
-<!-- Featured Businesses Section (Limited) -->
-
 <!-- Popular Categories Section - ONLY 6 ROWS -->
 <div class="container my-5">
     <div class="text-center mb-4">
@@ -121,145 +119,10 @@
     </div>
 </div>
 {% endblock %}
-{% block extra_js %}
-<script>
-$(document).ready(function() {
-    let searchTimeout;
-    const $businessSearch = $('#businessSearch');
-    const $locationSearch = $('#locationSearch');
-    const $businessSuggestions = $('#businessSuggestions');
-    const $locationSuggestions = $('#locationSuggestions');
-    
-    // Google-style autocomplete for business search
-    $businessSearch.on('input', function() {
-        const query = $(this).val().trim();
-        
-        clearTimeout(searchTimeout);
-        
-        if (query.length < 2) {
-            $businessSuggestions.hide();
-            return;
-        }
-        
-        searchTimeout = setTimeout(() => {
-            $.ajax({
-                url: "{% url 'directory:search_suggestions' %}",
-                data: { term: query },
-                success: function(data) {
-                    showSuggestions(data, query, $businessSuggestions);
-                },
-                error: function() {
-                    $businessSuggestions.hide();
-                }
-            });
-        }, 300);
-    });
-    
-    // Google-style autocomplete for location search
-    $locationSearch.on('input', function() {
-        const query = $(this).val().trim();
-        
-        clearTimeout(searchTimeout);
-        
-        if (query.length < 2) {
-            $locationSuggestions.hide();
-            return;
-        }
-        
-        searchTimeout = setTimeout(() => {
-            $.ajax({
-                url: "{% url 'directory:location_suggestions' %}",
-                data: { term: query },
-                success: function(data) {
-                    showSuggestions(data, query, $locationSuggestions);
-                },
-                error: function() {
-                    $locationSuggestions.hide();
-                }
-            });
-        }, 300);
-    });
-    
-    function showSuggestions(suggestions, query, $suggestions) {
-        if (suggestions.length === 0) {
-            $suggestions.hide();
-            return;
-        }
-        
-        let html = '';
-        suggestions.forEach(function(item, index) {
-            const highlighted = highlightMatch(item, query);
-            html += `<div class="suggestion-item" data-value="${item}">${highlighted}</div>`;
-        });
-        
-        $suggestions.html(html).show();
-    }
-    
-    function highlightMatch(text, query) {
-        const regex = new RegExp(`(${query})`, 'gi');
-        return text.replace(regex, '<strong>$1</strong>');
-    }
-    
-    // Handle suggestion clicks
-    $(document).on('click', '.suggestion-item', function() {
-        const value = $(this).data('value');
-        if ($(this).closest('#businessSuggestions').length) {
-            $businessSearch.val(value);
-            $businessSuggestions.hide();
-        } else {
-            $locationSearch.val(value);
-            $locationSuggestions.hide();
-        }
-        $('.search-form').submit();
-    });
-    
-    // Hide suggestions when clicking outside
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('.search-input-wrapper').length) {
-            $businessSuggestions.hide();
-            $locationSuggestions.hide();
-        }
-    });
-    
-    // Keyboard navigation
-    let selectedIndex = -1;
-    
-    $businessSearch.on('keydown', function(e) {
-        const $items = $('.suggestion-item');
-        
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            selectedIndex = Math.min(selectedIndex + 1, $items.length - 1);
-            updateSelection($items);
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            selectedIndex = Math.max(selectedIndex - 1, -1);
-            updateSelection($items);
-        } else if (e.key === 'Enter') {
-            if (selectedIndex >= 0) {
-                e.preventDefault();
-                $items.eq(selectedIndex).click();
-            }
-        } else if (e.key === 'Escape') {
-            $businessSuggestions.hide();
-            $locationSuggestions.hide();
-            selectedIndex = -1;
-        }
-    });
-    
-    function updateSelection($items) {
-        $items.removeClass('selected');
-        if (selectedIndex >= 0) {
-            $items.eq(selectedIndex).addClass('selected');
-        }
-    }
-});
-</script>
-{% endblock %}
 
 {% block extra_css %}
 <style>
-/* Hero Section - Clean & Transparent */
+/* Hero Section - Enhanced Visibility */
 .hero-section {
     position: relative;
     min-height: 60vh;
@@ -285,7 +148,7 @@ $(document).ready(function() {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.65);
     z-index: 1;
 }
 
@@ -293,10 +156,13 @@ $(document).ready(function() {
     z-index: 2;
 }
 
-/* Search Container - Transparent */
+/* Search Container - Enhanced Contrast */
 .search-container {
     text-align: center;
     padding: 2rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
 }
 
 .search-title {
@@ -304,14 +170,14 @@ $(document).ready(function() {
     font-weight: 700;
     color: white;
     margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
 }
 
 .search-subtitle {
     font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.95);
     margin-bottom: 2.5rem;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 /* New Search Layout */
@@ -345,10 +211,10 @@ $(document).ready(function() {
 .search-label {
     display: block;
     font-weight: 600;
-    font-size: 0.9rem;
-    color: white;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.95);
     margin-bottom: 0.5rem;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .search-input-wrapper {
@@ -357,24 +223,25 @@ $(document).ready(function() {
 
 .search-input {
     padding: 1rem;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.4);
     border-radius: 12px;
     font-size: 1rem;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
     color: white;
     width: 100%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .search-input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .search-input:focus {
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.3), 0 4px 20px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.25);
     outline: none;
 }
 
@@ -446,15 +313,15 @@ $(document).ready(function() {
     border-radius: 50px;
     background: linear-gradient(45deg, #0d6efd, #0dcaf0);
     border: none;
-    box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.5);
     transition: all 0.3s ease;
     color: white;
 }
 
 .search-btn:hover {
     background: linear-gradient(45deg, #0b5ed7, #0aa2c0);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(13, 110, 253, 0.6);
     color: white;
 }
 
@@ -566,4 +433,260 @@ $(document).ready(function() {
     }
 }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    let searchTimeout;
+    const $businessSearch = $('#businessSearch');
+    const $locationSearch = $('#locationSearch');
+    const $businessSuggestions = $('#businessSuggestions');
+    const $locationSuggestions = $('#locationSuggestions');
+    
+    // Business search autocomplete (working fine)
+    $businessSearch.on('input', function() {
+        const query = $(this).val().trim();
+        
+        clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            $businessSuggestions.hide();
+            return;
+        }
+        
+        searchTimeout = setTimeout(() => {
+            $.ajax({
+                url: "{% url 'directory:search_suggestions' %}",
+                data: { term: query },
+                success: function(data) {
+                    showBusinessSuggestions(data, query);
+                },
+                error: function() {
+                    $businessSuggestions.hide();
+                }
+            });
+        }, 300);
+    });
+    
+    // Location search with Google Places API (FIXED VERSION)
+    let autocompleteService;
+    let placesService;
+    
+    // Initialize Google Places services
+    function initGooglePlaces() {
+        if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+            autocompleteService = new google.maps.places.AutocompleteService();
+            placesService = new google.maps.places.PlacesService(document.createElement('div'));
+            console.log('✅ Google Places services initialized');
+        } else {
+            console.log('⚠️ Google Maps API not available, using fallback');
+        }
+    }
+    
+    // Location search input handler
+    $locationSearch.on('input', function() {
+        const query = $(this).val().trim();
+        
+        clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            $locationSuggestions.hide();
+            return;
+        }
+        
+        searchTimeout = setTimeout(() => {
+            if (autocompleteService) {
+                // Use Google Places Autocomplete Service
+                const request = {
+                    input: query,
+                    componentRestrictions: { country: 'IN' },
+                    types: ['(cities)'] // Focus on cities and localities
+                };
+                
+                autocompleteService.getPlacePredictions(request, (predictions, status) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
+                        const suggestions = predictions.slice(0, 8).map(prediction => ({
+                            place_id: prediction.place_id,
+                            description: prediction.description
+                        }));
+                        showLocationSuggestions(suggestions, query);
+                    } else {
+                        console.log('Google Places API error:', status);
+                        fallbackLocationSearch(query);
+                    }
+                });
+            } else {
+                // Fallback to database search
+                fallbackLocationSearch(query);
+            }
+        }, 300);
+    });
+    
+    // Fallback location search using database
+    function fallbackLocationSearch(query) {
+        $.ajax({
+            url: "{% url 'directory:location_suggestions' %}",
+            data: { term: query },
+            success: function(data) {
+                const suggestions = data.map(item => ({
+                    place_id: null,
+                    description: item
+                }));
+                showLocationSuggestions(suggestions, query);
+            },
+            error: function() {
+                $locationSuggestions.hide();
+            }
+        });
+    }
+    
+    // Show business suggestions
+    function showBusinessSuggestions(suggestions, query) {
+        if (suggestions.length === 0) {
+            $businessSuggestions.hide();
+            return;
+        }
+        
+        let html = '';
+        suggestions.forEach(function(item) {
+            const highlighted = highlightMatch(item, query);
+            html += `<div class="suggestion-item" data-value="${item}">
+                <i class="bi bi-building me-2"></i>${highlighted}
+            </div>`;
+        });
+        
+        $businessSuggestions.html(html).show();
+    }
+    
+    // Show location suggestions
+    function showLocationSuggestions(suggestions, query) {
+        if (suggestions.length === 0) {
+            $locationSuggestions.hide();
+            return;
+        }
+        
+        let html = '';
+        suggestions.forEach(function(item) {
+            const highlighted = highlightMatch(item.description, query);
+            html += `<div class="suggestion-item" data-place-id="${item.place_id}" data-description="${item.description}">
+                <i class="bi bi-geo-alt me-2"></i>${highlighted}
+            </div>`;
+        });
+        
+        $locationSuggestions.html(html).show();
+    }
+    
+    function highlightMatch(text, query) {
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.replace(regex, '<strong>$1</strong>');
+    }
+    
+    // Handle suggestion clicks
+    $(document).on('click', '.suggestion-item', function() {
+        if ($(this).closest('#businessSuggestions').length) {
+            // Business suggestion clicked
+            const value = $(this).data('value');
+            $businessSearch.val(value);
+            $businessSuggestions.hide();
+        } else {
+            // Location suggestion clicked
+            const placeId = $(this).data('place-id');
+            const description = $(this).data('description');
+            
+            $locationSearch.val(description);
+            $locationSuggestions.hide();
+            
+            // Get coordinates if place_id exists
+            if (placeId && placesService) {
+                const request = {
+                    placeId: placeId,
+                    fields: ['geometry']
+                };
+                
+                placesService.getDetails(request, (place, status) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK && place.geometry) {
+                        const location = place.geometry.location;
+                        
+                        // Add hidden inputs for coordinates
+                        $('input[name="lat"]').remove();
+                        $('input[name="lng"]').remove();
+                        $('input[name="radius"]').remove();
+                        
+                        $('.search-form').append(`
+                            <input type="hidden" name="lat" value="${location.lat()}">
+                            <input type="hidden" name="lng" value="${location.lng()}">
+                            <input type="hidden" name="radius" value="50">
+                        `);
+                        
+                        console.log('✅ Location coordinates added:', location.lat(), location.lng());
+                    }
+                });
+            }
+        }
+    });
+    
+    // Hide suggestions when clicking outside
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.search-input-wrapper').length) {
+            $businessSuggestions.hide();
+            $locationSuggestions.hide();
+        }
+    });
+    
+    // Keyboard navigation
+    let selectedIndex = -1;
+    
+    $businessSearch.add($locationSearch).on('keydown', function(e) {
+        const $container = $(this).siblings('.search-suggestions');
+        const $items = $container.find('.suggestion-item');
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedIndex = Math.min(selectedIndex + 1, $items.length - 1);
+            updateSelection($items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedIndex = Math.max(selectedIndex - 1, -1);
+            updateSelection($items);
+        } else if (e.key === 'Enter') {
+            if (selectedIndex >= 0) {
+                e.preventDefault();
+                $items.eq(selectedIndex).click();
+            }
+        } else if (e.key === 'Escape') {
+            $businessSuggestions.hide();
+            $locationSuggestions.hide();
+            selectedIndex = -1;
+        }
+    });
+    
+    function updateSelection($items) {
+        $items.removeClass('selected');
+        if (selectedIndex >= 0) {
+            $items.eq(selectedIndex).addClass('selected');
+        }
+    }
+    
+    // Initialize Google Places when page loads
+    if (typeof google !== 'undefined') {
+        initGooglePlaces();
+    } else {
+        // Wait for Google Maps API to load
+        window.initGooglePlaces = initGooglePlaces;
+    }
+});
+
+// Global callback for Google Maps API
+function initMap() {
+    if (window.initGooglePlaces) {
+        window.initGooglePlaces();
+    }
+}
+</script>
+
+<!-- Load Google Maps API with Places library -->
+<script async defer 
+    src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initMap">
+</script>
 {% endblock %}

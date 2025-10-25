@@ -115,16 +115,12 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media',
-                'django.template.context_processors.static',
-                'directory.context_processors.cloudinary_settings',  # Add this
-                'directory.context_processors.google_maps_key',  # Add this line
-
+                'directory.context_processors.google_maps_key',  # ADD THIS LINE
             ],
-            'debug': True,  # Enable template debugging
         },
     },
 ]
