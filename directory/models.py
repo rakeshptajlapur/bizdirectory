@@ -8,7 +8,12 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to='category_images/', blank=True, null=True)
+    image = models.ImageField(
+        upload_to='category_images/', 
+        blank=True, 
+        null=True,
+        storage=MediaCloudinaryStorage()  # ✅ ADD CLOUDINARY STORAGE
+    )
     
     # Add this method for fallback images
     def get_image_url(self):
