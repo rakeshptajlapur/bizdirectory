@@ -376,6 +376,177 @@
     #loading-indicator {
         transition: all 0.3s ease;
     }
+    
+    /* Enhanced Mobile Filter Styling */
+.mobile-filter-container .search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.mobile-filter-container .suggestion-item {
+    padding: 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f8f9fa;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.mobile-filter-container .suggestion-item:hover {
+    background: #f8f9fa;
+    color: #0d6efd;
+}
+
+.mobile-filter-container .suggestion-item:last-child {
+    border-bottom: none;
+}
+
+/* Enhanced checkbox styling */
+.mobile-filter-container .form-check {
+    padding: 0.5rem 0.5rem 0.5rem 1rem; /* Added left padding */
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.mobile-filter-container .form-check:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.mobile-filter-container .form-check-input {
+    margin-left: 0.5rem; /* Add left margin to checkbox */
+    margin-right: 0.75rem; /* Increase right margin for breathing room */
+}
+
+.mobile-filter-container .form-check-input:checked + .form-check-label {
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+.mobile-filter-container .form-check-label {
+    padding-left: 0.25rem; /* Small left padding for label */
+    cursor: pointer;
+}
+
+/* Star rating alignment with proper spacing */
+.mobile-filter-container .stars i {
+    font-size: 0.8rem;
+    margin-right: 2px; /* Consistent spacing between stars */
+}
+
+/* Category item specific spacing */
+.category-item {
+    margin-bottom: 0.25rem;
+}
+
+.category-item .form-check-input {
+    margin-top: 0.15rem; /* Align with text baseline */
+}
+
+/* Desktop Filter Styling (same as mobile) */
+.desktop-filters .search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.desktop-filters .suggestion-item {
+    padding: 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f8f9fa;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.desktop-filters .suggestion-item:hover {
+    background: #f8f9fa;
+    color: #0d6efd;
+}
+
+.desktop-filters .suggestion-item:last-child {
+    border-bottom: none;
+}
+
+/* Enhanced checkbox styling for desktop */
+.desktop-filters .form-check {
+    padding: 0.4rem 0.5rem 0.4rem 0.8rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+    margin-bottom: 0.2rem;
+}
+
+.desktop-filters .form-check:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.desktop-filters .form-check-input {
+    margin-left: 0.3rem;
+    margin-right: 0.6rem;
+}
+
+.desktop-filters .form-check-input:checked + .form-check-label {
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+.desktop-filters .form-check-label {
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Desktop star ratings styling */
+.desktop-filters .stars i {
+    font-size: 0.8rem;
+    margin-right: 2px;
+}
+
+/* Desktop category search highlighting */
+.desktop-filters .category-item.hidden {
+    display: none !important;
+}
+
+/* Desktop verification dropdown styling */
+#desktopVerificationSelect {
+    font-size: 0.9rem;
+}
+
+#desktopVerificationSelect option {
+    padding: 0.5rem;
+}
+
+/* Desktop form styling consistency */
+.desktop-filters .form-label {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.desktop-filters .form-control,
+.desktop-filters .form-select {
+    font-size: 0.9rem;
+}
+
+.desktop-filters .form-text {
+    font-size: 0.8rem;
+}
 </style>
 {% endblock %}
 
@@ -443,9 +614,29 @@
             <input type="hidden" name="query" value="{{ current_filters.query }}">
             {% endif %}
             
-            <!-- Category filter -->
+            <!-- 1. LOCATION SEARCH FIELD -->
             <div class="mb-4">
-                <label class="form-label fw-bold">Categories</label>
+                <label class="form-label fw-bold">
+                    <i class="bi bi-geo-alt me-1"></i>Location
+                </label>
+                <div class="position-relative">
+                    <input type="text" 
+                           class="form-control" 
+                           id="mobileLocationSearch" 
+                           name="location"
+                           placeholder="City, area, or pincode" 
+                           value="{{ current_filters.location|default:'' }}"
+                           autocomplete="off">
+                    <div class="search-suggestions" id="mobileLocationSuggestions"></div>
+                </div>
+                <div class="form-text small">Type to get location suggestions</div>
+            </div>
+            
+            <!-- 2. CATEGORIES AS CHECKBOXES (MULTI-SELECT) -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">
+                    <i class="bi bi-grid-3x3-gap me-1"></i>Categories
+                </label>
                 <div class="input-group input-group-sm mb-2">
                     <input type="text" class="form-control" id="mobileCategorySearch" placeholder="Search categories...">
                     <button class="btn btn-outline-secondary" type="button">
@@ -453,82 +644,81 @@
                     </button>
                 </div>
                 
-                <div class="overflow-auto" style="max-height: 200px;">
-                    {% for category in categories|slice:":10" %}
+                <div class="overflow-auto border rounded p-2" style="max-height: 120px; background: #f8f9fa;">
+                    {% for category in categories|slice:":15" %}
                     <div class="form-check category-item">
-                        <input class="form-check-input mobile-filter-change" type="radio" name="category" 
-                               id="mobile-category-{{ category.id }}" value="{{ category.id }}"
-                               {% if current_filters.category|add:"0" == category.id %}checked{% endif %}>
-                        <label class="form-check-label" for="mobile-category-{{ category.id }}">
+                        <input class="form-check-input mobile-filter-change" 
+                               type="checkbox" 
+                               name="categories" 
+                               id="mobile-category-{{ category.id }}" 
+                               value="{{ category.id }}"
+                               {% if category.id|stringformat:"s" in current_filters.categories %}checked{% endif %}>
+                        <label class="form-check-label small" for="mobile-category-{{ category.id }}">
                             {{ category.name }}
                         </label>
                     </div>
                     {% endfor %}
                 </div>
+                <div class="form-text small">Select multiple categories</div>
             </div>
             
-            <!-- Rating filter -->
+            <!-- 3. INDIVIDUAL STAR RATINGS -->
             <div class="mb-4">
-                <label class="form-label fw-bold">Rating</label>
-                {% for i in '54321'|make_list %}
+                <label class="form-label fw-bold">
+                    <i class="bi bi-star me-1"></i>Ratings
+                </label>
+                {% for i in '12345'|make_list %}
                 <div class="form-check">
-                    <input class="form-check-input mobile-filter-change" type="radio" name="rating" 
-                           id="mobile-rating-{{ i }}" value="{{ i }}"
-                           {% if current_filters.rating == i %}checked{% endif %}>
-                    <label class="form-check-label" for="mobile-rating-{{ i }}">
+                    <input class="form-check-input mobile-filter-change" 
+                           type="checkbox" 
+                           name="ratings" 
+                           id="mobile-rating-{{ i }}" 
+                           value="{{ i }}"
+                           {% if i in current_filters.ratings %}checked{% endif %}>
+                    <label class="form-check-label small" for="mobile-rating-{{ i }}">
                         {% with rating_int=i|add:"0" %}
                         {% for j in '12345'|make_list %}
                         <i class="bi bi-star{% if forloop.counter <= rating_int %}-fill{% endif %} text-warning"></i>
                         {% endfor %}
                         {% endwith %}
-                        & Up
+                        <span class="ms-1">{{ i }} Star{{ i|add:"0"|pluralize }}</span>
                     </label>
                 </div>
                 {% endfor %}
+                <div class="form-text small">Select specific ratings</div>
             </div>
             
-            <!-- Trust & Safety filter -->
+            <!-- 4. VERIFICATION STATUS DROPDOWN -->
             <div class="mb-4">
-                <label class="form-label fw-bold">Trust & Safety</label>
-                <div class="form-check">
-                    <input class="form-check-input mobile-filter-change" type="radio" name="trust" 
-                           id="mobile-trust-gst" value="gst"
-                           {% if current_filters.trust == 'gst' %}checked{% endif %}>
-                    <label class="form-check-label" for="mobile-trust-gst">
-                        <span class="badge bg-success-subtle text-success border border-success-subtle">
-                            <i class="bi bi-check-circle-fill"></i> GST Verified
-                        </span>
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input mobile-filter-change" type="radio" name="trust" 
-                           id="mobile-trust-kyc" value="kyc"
-                           {% if current_filters.trust == 'kyc' %}checked{% endif %}>
-                    <label class="form-check-label" for="mobile-trust-kyc">
-                        <span class="badge bg-success-subtle text-success border border-success-subtle">
-                            <i class="bi bi-shield-check"></i> KYC Completed
-                        </span>
-                    </label>
-                </div>
+                <label for="mobileVerificationSelect" class="form-label fw-bold">
+                    <i class="bi bi-shield-check me-1"></i>Verification Status
+                </label>
+                <select class="form-select mobile-filter-change" id="mobileVerificationSelect" name="verification">
+                    <option value="">All Businesses</option>
+                    <option value="gst" {% if current_filters.verification == 'gst' %}selected{% endif %}>
+                        GST Verified Only
+                    </option>
+                    <option value="kyc" {% if current_filters.verification == 'kyc' %}selected{% endif %}>
+                        KYC Completed Only
+                    </option>
+                    <option value="both" {% if current_filters.verification == 'both' %}selected{% endif %}>
+                        Both GST & KYC
+                    </option>
+                </select>
+                <div class="form-text small">Filter by verification status</div>
             </div>
             
-            <!-- Pincode filter -->
-            <div class="mb-4">
-                <label for="mobile-pincode-filter" class="form-label fw-bold">Pincode</label>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="mobile-pincode-filter" name="pincode"
-                           placeholder="Enter pincode" value="{{ current_filters.pincode|default:'' }}"
-                           maxlength="6" pattern="\d*">
-                    <button class="btn btn-outline-primary" type="submit">
-                        <i class="bi bi-funnel"></i>
-                    </button>
-                </div>
-            </div>
+            <!-- Pincode filter (existing) -->
+
             
             <!-- Apply and Reset buttons -->
             <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">Apply Filters</button>
-                <a href="{% url 'directory:listings' %}" class="btn btn-outline-secondary">Clear All</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-funnel me-2"></i>Apply Filters
+                </button>
+                <a href="{% url 'directory:listings' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle me-2"></i>Clear All
+                </a>
             </div>
         </form>
     </div>
@@ -548,138 +738,116 @@
                     <input type="hidden" name="query" value="{{ current_filters.query }}">
                     {% endif %}
                     
-                    <!-- Category filter -->
+                    <!-- 1. LOCATION SEARCH FIELD -->
                     <div class="mb-4">
-    <label class="form-label fw-bold d-flex justify-content-between align-items-center">
-        Categories
-        <a href="{% url 'directory:categories' %}" class="btn btn-sm btn-outline-primary">
-            <i class="bi bi-grid-3x3-gap-fill me-1"></i>All Categories
-        </a>
-    </label>
-    
-    <!-- Quick search for categories -->
-    <div class="input-group input-group-sm mb-2">
-        <input type="text" class="form-control" id="categorySearch" placeholder="Search categories...">
-        <button class="btn btn-outline-secondary" type="button">
-            <i class="bi bi-search"></i>
-        </button>
-    </div>
-    
-    <!-- Popular/Top categories (limited list) -->
-    <div class="overflow-auto" style="max-height: 200px;">
-        <div class="mb-2">
-            <strong class="small text-muted">Popular Categories</strong>
-        </div>
-        {% for category in categories|slice:":10" %}
-        <div class="form-check category-item">
-            <input class="form-check-input filter-change" type="radio" name="category" 
-                   id="category-{{ category.id }}" value="{{ category.id }}"
-                   {% if current_filters.category|add:"0" == category.id %}checked{% endif %}>
-            <label class="form-check-label" for="category-{{ category.id }}">
-                {{ category.name }}
-            </label>
-        </div>
-        {% endfor %}
-        
-        <!-- More categories (initially hidden) -->
-        <div id="moreCategoriesContainer" class="d-none">
-            <div class="mb-2 mt-3">
-                <strong class="small text-muted">More Categories</strong>
-            </div>
-            {% for category in categories|slice:"10:" %}
-            <div class="form-check category-item">
-                <input class="form-check-input filter-change" type="radio" name="category" 
-                       id="category-{{ category.id }}" value="{{ category.id }}"
-                       {% if current_filters.category|add:"0" == category.id %}checked{% endif %}>
-                <label class="form-check-label" for="category-{{ category.id }}">
-                    {{ category.name }}
-                </label>
-            </div>
-            {% endfor %}
-        </div>
-        
-        <!-- Toggle button for more categories -->
-        {% if categories.count > 10 %}
-        <button id="showMoreCategories" class="btn btn-sm btn-link text-decoration-none w-100 text-center mt-2">
-            <i class="bi bi-plus-circle me-1"></i>Show More Categories
-        </button>
-        <button id="showLessCategories" class="btn btn-sm btn-link text-decoration-none w-100 text-center mt-2 d-none">
-            <i class="bi bi-dash-circle me-1"></i>Show Less Categories
-        </button>
-        {% endif %}
-    </div>
-</div>
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-geo-alt me-1"></i>Location
+                        </label>
+                        <div class="position-relative">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="desktopLocationSearch" 
+                                   name="location"
+                                   placeholder="City, area, or pincode" 
+                                   value="{{ current_filters.location|default:'' }}"
+                                   autocomplete="off">
+                            <div class="search-suggestions" id="desktopLocationSuggestions"></div>
+                        </div>
+                        <div class="form-text small">Type to get location suggestions</div>
+                    </div>
                     
-                    <!-- Rating filter -->
+                    <!-- 2. CATEGORIES AS CHECKBOXES (MULTI-SELECT) -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Rating</label>
-                        {% for i in '54321'|make_list %}
+                        <label class="form-label fw-bold d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-grid-3x3-gap me-1"></i>Categories</span>
+                            <a href="{% url 'directory:categories' %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-grid-3x3-gap-fill me-1"></i>All
+                            </a>
+                        </label>
+                        
+                        <!-- Category search -->
+                        <div class="input-group input-group-sm mb-2">
+                            <input type="text" class="form-control" id="desktopCategorySearch" placeholder="Search categories...">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Categories list with checkboxes -->
+                        <div class="overflow-auto border rounded p-2" style="max-height: 200px; background: #f8f9fa;">
+                            <div class="mb-2">
+                                <strong class="small text-muted">Select Multiple Categories</strong>
+                            </div>
+                            {% for category in categories %}
+                            <div class="form-check category-item">
+                                <input class="form-check-input desktop-filter-change" 
+                                       type="checkbox" 
+                                       name="categories" 
+                                       id="desktop-category-{{ category.id }}" 
+                                       value="{{ category.id }}"
+                                       {% if category.id|stringformat:"s" in current_filters.categories %}checked{% endif %}>
+                                <label class="form-check-label small" for="desktop-category-{{ category.id }}">
+                                    {{ category.name }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-text small">Select multiple categories</div>
+                    </div>
+                    
+                    <!-- 3. INDIVIDUAL STAR RATINGS -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-star me-1"></i>Ratings
+                        </label>
+                        {% for i in '12345'|make_list %}
                         <div class="form-check">
-                            <input class="form-check-input filter-change" type="radio" name="rating" 
-                                   id="rating-{{ i }}" value="{{ i }}"
-                                   {% if current_filters.rating == i %}checked{% endif %}>
-                            <label class="form-check-label" for="rating-{{ i }}">
+                            <input class="form-check-input desktop-filter-change" 
+                                   type="checkbox" 
+                                   name="ratings" 
+                                   id="desktop-rating-{{ i }}" 
+                                   value="{{ i }}"
+                                   {% if i in current_filters.ratings %}checked{% endif %}>
+                            <label class="form-check-label small" for="desktop-rating-{{ i }}">
                                 {% with rating_int=i|add:"0" %}
                                 {% for j in '12345'|make_list %}
                                 <i class="bi bi-star{% if forloop.counter <= rating_int %}-fill{% endif %} text-warning"></i>
                                 {% endfor %}
                                 {% endwith %}
-                                & Up
+                                <span class="ms-1">{{ i }} Star{{ i|add:"0"|pluralize }}</span>
                             </label>
                         </div>
                         {% endfor %}
+                        <div class="form-text small">Select specific ratings</div>
                     </div>
                     
-                    <!-- Trust & Safety filter -->
+                    <!-- 4. VERIFICATION STATUS DROPDOWN -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Trust & Safety</label>
-                        <div class="form-check">
-                            <input class="form-check-input filter-change" type="radio" name="trust" 
-                                   id="trust-gst" value="gst"
-                                   {% if current_filters.trust == 'gst' %}checked{% endif %}>
-                            <label class="form-check-label" for="trust-gst">
-                                <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                    <i class="bi bi-check-circle-fill"></i> GST Verified
-                                </span>
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input filter-change" type="radio" name="trust" 
-                                   id="trust-kyc" value="kyc"
-                                   {% if current_filters.trust == 'kyc' %}checked{% endif %}>
-                            <label class="form-check-label" for="trust-kyc">
-                                <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                    <i class="bi bi-shield-check"></i> KYC Completed
-                                </span>
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input filter-change" type="radio" name="trust" 
-                                   id="trust-both" value="both"
-                                   {% if current_filters.trust == 'both' %}checked{% endif %}>
-                            <label class="form-check-label" for="trust-both">
+                        <label for="desktopVerificationSelect" class="form-label fw-bold">
+                            <i class="bi bi-shield-check me-1"></i>Verification Status
+                        </label>
+                        <select class="form-select desktop-filter-change" id="desktopVerificationSelect" name="verification">
+                            <option value="">All Businesses</option>
+                            <option value="gst" {% if current_filters.verification == 'gst' %}selected{% endif %}>
+                                GST Verified Only
+                            </option>
+                            <option value="kyc" {% if current_filters.verification == 'kyc' %}selected{% endif %}>
+                                KYC Completed Only
+                            </option>
+                            <option value="both" {% if current_filters.verification == 'both' %}selected{% endif %}>
                                 Both GST & KYC
-                            </label>
-                        </div>
+                            </option>
+                        </select>
+                        <div class="form-text small">Filter by verification status</div>
                     </div>
                     
-                    <!-- Pincode filter -->
-                    <div class="mb-4">
-                        <label for="pincode-filter" class="form-label fw-bold">Pincode</label>
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" id="pincode-filter" name="pincode"
-                                   placeholder="Enter pincode" value="{{ current_filters.pincode|default:'' }}"
-                                   maxlength="6" pattern="\d*">
-                            <button class="btn btn-outline-primary" type="submit">
-                                <i class="bi bi-funnel"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Reset filters button -->
-                    <div class="d-grid">
+                    <!-- Apply and Reset buttons -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-funnel me-2"></i>Apply Filters
+                        </button>
                         <a href="{% url 'directory:listings' %}" class="btn btn-outline-secondary">
-                            <i class="bi bi-x-circle"></i> Clear All Filters
+                            <i class="bi bi-x-circle me-2"></i>Clear All Filters
                         </a>
                     </div>
                 </form>
@@ -708,15 +876,10 @@
                         Rating: {{ value }}+ stars
                         <a href="javascript:void(0)" class="text-white remove-filter" data-filter="rating" aria-label="Remove filter">×</a>
                     </span>
-                {% elif key == 'pincode' %}
+                {% elif key == 'verification' %}
                     <span class="badge bg-primary rounded-pill">
-                        Pincode: {{ value }}
-                        <a href="javascript:void(0)" class="text-white remove-filter" data-filter="pincode" aria-label="Remove filter">×</a>
-                    </span>
-                {% elif key == 'trust' %}
-                    <span class="badge bg-primary rounded-pill">
-                        Trust: {% if value == 'gst' %}GST Verified{% elif value == 'kyc' %}KYC Completed{% else %}Both{% endif %}
-                        <a href="javascript:void(0)" class="text-white remove-filter" data-filter="trust" aria-label="Remove filter">×</a>
+                        Verification: {% if value == 'gst' %}GST Verified{% elif value == 'kyc' %}KYC Completed{% else %}Both{% endif %}
+                        <a href="javascript:void(0)" class="text-white remove-filter" data-filter="verification" aria-label="Remove filter">×</a>
                     </span>
                 {% elif key == 'query' %}
                     <span class="badge bg-primary rounded-pill">
@@ -948,12 +1111,17 @@
             $('body').css('overflow', 'auto');
         }
         
-        // Mobile filter changes
+        // REMOVED AUTO-SUBMISSION - Filter stays open until Apply is clicked
         $('.mobile-filter-change').on('change', function() {
-            // Auto-submit on mobile for better UX
-            setTimeout(function() {
-                $('#mobile-filter-form').submit();
-            }, 300);
+            // Just update UI, don't submit yet
+            console.log('Filter changed but not submitting');
+        });
+        
+        // Only submit when Apply Filter button is clicked
+        $('#mobile-filter-form').on('submit', function(e) {
+            // Close the mobile filter when form is submitted
+            closeMobileFilter();
+            // Form will submit normally
         });
         
         // Mobile category search
@@ -1022,9 +1190,7 @@
         });
         
         // Prevent non-numeric input in pincode fields
-        $('#pincode-filter, #mobile-pincode-filter').on('input', function() {
-            $(this).val($(this).val().replace(/[^0-9]/g, ''));
-        });
+       
         
         // Desktop category search and expand/collapse
         $("#categorySearch").on("input", function() {
@@ -1060,6 +1226,44 @@
             $("#moreCategoriesContainer").addClass("d-none");
             $(this).addClass("d-none");
             $("#showMoreCategories").removeClass("d-none");
+        });
+        
+        // Desktop category search functionality
+        $('#desktopCategorySearch').on('input', function() {
+            const searchTerm = $(this).val().toLowerCase();
+            $('.desktop-filters .category-item').each(function() {
+                const categoryName = $(this).find('label').text().toLowerCase();
+                if (categoryName.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+        
+        // REMOVED AUTO-SUBMISSION for desktop filters too
+        $('.desktop-filter-change').on('change', function() {
+            // Just update UI, don't submit yet
+            console.log('Desktop filter changed but not submitting');
+        });
+        
+        // Only submit when Apply Filter button is clicked (desktop)
+        $('#filter-form').on('submit', function(e) {
+            // Form will submit normally
+        });
+        
+        // Desktop location search (placeholder for now)
+        $("#desktopLocationSearch").on('input', function() {
+            const query = $(this).val().trim();
+            const $suggestions = $('#desktopLocationSuggestions');
+            
+            if (query.length < 2) {
+                $suggestions.hide().empty();
+                return;
+            }
+            
+            // For now, show a simple message
+            $suggestions.html('<div class="suggestion-item text-muted text-center"><i class="bi bi-info-circle me-2"></i>Location search coming soon</div>').show();
         });
     });
     

@@ -362,8 +362,9 @@ def listings(request):
     page_obj = paginator.get_page(page_number)
     
     # Prepare current filters for maintaining state
+    # Prepare current filters for maintaining state
     current_filters = {}
-    for param in ['category', 'rating', 'pincode', 'trust', 'query', 'location', 'lat', 'lng', 'radius']:
+    for param in ['category', 'rating', 'verification', 'query', 'location', 'lat', 'lng', 'radius']:
         if request.GET.get(param):
             current_filters[param] = request.GET.get(param)
     
