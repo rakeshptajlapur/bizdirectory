@@ -8,22 +8,209 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* ... your existing styles ... */
-        
-        /* Ensure navbar has proper z-index hierarchy */
-        .navbar-glass {
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1030; /* Higher than dashboard sidebar (999) */
+        /* REDUCED HEADER HEIGHT - DESKTOP & MOBILE */
+        .navbar {
+            padding-top: 0.4rem !important;
+            padding-bottom: 0.4rem !important;
+            min-height: 52px !important; /* Reduced from ~70px to 52px */
+            transition: all 0.3s ease;
         }
         
-        /* Sticky navbar should stay above everything */
+        /* Custom Logo Styling */
+        .navbar-logo {
+            width: 32px !important;
+            height: 32px !important;
+            object-fit: contain;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Logo hover effect */
+        .navbar-brand:hover .navbar-logo {
+            transform: scale(1.1);
+        }
+        
+        /* Proportionally scale down navbar brand */
+        .navbar-brand {
+            font-family: 'Poppins', sans-serif !important;
+            font-weight: 700 !important;
+            font-size: 1.4rem !important; /* Reduced from 1.75rem */
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            transition: all 0.3s ease !important;
+            letter-spacing: -0.02em !important;
+        }
+        
+        .navbar-brand:hover {
+            transform: scale(1.05) !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+        
+        /* Scale down navigation links proportionally */
+        .navbar .nav-link {
+            font-size: 0.85rem !important; /* Reduced from 0.9rem */
+            padding: 0.4rem 0.7rem !important; /* Reduced padding */
+            font-weight: 500;
+        }
+        
+        /* Scale down dropdown items */
+        .navbar .dropdown-item {
+            font-size: 0.8rem !important; /* Reduced */
+            padding: 0.35rem 0.9rem !important; /* Reduced padding */
+        }
+        
+        /* Mobile toggle button - smaller */
+        .mobile-nav-toggle {
+            width: 34px !important; /* Reduced from 38px */
+            height: 34px !important;
+            font-size: 0.9rem !important; /* Reduced */
+            border-radius: 8px !important;
+            padding: 0;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-nav-toggle:hover {
+            background: #f8f9fa;
+            border-color: #0d6efd;
+            color: #0d6efd;
+        }
+        
+        /* Adjust sticky positioning for reduced header */
         .navbar.sticky-top {
             z-index: 1030;
         }
         
+        /* Update all elements that depend on navbar height */
+        .business-tabs-container {
+            top: 52px !important; /* Match new navbar height */
+        }
+        
+        /* Hero section adjustment */
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+            min-height: 380px !important; /* Slightly reduced */
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 767.98px) {
+            .navbar {
+                padding-top: 0.3rem !important;
+                padding-bottom: 0.3rem !important;
+                min-height: 46px !important; /* Even smaller on mobile */
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem !important; /* Smaller on mobile */
+            }
+            
+            .navbar-logo {
+                width: 28px !important;
+                height: 28px !important;
+            }
+            
+            .mobile-nav-toggle {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 0.85rem !important;
+            }
+            
+            .navbar .nav-link {
+                font-size: 0.8rem !important;
+                padding: 0.35rem 0.6rem !important;
+            }
+            
+            /* Update mobile sticky offsets */
+            .business-tabs-container {
+                top: 46px !important;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 575.98px) {
+            .navbar {
+                padding-top: 0.25rem !important;
+                padding-bottom: 0.25rem !important;
+                min-height: 42px !important;
+            }
+            
+            .navbar-brand {
+                font-size: 1.1rem !important;
+            }
+            
+            .navbar-logo {
+                width: 26px !important;
+                height: 26px !important;
+            }
+            
+            .mobile-nav-toggle {
+                width: 30px !important;
+                height: 30px !important;
+                font-size: 0.8rem !important;
+            }
+            
+            .business-tabs-container {
+                top: 42px !important;
+            }
+        }
+
+        /* Ensure navbar has proper z-index hierarchy */
+        .navbar-glass {
+            background-color: rgba(255, 255, 255, 0.9) !important; /* Slightly more opaque */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Softer shadow */
+            z-index: 1030;
+        }
+        
+        /* Remove any body padding that was compensating for larger header */
+        body {
+            padding-top: 0 !important;
+        }
+        
+        /* Update container padding inside navbar for better spacing */
+        .navbar .container {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+        
+        /* Dropdown menu positioning */
+        .navbar .dropdown-menu {
+            margin-top: 0.25rem;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+        /* User menu avatar - smaller */
+        .navbar .user-avatar {
+            width: 28px !important;
+            height: 28px !important;
+        }
+        
+        /* Search suggestions positioning adjustment */
+        .search-suggestions {
+            top: calc(100% + 2px);
+        }
+        
+        /* Mobile dashboard button positioning */
+        .mobile-dashboard-btn {
+            bottom: 18px !important;
+        }
+        
+        /* Footer adjustment for reduced header */
+        .modern-footer {
+            margin-top: 3rem;
+        }
+
+        /* Hero section */
         .hero-section {
             position: relative;
             overflow: hidden;
@@ -1185,10 +1372,13 @@
     {% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light navbar-glass sticky-top py-3">
+    <nav class="navbar navbar-expand-lg navbar-light navbar-glass sticky-top py-2">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'directory:home' %}">
-                <i class="bi bi-building"></i> FindNearBiz
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{% url 'directory:home' %}">
+                <img src="https://res.cloudinary.com/dvjvyse2r/image/upload/v1/media/payment_screenshots/FNB_logo_pefcsb" width="80px" height="auto"
+                     alt="FindNearBiz Logo" 
+                     class="navbar-logo me-2">
+                FindNearBiz
             </a>
             <button class="mobile-nav-toggle d-lg-none" type="button" id="mobileNavToggle">
                 <i class="bi bi-list"></i>
@@ -1255,8 +1445,12 @@
             <button class="mobile-nav-close" id="mobileNavClose">
                 <i class="bi bi-x"></i>
             </button>
-            <h5 class="mb-0" style="font-family: 'Poppins', sans-serif; font-weight: 800;">
-                <i class="bi bi-building me-2"></i>FindNearBiz
+            <h5 class="mb-0 d-flex align-items-center" style="font-family: 'Poppins', sans-serif; font-weight: 800;">
+                <img src="https://res.cloudinary.com/dvjvyse2r/image/upload/v1/media/payment_screenshots/FNB_logo_pefcsb" 
+                     alt="FindNearBiz Logo" 
+                     class="me-2"
+                     style="width: 24px; height: 24px; border-radius: 4px;">
+                FindNearBiz
             </h5>
             <p class="mb-0 small opacity-75">Your Local Business Hub</p>
         </div>
@@ -1335,8 +1529,12 @@
             <!-- Company Info -->
             <div class="col-lg-4 col-md-6">
                 <div class="footer-brand">
-                    <h4 class="brand-name">
-                        <i class="bi bi-building me-2"></i>FindNearBiz
+                    <h4 class="brand-name d-flex align-items-center">
+                        <img src="https://res.cloudinary.com/dvjvyse2r/image/upload/v1/media/payment_screenshots/FNB_logo_pefcsb" 
+                             alt="FindNearBiz Logo" 
+                             class="me-2"
+                             style="width: 28px; height: 28px; border-radius: 4px;">
+                        FindNearBiz
                     </h4>
                     <p class="brand-description">
                         Connecting local businesses with customers. Discover trusted services, read verified reviews, 
