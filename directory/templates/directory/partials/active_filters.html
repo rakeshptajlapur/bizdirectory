@@ -1,0 +1,40 @@
+<!-- Active Filters Display -->
+{% if current_filters %}
+<div class="mb-3">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <span class="text-muted small">Active filters:</span>
+        
+        {% if current_filters.query %}
+        <span class="badge bg-primary active-filter-badge" onclick="removeFilter('query')">
+            Search: {{ current_filters.query }}
+            <i class="bi bi-x ms-1"></i>
+        </span>
+        {% endif %}
+        
+        {% if current_filters.location %}
+        <span class="badge bg-info active-filter-badge" onclick="removeFilter('location')">
+            Location: {{ current_filters.location }}
+            <i class="bi bi-x ms-1"></i>
+        </span>
+        {% endif %}
+        
+        {% if current_filters.rating %}
+        <span class="badge bg-warning active-filter-badge" onclick="removeFilter('rating')">
+            {{ current_filters.rating }} Stars
+            <i class="bi bi-x ms-1"></i>
+        </span>
+        {% endif %}
+        
+        {% if current_filters.verification %}
+        <span class="badge bg-success active-filter-badge" onclick="removeFilter('verification')">
+            {% if current_filters.verification == 'gst' %}GST Verified{% elif current_filters.verification == 'kyc' %}KYC Completed{% else %}Both Verified{% endif %}
+            <i class="bi bi-x ms-1"></i>
+        </span>
+        {% endif %}
+        
+        <a href="{% url 'directory:listings' %}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-x-circle me-1"></i>Clear All
+        </a>
+    </div>
+</div>
+{% endif %}

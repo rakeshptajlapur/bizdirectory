@@ -1,0 +1,102 @@
+<!-- Desktop Filter Form -->
+<form id="desktop-filter-form" action="{% url 'directory:listings' %}" method="get">
+    {% if current_filters.query %}
+    <input type="hidden" name="query" value="{{ current_filters.query }}">
+    {% endif %}
+    
+    <!-- Location Search -->
+    <div class="mb-3">
+        <label class="form-label fw-bold d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-geo-alt me-1"></i>Location</span>
+            <i class="bi bi-question-circle text-muted filter-tooltip" 
+               data-bs-toggle="tooltip" 
+               data-bs-placement="left"
+               title="Search by area, locality, or landmark."></i>
+        </label>
+        <div class="position-relative">
+            <input type="text" 
+                   class="form-control form-control-sm" 
+                   id="desktopLocationSearch" 
+                   name="location"
+                   placeholder="Search by area, locality..."
+                   value="{{ current_filters.location|default:'' }}"
+                   autocomplete="off">
+            <div class="search-suggestions" id="desktopLocationSuggestions"></div>
+            
+            <!-- Hidden fields for Google Places data -->
+            <input type="hidden" name="lat" id="desktopLat" value="{{ current_filters.lat|default:'' }}">
+            <input type="hidden" name="lng" id="desktopLng" value="{{ current_filters.lng|default:'' }}">
+            <input type="hidden" name="radius" id="desktopRadius" value="{{ current_filters.radius|default:'50' }}">
+        </div>
+    </div>
+    
+    <!-- Categories -->
+    <div class="mb-3">
+        <label class="form-label fw-bold d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-grid-3x3-gap me-1"></i>Categories</span>
+            <i class="bi bi-question-circle text-muted filter-tooltip" 
+               data-bs-toggle="tooltip" 
+               data-bs-placement="left"
+               title="Search categories and click to add. Maximum 3 selections allowed."></i>
+        </label>
+        
+        <div class="selected-categories-container mb-2" id="desktopSelectedCategories"></div>
+        
+        <div class="position-relative">
+            <input type="text" 
+                   class="form-control form-control-sm category-search-input" 
+                   id="desktopCategorySearch" 
+                   placeholder="Search categories..."
+                   autocomplete="off">
+            <div class="category-suggestions" id="desktopCategorySuggestions"></div>
+        </div>
+        
+        <div id="desktopHiddenCategories"></div>
+    </div>
+    
+    <!-- Ratings Dropdown -->
+    <div class="mb-3">
+        <label for="desktopRatingSelect" class="form-label fw-bold d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-star me-1"></i>Ratings</span>
+            <i class="bi bi-question-circle text-muted filter-tooltip" 
+               data-bs-toggle="tooltip" 
+               data-bs-placement="left"
+               title="Filter businesses by specific star ratings."></i>
+        </label>
+        <select class="form-select form-select-sm desktop-filter-change" id="desktopRatingSelect" name="rating">
+            <option value="">Any Rating</option>
+            {% for i in "54321"|make_list %}
+            <option value="{{ i }}" {% if current_filters.rating == i %}selected{% endif %}>
+                {% for j in "12345"|make_list %}★{% if forloop.counter > i|add:"0" %}☆{% endif %}{% endfor %} {{ i }} Star{{ i|pluralize }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <!-- Verification Status -->
+    <div class="mb-3">
+        <label for="desktopVerificationSelect" class="form-label fw-bold d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-shield-check me-1"></i>Verification</span>
+            <i class="bi bi-question-circle text-muted filter-tooltip" 
+               data-bs-toggle="tooltip" 
+               data-bs-placement="left"
+               title="Filter by business verification status."></i>
+        </label>
+        <select class="form-select form-select-sm desktop-filter-change" id="desktopVerificationSelect" name="verification">
+            <option value="">All Businesses</option>
+            <option value="gst" {% if current_filters.verification == 'gst' %}selected{% endif %}>GST Verified Only</option>
+            <option value="kyc" {% if current_filters.verification == 'kyc' %}selected{% endif %}>KYC Completed Only</option>
+            <option value="both" {% if current_filters.verification == 'both' %}selected{% endif %}>Both GST & KYC</option>
+        </select>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="bi bi-funnel me-2"></i>Apply Filters
+        </button>
+        <a href="{% url 'directory:listings' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-x-circle me-2"></i>Clear All
+        </a>
+    </div>
+</form>
