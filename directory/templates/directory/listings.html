@@ -378,6 +378,57 @@
     }
     
 
+/* RATINGS DROPDOWN STYLING */
+#mobileRatingSelect,
+#desktopRatingSelect {
+    font-size: 0.9rem;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#mobileRatingSelect:focus,
+#desktopRatingSelect:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+#mobileRatingSelect option,
+#desktopRatingSelect option {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    background: white;
+    color: #495057;
+}
+
+#mobileRatingSelect option:hover,
+#desktopRatingSelect option:hover {
+    background: #f8f9fa;
+    color: #0d6efd;
+}
+
+/* Star symbols styling in dropdown */
+.rating-option {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: 0.5px;
+}
+
+/* Mobile specific adjustments */
+@media (max-width: 768px) {
+    #mobileRatingSelect {
+        font-size: 0.85rem;
+        padding: 0.6rem;
+    }
+    
+    #mobileRatingSelect option {
+        font-size: 0.85rem;
+        padding: 0.6rem;
+    }
+}
+
 /* TAG-BASED CATEGORY SELECTOR STYLING */
 .selected-categories-container {
     min-height: 36px;
@@ -856,30 +907,40 @@
                 <div class="form-text small">Search categories and click to add. Max 3 selections.</div>
             </div>
             
-            <!-- 3. INDIVIDUAL STAR RATINGS -->
+            <!-- 3. RATINGS DROPDOWN -->
             <div class="mb-4">
-                <label class="form-label fw-bold">
+                <label for="mobileRatingSelect" class="form-label fw-bold">
                     <i class="bi bi-star me-1"></i>Ratings
                 </label>
-                {% for i in '12345'|make_list %}
-                <div class="form-check">
-                    <input class="form-check-input mobile-filter-change" 
-                           type="checkbox" 
-                           name="ratings" 
-                           id="mobile-rating-{{ i }}" 
-                           value="{{ i }}"
-                           {% if i in current_filters.ratings %}checked{% endif %}>
-                    <label class="form-check-label small" for="mobile-rating-{{ i }}">
-                        {% with rating_int=i|add:"0" %}
-                        {% for j in '12345'|make_list %}
-                        <i class="bi bi-star{% if forloop.counter <= rating_int %}-fill{% endif %} text-warning"></i>
-                        {% endfor %}
-                        {% endwith %}
-                        <span class="ms-1">{{ i }} Star{{ i|add:"0"|pluralize }}</span>
-                    </label>
-                </div>
-                {% endfor %}
-                <div class="form-text small">Select specific ratings</div>
+                <select class="form-select mobile-filter-change" id="mobileRatingSelect" name="rating">
+                    <option value="">Any Rating</option>
+                    <option value="5" {% if current_filters.rating == '5' %}selected{% endif %}>
+                        <span class="rating-option">
+                            ★★★★★ 5 Stars ({{ rating_counts.5|default:0 }} businesses)
+                        </span>
+                    </option>
+                    <option value="4" {% if current_filters.rating == '4' %}selected{% endif %}>
+                        <span class="rating-option">
+                            ★★★★☆ 4 Stars ({{ rating_counts.4|default:0 }} businesses)
+                        </span>
+                    </option>
+                    <option value="3" {% if current_filters.rating == '3' %}selected{% endif %}>
+                        <span class="rating-option">
+                            ★★★☆☆ 3 Stars ({{ rating_counts.3|default:0 }} businesses)
+                        </span>
+                    </option>
+                    <option value="2" {% if current_filters.rating == '2' %}selected{% endif %}>
+                        <span class="rating-option">
+                            ★★☆☆☆ 2 Stars ({{ rating_counts.2|default:0 }} businesses)
+                        </span>
+                    </option>
+                    <option value="1" {% if current_filters.rating == '1' %}selected{% endif %}>
+                        <span class="rating-option">
+                            ★☆☆☆☆ 1 Star ({{ rating_counts.1|default:0 }} businesses)
+                        </span>
+                    </option>
+                </select>
+                <div class="form-text small">Select specific rating to filter businesses</div>
             </div>
             
             <!-- 4. VERIFICATION STATUS DROPDOWN -->
@@ -980,30 +1041,40 @@
                         <div class="form-text small">Search categories and click to add. Max 3 selections.</div>
                     </div>
                     
-                    <!-- 3. INDIVIDUAL STAR RATINGS -->
+                    <!-- 3. RATINGS DROPDOWN -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold">
+                        <label for="desktopRatingSelect" class="form-label fw-bold">
                             <i class="bi bi-star me-1"></i>Ratings
                         </label>
-                        {% for i in '12345'|make_list %}
-                        <div class="form-check">
-                            <input class="form-check-input desktop-filter-change" 
-                                   type="checkbox" 
-                                   name="ratings" 
-                                   id="desktop-rating-{{ i }}" 
-                                   value="{{ i }}"
-                                   {% if i in current_filters.ratings %}checked{% endif %}>
-                            <label class="form-check-label small" for="desktop-rating-{{ i }}">
-                                {% with rating_int=i|add:"0" %}
-                                {% for j in '12345'|make_list %}
-                                <i class="bi bi-star{% if forloop.counter <= rating_int %}-fill{% endif %} text-warning"></i>
-                                {% endfor %}
-                                {% endwith %}
-                                <span class="ms-1">{{ i }} Star{{ i|add:"0"|pluralize }}</span>
-                            </label>
-                        </div>
-                        {% endfor %}
-                        <div class="form-text small">Select specific ratings</div>
+                        <select class="form-select desktop-filter-change" id="desktopRatingSelect" name="rating">
+                            <option value="">Any Rating</option>
+                            <option value="5" {% if current_filters.rating == '5' %}selected{% endif %}>
+                                <span class="rating-option">
+                                    ★★★★★ 5 Stars ({{ rating_counts.5|default:0 }} businesses)
+                                </span>
+                            </option>
+                            <option value="4" {% if current_filters.rating == '4' %}selected{% endif %}>
+                                <span class="rating-option">
+                                    ★★★★☆ 4 Stars ({{ rating_counts.4|default:0 }} businesses)
+                                </span>
+                            </option>
+                            <option value="3" {% if current_filters.rating == '3' %}selected{% endif %}>
+                                <span class="rating-option">
+                                    ★★★☆☆ 3 Stars ({{ rating_counts.3|default:0 }} businesses)
+                                </span>
+                            </option>
+                            <option value="2" {% if current_filters.rating == '2' %}selected{% endif %}>
+                                <span class="rating-option">
+                                    ★★☆☆☆ 2 Stars ({{ rating_counts.2|default:0 }} businesses)
+                                </span>
+                            </option>
+                            <option value="1" {% if current_filters.rating == '1' %}selected{% endif %}>
+                                <span class="rating-option">
+                                    ★☆☆☆☆ 1 Star ({{ rating_counts.1|default:0 }} businesses)
+                                </span>
+                            </option>
+                        </select>
+                        <div class="form-text small">Select specific rating to filter businesses</div>
                     </div>
                     
                     <!-- 4. VERIFICATION STATUS DROPDOWN -->
@@ -1058,7 +1129,7 @@
                     {% endfor %}
                 {% elif key == 'rating' %}
                     <span class="badge bg-primary rounded-pill">
-                        Rating: {{ value }}+ stars
+                        Rating: {{ value }} star{{ value|pluralize }}
                         <a href="javascript:void(0)" class="text-white remove-filter" data-filter="rating" aria-label="Remove filter">×</a>
                     </span>
                 {% elif key == 'verification' %}

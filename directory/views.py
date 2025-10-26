@@ -246,12 +246,24 @@ def listings(request):
     businesses = businesses.annotate(
         avg_rating=Avg('reviews__rating', filter=Q(reviews__is_approved=True)),
         approved_reviews_count=Count('reviews', filter=Q(reviews__is_approved=True))
-    ).order_by('-created_at')  # Fixed ordering for pagination
+    ).order_by('-created_at')
     
     # Apply filters
     category_id = request.GET.get('category')
     if category_id:
         businesses = businesses.filter(category_id=category_id)
+    
+    # UPDATED: Rating filter for exact rating match
+    rating = request.GET.get('rating')
+    if rating:
+        try:
+            rating_int = int(rating)
+            businesses = businesses.filter(
+                avg_rating__gte=rating_int - 0.5,
+                avg_rating__lt=rating_int + 0.5
+            )
+        except ValueError:
+            pass
     
     # NEW: Geographic Location Search with Radius
     lat = request.GET.get('lat')
@@ -329,10 +341,6 @@ def listings(request):
         print(f"Text-based location search: {businesses.count()} businesses found for '{location_query}'")
     
     # Rest of your existing filters...
-    rating = request.GET.get('rating')
-    if rating:
-        businesses = businesses.filter(reviews__rating__gte=int(rating)).distinct()
-    
     pincode = request.GET.get('pincode')
     if pincode:
         businesses = businesses.filter(pincode__startswith=pincode)
@@ -356,12 +364,24 @@ def listings(request):
     # Get all categories for the filter sidebar
     categories = Category.objects.all()
     
+    # ADDED: Calculate rating counts for dropdown
+    from django.db.models import Case, When, IntegerField
+    
+    rating_counts = {}
+    for i in range(1, 6):
+        count = Business.objects.filter(is_active=True).annotate(
+            avg_rating=Avg('reviews__rating', filter=Q(reviews__is_approved=True))
+        ).filter(
+            avg_rating__gte=i - 0.5,
+            avg_rating__lt=i + 0.5
+        ).count()
+        rating_counts[i] = count
+    
     # Pagination
-    paginator = Paginator(businesses, 12)  # 12 businesses per page
+    paginator = Paginator(businesses, 12)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
     
-    # Prepare current filters for maintaining state
     # Prepare current filters for maintaining state
     current_filters = {}
     for param in ['category', 'rating', 'verification', 'query', 'location', 'lat', 'lng', 'radius']:
@@ -372,6 +392,7 @@ def listings(request):
         'page_obj': page_obj,
         'categories': categories,
         'current_filters': current_filters,
+        'rating_counts': rating_counts,  # ADDED: Rating counts for dropdown
     }
     
     return render(request, 'directory/listings.html', context)
