@@ -131,9 +131,24 @@
         </div>
         
         <!-- Loading & End States -->
-        {% include 'directory/partials/loading_states.html' %}
+        <div id="loading-indicator" class="text-center py-4" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-muted mt-2">Loading more businesses...</p>
+        </div>
+
+        <div id="end-of-results" class="text-center py-4" style="display: none;">
+            <i class="bi bi-check-circle text-success fs-3"></i>
+            <p class="text-muted mt-2">You've seen all businesses matching your criteria</p>
+            <button class="btn btn-outline-primary btn-sm" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <i class="bi bi-arrow-up me-1"></i>Back to Top
+            </button>
+        </div>
     </div>
 </div>
+
+
 
 <!-- =================================================================
      STICKY BOTTOM CTA (MOBILE ONLY)
@@ -1439,6 +1454,17 @@
 
 {% block extra_js %}
 <script>
+// ===================================================================
+// INFINITE SCROLL IMPLEMENTATION
+// ===================================================================
+let isLoading = false;
+let hasMorePages = {{ page_obj.has_next|yesno:"true,false" }};
+let currentPage = {{ page_obj.number|default:1 }};
+let totalPages = {{ paginator.num_pages|default:1 }};
+
+console.log('🚀 Listings page initialized');
+console.log(`📊 Initial state: Page ${currentPage}/${totalPages}, Has more: ${hasMorePages}`);
+
 // Auto-suggestions for search box
 $("#search-input").autocomplete({
     source: function(request, response) {
@@ -1476,7 +1502,262 @@ $("#search-input").autocomplete({
         .appendTo(ul);
 };
 
-// Mobile filter functionality
+// ===================================================================
+// INFINITE SCROLL FUNCTIONALITY
+// ===================================================================
+function loadMoreBusinesses() {
+    if (isLoading || !hasMorePages) {
+        return;
+    }
+    
+    isLoading = true;
+    currentPage++;
+    
+    // Show loading indicator
+    $('#loading-indicator').show();
+    
+    // Get current URL parameters to maintain filters
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('page', currentPage);
+    
+    $.ajax({
+        url: "{% url 'directory:listings_ajax' %}",
+        data: urlParams.toString(),
+        method: 'GET',
+        success: function(response) {
+            if (response.businesses && response.businesses.length > 0) {
+                // Render new business cards
+                appendBusinessCards(response.businesses);
+                
+                // Update pagination info
+                hasMorePages = response.has_next;
+                totalPages = response.total_pages;
+                
+                // Update results count
+                updateResultsCount(response);
+                
+                console.log(`✅ Loaded page ${currentPage}/${totalPages} - ${response.businesses.length} businesses`);
+                
+                // Show end message if no more pages
+                if (!hasMorePages) {
+                    $('#end-of-results').show();
+                }
+            } else {
+                // No more results
+                hasMorePages = false;
+                $('#end-of-results').show();
+                console.log('📄 No more businesses to load');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('❌ Error loading more businesses:', error);
+            hasMorePages = false; // Stop trying on error
+            
+            // Show error message
+            $('#loading-indicator').html(`
+                <div class="text-center py-4">
+                    <i class="bi bi-exclamation-triangle text-warning fs-3"></i>
+                    <p class="text-muted mt-2">Error loading more businesses. Please refresh the page.</p>
+                </div>
+            `);
+        },
+        complete: function() {
+            isLoading = false;
+            $('#loading-indicator').hide();
+        }
+    });
+}
+
+function appendBusinessCards(businesses) {
+    const desktopContainer = $('#desktop-listings');
+    const mobileContainer = $('#mobile-listings');
+    
+    businesses.forEach(function(business) {
+        // Create desktop business card HTML
+        const desktopCardHtml = createDesktopBusinessCard(business);
+        desktopContainer.append(desktopCardHtml);
+        
+        // Create mobile business card HTML
+        const mobileCardHtml = createMobileBusinessCard(business);
+        mobileContainer.append(mobileCardHtml);
+    });
+}
+
+function createDesktopBusinessCard(business) {
+    const verificationBadges = [];
+    if (business.gst_verified) {
+        verificationBadges.push('<span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>GST</span>');
+    }
+    if (business.kyc_status === 'completed') {
+        verificationBadges.push('<span class="badge bg-success"><i class="bi bi-shield-check me-1"></i>KYC</span>');
+    }
+    
+    const stars = generateStars(business.avg_rating);
+    const services = business.services.slice(0, 4).map(service => 
+        `<span class="badge bg-light text-dark">${service}</span>`
+    ).join(' ');
+    
+    const moreServices = business.services_count > 4 ? 
+        `<span class="badge bg-secondary">+${business.services_count - 4} more</span>` : '';
+    
+    return `
+        <div class="mb-4 business-item">
+            <div class="card h-100 shadow-sm desktop-business-card" onclick="window.location.href='/business/${business.id}/'">
+                <div class="row g-0">
+                    <div class="col-3">
+                        <div class="position-relative">
+                            <img src="${business.image_url}" 
+                                 class="img-fluid h-100" 
+                                 alt="${business.name}"
+                                 style="object-fit: cover;">
+                            <span class="position-absolute top-0 start-0 m-2 badge category-badge">
+                                ${business.category}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-9">
+                        <div class="card-body">
+                            <!-- 1. Business Name -->
+                            <h5 class="card-title mb-2">${business.name}</h5>
+                            
+                            <!-- 2. Verification Badges -->
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                ${verificationBadges.join(' ')}
+                            </div>
+                            
+                            <!-- 3. Rating & Review Count -->
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="stars me-2">
+                                    ${stars}
+                                </div>
+                                <span class="text-muted small">(${business.approved_reviews_count})</span>
+                            </div>
+                            
+                            <!-- 4. Service Tags (Max 4) -->
+                            <div class="d-flex flex-wrap gap-1 mb-2">
+                                ${services} ${moreServices}
+                            </div>
+                            
+                            <!-- 5. Business Owner Name -->
+                            <div class="mb-1">
+                                <small class="text-muted">
+                                    <i class="bi bi-person me-1"></i>${business.owner_name}
+                                </small>
+                            </div>
+                            
+                            <!-- 6. Location -->
+                            <div class="mb-0">
+                                <small class="text-muted">
+                                    <i class="bi bi-geo-alt me-1"></i>${business.city}, ${business.pincode}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createMobileBusinessCard(business) {
+    const verificationBadges = [];
+    if (business.gst_verified) {
+        verificationBadges.push('<span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>GST</span>');
+    }
+    if (business.kyc_status === 'completed') {
+        verificationBadges.push('<span class="badge bg-success"><i class="bi bi-shield-check me-1"></i>KYC</span>');
+    }
+    
+    const stars = generateStars(business.avg_rating);
+    
+    return `
+        <div class="col-6">
+            <div class="card h-100 shadow-sm mobile-business-card" onclick="window.location.href='/business/${business.id}/'">
+                <div class="position-relative">
+                    <img src="${business.image_url}" 
+                         class="card-img-top" 
+                         alt="${business.name}">
+                    <span class="position-absolute top-0 start-0 m-2 badge category-badge">
+                        ${business.category}
+                    </span>
+                </div>
+                
+                <div class="card-body">
+                    <h5 class="card-title">${business.name}</h5>
+                    
+                    <!-- Trust & Safety Tags -->
+                    <div class="d-flex flex-wrap gap-1 mb-1">
+                        ${verificationBadges.join(' ')}
+                    </div>
+                    
+                    <!-- Star rating with reduced spacing -->
+                    <div class="d-flex align-items-center mb-1">
+                        <div class="stars me-2">
+                            ${stars}
+                        </div>
+                        <span class="text-muted small">(${business.approved_reviews_count})</span>
+                    </div>
+                </div>
+                
+                <!-- Stacked and left-aligned footer -->
+                <div class="card-footer">
+                    <div class="d-flex flex-column align-items-start gap-1">
+                        <small class="text-muted">
+                            <i class="bi bi-geo-alt me-1"></i>${business.city}
+                        </small>
+                        <small class="text-muted">
+                            <i class="bi bi-person me-1"></i>${business.owner_name}
+                        </small>
+                        <small class="text-muted">
+                            <i class="bi bi-tools me-1"></i>${business.services_count} service${business.services_count !== 1 ? 's' : ''}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function generateStars(rating) {
+    let stars = '';
+    for (let i = 1; i <= 5; i++) {
+        if (i <= rating) {
+            stars += '<i class="bi bi-star-fill text-warning"></i>';
+        } else {
+            stars += '<i class="bi bi-star text-warning"></i>';
+        }
+    }
+    return stars;
+}
+
+function updateResultsCount(response) {
+    const totalShowing = (response.current_page - 1) * 12 + response.businesses.length;
+    $('#results-count').text(`Showing 1 - ${totalShowing} of ${response.total_count} businesses`);
+}
+
+// ===================================================================
+// SCROLL EVENT LISTENER FOR INFINITE SCROLL
+// ===================================================================
+function handleScroll() {
+    if (isLoading || !hasMorePages) return;
+    
+    const scrollTop = $(window).scrollTop();
+    const windowHeight = $(window).height();
+    const documentHeight = $(document).height();
+    
+    // Trigger load when user is 200px from bottom
+    if (scrollTop + windowHeight >= documentHeight - 200) {
+        loadMoreBusinesses();
+    }
+}
+
+// Initialize infinite scroll
+$(window).on('scroll', handleScroll);
+
+// ===================================================================
+// MOBILE FILTER FUNCTIONALITY
+// ===================================================================
 document.getElementById('mobileFilterBtn').addEventListener('click', function() {
     document.getElementById('mobileFilterOverlay').style.display = 'block';
     document.getElementById('mobileFilterContainer').classList.add('show');
@@ -1492,7 +1773,9 @@ document.getElementById('mobileFilterOverlay').addEventListener('click', functio
     document.getElementById('mobileFilterContainer').classList.remove('show');
 });
 
-// Initialize Google Places API (same as homepage)
+// ===================================================================
+// GOOGLE PLACES API FOR LOCATION SEARCH
+// ===================================================================
 let autocompleteService, placesService;
 
 function initGooglePlaces() {
@@ -1567,13 +1850,14 @@ function showLocationSuggestions(suggestions, query, suggestionsId, type) {
 }
 
 function fallbackLocationSearch(query, suggestionsId) {
+    // Note: You'll need to add this URL to your urls.py
     $.ajax({
-        url: "{% url 'directory:location_suggestions' %}",
+        url: "{% url 'directory:search_suggestions' %}", // Using existing endpoint for now
         data: { term: query },
         success: function(data) {
             const suggestions = data.map(item => ({
                 place_id: null,
-                description: item
+                description: item.label || item
             }));
             showLocationSuggestions(suggestions, query, suggestionsId, 'fallback');
         },
@@ -1633,8 +1917,13 @@ $(document).on('click', function(e) {
     }
 });
 
-// Initialize when DOM ready
+// ===================================================================
+// INITIALIZE EVERYTHING
+// ===================================================================
 $(document).ready(function() {
+    console.log('🚀 Listings page initialized');
+    console.log(`📊 Initial state: Page ${currentPage}/${totalPages}, Has more: ${hasMorePages}`);
+    
     initFilterLocationSearch();
     
     if (window.google) {
@@ -1643,8 +1932,11 @@ $(document).ready(function() {
         window.initGooglePlaces = initGooglePlaces;
     }
 });
+
+
 </script>
-<!-- Load Google Maps API using existing env variable -->
+
+<!-- Load Google Maps API -->
 <script async defer 
     src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initGooglePlaces">
 </script>
