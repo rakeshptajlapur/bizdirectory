@@ -866,7 +866,7 @@
         font-size: 0.9rem !important; /* Much smaller */
         font-weight: 600 !important;
         line-height: 1.2 !important;
-        margin-bottom: 0 !important;
+        margin-bottom: 0.15rem !important; /* Reduced from default */
         color: #2c3e50 !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
@@ -876,26 +876,15 @@
     /* Trust badges - smaller and inline */
     .mobile-business-card .d-flex.flex-wrap.gap-1 {
         gap: 0.25rem !important;
-        margin-bottom: 0.3rem !important;
+        margin-bottom: 0.15rem !important; /* Reduced spacing */
     }
     
-    .mobile-business-card .badge.bg-success {
-        font-size: 0.55rem !important;
-        padding: 0.15rem 0.3rem !important;
-        border-radius: 3px !important;
-        font-weight: 500 !important;
-    }
-    
-    .mobile-business-card .badge.bg-success i {
-        font-size: 0.5rem !important;
-        margin-right: 0.2rem !important;
-    }
-    
-    /* Rating stars - smaller and TIGHTER */
+    /* Rating container - minimal top spacing */
     .mobile-business-card .d-flex.align-items-center.mb-1 {
-        margin-bottom: 0.15rem !important; /* Reduced from default */
-        padding: 0 !important; /* Remove any padding */
-        line-height: 1 !important; /* Tight line height */
+        margin-bottom: 0.1rem !important; /* Even tighter */
+        margin-top: 0 !important; /* No top margin */
+        padding: 0 !important;
+        line-height: 1 !important;
     }
 
     .mobile-business-card .stars {
