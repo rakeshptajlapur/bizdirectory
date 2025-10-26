@@ -27,7 +27,11 @@
         
         {% if current_filters.verification %}
         <span class="badge bg-success active-filter-badge" onclick="removeFilter('verification')">
-            {% if current_filters.verification == 'gst' %}GST Verified{% elif current_filters.verification == 'kyc' %}KYC Completed{% else %}Both Verified{% endif %}
+            {% if current_filters.verification == 'gst' %}GST Verified
+            {% elif current_filters.verification == 'kyc' %}KYC Completed
+            {% elif current_filters.verification == 'both' %}Both Verified
+            {% elif current_filters.verification == 'any' %}Any Verification
+            {% endif %}
             <i class="bi bi-x ms-1"></i>
         </span>
         {% endif %}

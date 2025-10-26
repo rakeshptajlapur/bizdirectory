@@ -359,12 +359,12 @@ def listings(request):
     if pincode:
         businesses = businesses.filter(pincode__startswith=pincode)
     
-    trust_filter = request.GET.get('trust')
-    if trust_filter == 'gst':
+    verification = request.GET.get('verification')
+    if verification == 'gst':
         businesses = businesses.filter(gst_verified=True)
-    elif trust_filter == 'kyc':
+    elif verification == 'kyc':
         businesses = businesses.filter(kyc_status='completed')
-    elif trust_filter == 'both':
+    elif verification == 'both':
         businesses = businesses.filter(gst_verified=True, kyc_status='completed')
     
     search_query = request.GET.get('query')
@@ -1364,6 +1364,10 @@ def listings_ajax(request):
         businesses = businesses.filter(kyc_status='completed')
     elif verification == 'both':
         businesses = businesses.filter(gst_verified=True, kyc_status='completed')
+    elif verification == 'any':
+        businesses = businesses.filter(
+            Q(gst_verified=True) | Q(kyc_status='completed')
+        )
     
     # Pagination for AJAX
     paginator = Paginator(businesses, 10)  # 10 items per load
