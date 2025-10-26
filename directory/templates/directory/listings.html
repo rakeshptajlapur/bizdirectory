@@ -622,178 +622,155 @@
     display: inline-block;
 }
 
-
-
-
-    /* Enhanced Mobile Filter Styling */
-.mobile-filter-container .search-suggestions {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #dee2e6;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    max-height: 200px;
-    overflow-y: auto;
-    display: none;
+/* COMPACT FILTER STYLING WITH TOOLTIPS */
+.filter-tooltip {
+    font-size: 0.75rem;
+    cursor: help;
+    transition: color 0.2s ease;
 }
 
-.mobile-filter-container .suggestion-item {
-    padding: 0.75rem;
-    cursor: pointer;
-    border-bottom: 1px solid #f8f9fa;
-    font-size: 0.9rem;
-    color: #495057;
+.filter-tooltip:hover {
+    color: #0d6efd !important;
 }
 
-.mobile-filter-container .suggestion-item:hover {
-    background: #f8f9fa;
-    color: #0d6efd;
-}
-
-.mobile-filter-container .suggestion-item:last-child {
-    border-bottom: none;
-}
-
-/* Enhanced checkbox styling */
-.mobile-filter-container .form-check {
-    padding: 0.5rem 0.5rem 0.5rem 1rem; /* Added left padding */
+/* Compact form controls */
+.form-control-sm {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
     border-radius: 6px;
-    transition: background-color 0.2s ease;
 }
 
-.mobile-filter-container .form-check:hover {
-    background-color: rgba(13, 110, 253, 0.05);
-}
-
-.mobile-filter-container .form-check-input {
-    margin-left: 0.5rem; /* Add left margin to checkbox */
-    margin-right: 0.75rem; /* Increase right margin for breathing room */
-}
-
-.mobile-filter-container .form-check-input:checked + .form-check-label {
-    color: #0d6efd;
-    font-weight: 500;
-}
-
-.mobile-filter-container .form-check-label {
-    padding-left: 0.25rem; /* Small left padding for label */
-    cursor: pointer;
-}
-
-/* Star rating alignment with proper spacing */
-.mobile-filter-container .stars i {
-    font-size: 0.8rem;
-    margin-right: 2px; /* Consistent spacing between stars */
-}
-
-/* Category item specific spacing */
-.category-item {
-    margin-bottom: 0.25rem;
-}
-
-.category-item .form-check-input {
-    margin-top: 0.15rem; /* Align with text baseline */
-}
-
-/* Desktop Filter Styling (same as mobile) */
-.desktop-filters .search-suggestions {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #dee2e6;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    max-height: 200px;
-    overflow-y: auto;
-    display: none;
-}
-
-.desktop-filters .suggestion-item {
-    padding: 0.75rem;
-    cursor: pointer;
-    border-bottom: 1px solid #f8f9fa;
-    font-size: 0.9rem;
-    color: #495057;
-}
-
-.desktop-filters .suggestion-item:hover {
-    background: #f8f9fa;
-    color: #0d6efd;
-}
-
-.desktop-filters .suggestion-item:last-child {
-    border-bottom: none;
-}
-
-/* Enhanced checkbox styling for desktop */
-.desktop-filters .form-check {
-    padding: 0.4rem 0.5rem 0.4rem 0.8rem;
+.form-select-sm {
+    padding: 0.4rem 1.75rem 0.4rem 0.6rem;
+    font-size: 0.85rem;
     border-radius: 6px;
-    transition: background-color 0.2s ease;
-    margin-bottom: 0.2rem;
 }
 
-.desktop-filters .form-check:hover {
-    background-color: rgba(13, 110, 253, 0.05);
-}
-
-.desktop-filters .form-check-input {
-    margin-left: 0.3rem;
-    margin-right: 0.6rem;
-}
-
-.desktop-filters .form-check-input:checked + .form-check-label {
-    color: #0d6efd;
-    font-weight: 500;
-}
-
-.desktop-filters .form-check-label {
-    cursor: pointer;
+/* Compact form labels */
+.form-label {
     font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
 }
 
-/* Desktop star ratings styling */
-.desktop-filters .stars i {
+/* Reduce margins for more compact layout */
+.mb-3 {
+    margin-bottom: 0.75rem !important;
+}
+
+/* Compact selected categories container */
+.selected-categories-container {
+    min-height: 32px;
+    padding: 0.4rem;
+}
+
+.selected-categories-container.empty {
     font-size: 0.8rem;
-    margin-right: 2px;
 }
 
-/* Desktop category search highlighting */
-.desktop-filters .category-item.hidden {
-    display: none !important;
+/* Smaller category tags */
+.category-tag {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
 }
 
-/* Desktop verification dropdown styling */
-#desktopVerificationSelect {
-    font-size: 0.9rem;
+.category-tag .remove-tag {
+    width: 16px;
+    height: 16px;
+    font-size: 0.65rem;
 }
 
-#desktopVerificationSelect option {
-    padding: 0.5rem;
+/* Compact buttons */
+.d-grid .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
 }
 
-/* Desktop form styling consistency */
-.desktop-filters .form-label {
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
+/* Tooltip styling */
+.tooltip {
+    font-size: 0.75rem;
 }
 
-.desktop-filters .form-control,
-.desktop-filters .form-select {
-    font-size: 0.9rem;
+.tooltip-inner {
+    max-width: 250px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background-color: #212529;
+    text-align: left;
 }
 
-.desktop-filters .form-text {
-    font-size: 0.8rem;
+/* Compact mobile filter header */
+.mobile-filter-header {
+    padding: 0.75rem 1rem;
+}
+
+.mobile-filter-container .p-3 {
+    padding: 0.75rem !important;
+}
+
+/* Compact desktop filter card */
+.desktop-filters .card-body {
+    padding: 0.75rem;
+}
+
+.desktop-filters .card-header {
+    padding: 0.5rem 0.75rem;
+}
+
+/* Mobile responsive tooltips */
+@media (max-width: 768px) {
+    .filter-tooltip {
+        font-size: 0.7rem;
+    }
+    
+    .tooltip-inner {
+        max-width: 200px;
+        font-size: 0.7rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .form-control-sm,
+    .form-select-sm {
+        font-size: 0.8rem;
+        padding: 0.35rem 0.5rem;
+    }
+    
+    .form-select-sm {
+        padding-right: 1.5rem;
+    }
+    
+    .category-tag {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .mb-3 {
+        margin-bottom: 0.6rem !important;
+    }
+}
+
+/* Ultra compact for very small screens */
+@media (max-width: 375px) {
+    .mobile-filter-container .p-3 {
+        padding: 0.5rem !important;
+    }
+    
+    .mobile-filter-header {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .mb-3 {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .d-grid .btn {
+        padding: 0.45rem 0.8rem;
+        font-size: 0.8rem;
+    }
 }
 </style>
 {% endblock %}
@@ -862,14 +839,18 @@
             <input type="hidden" name="query" value="{{ current_filters.query }}">
             {% endif %}
             
-            <!-- 1. LOCATION SEARCH FIELD -->
-            <div class="mb-4">
-                <label class="form-label fw-bold">
-                    <i class="bi bi-geo-alt me-1"></i>Location
+        <!-- 1. LOCATION SEARCH FIELD -->
+            <div class="mb-3">
+                <label class="form-label fw-bold d-flex align-items-center justify-content-between">
+                    <span><i class="bi bi-geo-alt me-1"></i>Location</span>
+                    <i class="bi bi-question-circle text-muted filter-tooltip" 
+                       data-bs-toggle="tooltip" 
+                       data-bs-placement="left"
+                       title="Type to get location suggestions. Search by city, area, or pincode."></i>
                 </label>
                 <div class="position-relative">
                     <input type="text" 
-                           class="form-control" 
+                           class="form-control form-control-sm" 
                            id="mobileLocationSearch" 
                            name="location"
                            placeholder="City, area, or pincode" 
@@ -877,13 +858,16 @@
                            autocomplete="off">
                     <div class="search-suggestions" id="mobileLocationSuggestions"></div>
                 </div>
-                <div class="form-text small">Type to get location suggestions</div>
             </div>
             
             <!-- 2. CATEGORIES AS TAG-BASED SELECTOR -->
-            <div class="mb-4">
-                <label class="form-label fw-bold">
-                    <i class="bi bi-grid-3x3-gap me-1"></i>Categories
+            <div class="mb-3">
+                <label class="form-label fw-bold d-flex align-items-center justify-content-between">
+                    <span><i class="bi bi-grid-3x3-gap me-1"></i>Categories</span>
+                    <i class="bi bi-question-circle text-muted filter-tooltip" 
+                       data-bs-toggle="tooltip" 
+                       data-bs-placement="left"
+                       title="Search categories and click to add. Maximum 3 selections allowed."></i>
                 </label>
                 
                 <!-- Selected categories as tags -->
@@ -894,61 +878,56 @@
                 <!-- Category search input -->
                 <div class="position-relative">
                     <input type="text" 
-                           class="form-control category-search-input" 
+                           class="form-control form-control-sm category-search-input" 
                            id="mobileCategorySearch" 
-                           placeholder="Search and select categories (max 3)..."
+                           placeholder="Search categories..."
                            autocomplete="off">
                     <div class="category-suggestions" id="mobileCategorySuggestions"></div>
                 </div>
                 
                 <!-- Hidden inputs for form submission -->
                 <div id="mobileHiddenCategories"></div>
-                
-                <div class="form-text small">Search categories and click to add. Max 3 selections.</div>
             </div>
             
             <!-- 3. RATINGS DROPDOWN -->
-            <div class="mb-4">
-                <label for="mobileRatingSelect" class="form-label fw-bold">
-                    <i class="bi bi-star me-1"></i>Ratings
+            <div class="mb-3">
+                <label for="mobileRatingSelect" class="form-label fw-bold d-flex align-items-center justify-content-between">
+                    <span><i class="bi bi-star me-1"></i>Ratings</span>
+                    <i class="bi bi-question-circle text-muted filter-tooltip" 
+                       data-bs-toggle="tooltip" 
+                       data-bs-placement="left"
+                       title="Filter businesses by specific star ratings. Shows business count for each rating."></i>
                 </label>
-                <select class="form-select mobile-filter-change" id="mobileRatingSelect" name="rating">
+                <select class="form-select form-select-sm mobile-filter-change" id="mobileRatingSelect" name="rating">
                     <option value="">Any Rating</option>
                     <option value="5" {% if current_filters.rating == '5' %}selected{% endif %}>
-                        <span class="rating-option">
-                            ★★★★★ 5 Stars ({{ rating_counts.5|default:0 }} businesses)
-                        </span>
+                        ★★★★★ 5 Stars ({{ rating_counts.5|default:0 }})
                     </option>
                     <option value="4" {% if current_filters.rating == '4' %}selected{% endif %}>
-                        <span class="rating-option">
-                            ★★★★☆ 4 Stars ({{ rating_counts.4|default:0 }} businesses)
-                        </span>
+                        ★★★★☆ 4 Stars ({{ rating_counts.4|default:0 }})
                     </option>
                     <option value="3" {% if current_filters.rating == '3' %}selected{% endif %}>
-                        <span class="rating-option">
-                            ★★★☆☆ 3 Stars ({{ rating_counts.3|default:0 }} businesses)
-                        </span>
+                        ★★★★☆ 3 Stars ({{ rating_counts.3|default:0 }})
                     </option>
                     <option value="2" {% if current_filters.rating == '2' %}selected{% endif %}>
-                        <span class="rating-option">
-                            ★★☆☆☆ 2 Stars ({{ rating_counts.2|default:0 }} businesses)
-                        </span>
+                        ★★☆☆☆ 2 Stars ({{ rating_counts.2|default:0 }})
                     </option>
                     <option value="1" {% if current_filters.rating == '1' %}selected{% endif %}>
-                        <span class="rating-option">
-                            ★☆☆☆☆ 1 Star ({{ rating_counts.1|default:0 }} businesses)
-                        </span>
+                        ★☆☆☆☆ 1 Star ({{ rating_counts.1|default:0 }})
                     </option>
                 </select>
-                <div class="form-text small">Select specific rating to filter businesses</div>
             </div>
             
             <!-- 4. VERIFICATION STATUS DROPDOWN -->
-            <div class="mb-4">
-                <label for="mobileVerificationSelect" class="form-label fw-bold">
-                    <i class="bi bi-shield-check me-1"></i>Verification Status
+            <div class="mb-3">
+                <label for="mobileVerificationSelect" class="form-label fw-bold d-flex align-items-center justify-content-between">
+                    <span><i class="bi bi-shield-check me-1"></i>Verification</span>
+                    <i class="bi bi-question-circle text-muted filter-tooltip" 
+                       data-bs-toggle="tooltip" 
+                       data-bs-placement="left"
+                       title="Filter by business verification status. GST verified and KYC completed businesses are more trustworthy."></i>
                 </label>
-                <select class="form-select mobile-filter-change" id="mobileVerificationSelect" name="verification">
+                <select class="form-select form-select-sm mobile-filter-change" id="mobileVerificationSelect" name="verification">
                     <option value="">All Businesses</option>
                     <option value="gst" {% if current_filters.verification == 'gst' %}selected{% endif %}>
                         GST Verified Only
@@ -960,7 +939,6 @@
                         Both GST & KYC
                     </option>
                 </select>
-                <div class="form-text small">Filter by verification status</div>
             </div>
             
             <!-- Pincode filter (existing) -->
@@ -993,14 +971,19 @@
                     <input type="hidden" name="query" value="{{ current_filters.query }}">
                     {% endif %}
                     
-                    <!-- 1. LOCATION SEARCH FIELD -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">
-                            <i class="bi bi-geo-alt me-1"></i>Location
+                    
+                                        <!-- 1. LOCATION SEARCH FIELD -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold d-flex align-items-center justify-content-between">
+                            <span><i class="bi bi-geo-alt me-1"></i>Location</span>
+                            <i class="bi bi-question-circle text-muted filter-tooltip" 
+                               data-bs-toggle="tooltip" 
+                               data-bs-placement="top"
+                               title="Type to get location suggestions. Search by city, area, or pincode."></i>
                         </label>
                         <div class="position-relative">
                             <input type="text" 
-                                   class="form-control" 
+                                   class="form-control form-control-sm" 
                                    id="desktopLocationSearch" 
                                    name="location"
                                    placeholder="City, area, or pincode" 
@@ -1008,16 +991,21 @@
                                    autocomplete="off">
                             <div class="search-suggestions" id="desktopLocationSuggestions"></div>
                         </div>
-                        <div class="form-text small">Type to get location suggestions</div>
                     </div>
                     
-                      <!-- 2. CATEGORIES AS TAG-BASED SELECTOR -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold d-flex justify-content-between align-items-center">
+                    <!-- 2. CATEGORIES AS TAG-BASED SELECTOR -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold d-flex align-items-center justify-content-between">
                             <span><i class="bi bi-grid-3x3-gap me-1"></i>Categories</span>
-                            <a href="{% url 'directory:categories' %}" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-grid-3x3-gap-fill me-1"></i>All
-                            </a>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-question-circle text-muted filter-tooltip" 
+                                   data-bs-toggle="tooltip" 
+                                   data-bs-placement="top"
+                                   title="Search categories and click to add. Maximum 3 selections allowed."></i>
+                                <a href="{% url 'directory:categories' %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-grid-3x3-gap-fill me-1"></i>All
+                                </a>
+                            </div>
                         </label>
                         
                         <!-- Selected categories as tags -->
@@ -1028,61 +1016,56 @@
                         <!-- Category search input -->
                         <div class="position-relative">
                             <input type="text" 
-                                   class="form-control category-search-input" 
+                                   class="form-control form-control-sm category-search-input" 
                                    id="desktopCategorySearch" 
-                                   placeholder="Search and select categories (max 3)..."
+                                   placeholder="Search categories..."
                                    autocomplete="off">
                             <div class="category-suggestions" id="desktopCategorySuggestions"></div>
                         </div>
                         
                         <!-- Hidden inputs for form submission -->
                         <div id="desktopHiddenCategories"></div>
-                        
-                        <div class="form-text small">Search categories and click to add. Max 3 selections.</div>
                     </div>
                     
                     <!-- 3. RATINGS DROPDOWN -->
-                    <div class="mb-4">
-                        <label for="desktopRatingSelect" class="form-label fw-bold">
-                            <i class="bi bi-star me-1"></i>Ratings
+                    <div class="mb-3">
+                        <label for="desktopRatingSelect" class="form-label fw-bold d-flex align-items-center justify-content-between">
+                            <span><i class="bi bi-star me-1"></i>Ratings</span>
+                            <i class="bi bi-question-circle text-muted filter-tooltip" 
+                               data-bs-toggle="tooltip" 
+                               data-bs-placement="top"
+                               title="Filter businesses by specific star ratings. Shows business count for each rating."></i>
                         </label>
-                        <select class="form-select desktop-filter-change" id="desktopRatingSelect" name="rating">
+                        <select class="form-select form-select-sm desktop-filter-change" id="desktopRatingSelect" name="rating">
                             <option value="">Any Rating</option>
                             <option value="5" {% if current_filters.rating == '5' %}selected{% endif %}>
-                                <span class="rating-option">
-                                    ★★★★★ 5 Stars ({{ rating_counts.5|default:0 }} businesses)
-                                </span>
+                                ★★★★★ 5 Stars ({{ rating_counts.5|default:0 }})
                             </option>
                             <option value="4" {% if current_filters.rating == '4' %}selected{% endif %}>
-                                <span class="rating-option">
-                                    ★★★★☆ 4 Stars ({{ rating_counts.4|default:0 }} businesses)
-                                </span>
+                                ★★★★☆ 4 Stars ({{ rating_counts.4|default:0 }})
                             </option>
                             <option value="3" {% if current_filters.rating == '3' %}selected{% endif %}>
-                                <span class="rating-option">
-                                    ★★★☆☆ 3 Stars ({{ rating_counts.3|default:0 }} businesses)
-                                </span>
+                                ★★★☆☆ 3 Stars ({{ rating_counts.3|default:0 }})
                             </option>
                             <option value="2" {% if current_filters.rating == '2' %}selected{% endif %}>
-                                <span class="rating-option">
-                                    ★★☆☆☆ 2 Stars ({{ rating_counts.2|default:0 }} businesses)
-                                </span>
+                                ★★☆☆☆ 2 Stars ({{ rating_counts.2|default:0 }})
                             </option>
                             <option value="1" {% if current_filters.rating == '1' %}selected{% endif %}>
-                                <span class="rating-option">
-                                    ★☆☆☆☆ 1 Star ({{ rating_counts.1|default:0 }} businesses)
-                                </span>
+                                ★☆☆☆☆ 1 Star ({{ rating_counts.1|default:0 }})
                             </option>
                         </select>
-                        <div class="form-text small">Select specific rating to filter businesses</div>
                     </div>
                     
                     <!-- 4. VERIFICATION STATUS DROPDOWN -->
-                    <div class="mb-4">
-                        <label for="desktopVerificationSelect" class="form-label fw-bold">
-                            <i class="bi bi-shield-check me-1"></i>Verification Status
+                    <div class="mb-3">
+                        <label for="desktopVerificationSelect" class="form-label fw-bold d-flex align-items-center justify-content-between">
+                            <span><i class="bi bi-shield-check me-1"></i>Verification</span>
+                            <i class="bi bi-question-circle text-muted filter-tooltip" 
+                               data-bs-toggle="tooltip" 
+                               data-bs-placement="top"
+                               title="Filter by business verification status. GST verified and KYC completed businesses are more trustworthy."></i>
                         </label>
-                        <select class="form-select desktop-filter-change" id="desktopVerificationSelect" name="verification">
+                        <select class="form-select form-select-sm desktop-filter-change" id="desktopVerificationSelect" name="verification">
                             <option value="">All Businesses</option>
                             <option value="gst" {% if current_filters.verification == 'gst' %}selected{% endif %}>
                                 GST Verified Only
@@ -1094,8 +1077,8 @@
                                 Both GST & KYC
                             </option>
                         </select>
-                        <div class="form-text small">Filter by verification status</div>
                     </div>
+
                     
                     <!-- Apply and Reset buttons -->
                     <div class="d-grid gap-2">
@@ -1349,6 +1332,20 @@
 
 {% block extra_js %}
 <script>
+        // Initialize Bootstrap tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize all tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl, {
+                trigger: 'hover focus',
+                delay: { "show": 500, "hide": 100 }
+            });
+        });
+        
+        // Initialize infinite scroll
+        initInfiniteScroll();
+    });
 
         // TAG-BASED CATEGORY FUNCTIONALITY
         const categories = [
