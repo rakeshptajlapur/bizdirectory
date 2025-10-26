@@ -267,7 +267,7 @@ def listings(request):
             # Invalid category ID, ignore the filter
             pass
     
-    # UPDATED: Rating filter for exact rating match
+    # FIXED: Rating filter for EXACT star rating
     rating = request.GET.get('rating')
     if rating:
         try:
@@ -1344,18 +1344,25 @@ def listings_ajax(request):
     
     rating = request.GET.get('rating')
     if rating:
-        businesses = businesses.filter(reviews__rating__gte=int(rating)).distinct()
-    
+        try:
+            rating_int = int(rating)
+            businesses = businesses.filter(
+                avg_rating__gte=rating_int - 0.5,
+                avg_rating__lt=rating_int + 0.5
+            )
+        except ValueError:
+            pass
+        
     pincode = request.GET.get('pincode')
     if pincode:
         businesses = businesses.filter(pincode__startswith=pincode)
     
-    trust_filter = request.GET.get('trust')
-    if trust_filter == 'gst':
+    verification = request.GET.get('verification')
+    if verification == 'gst':
         businesses = businesses.filter(gst_verified=True)
-    elif trust_filter == 'kyc':
+    elif verification == 'kyc':
         businesses = businesses.filter(kyc_status='completed')
-    elif trust_filter == 'both':
+    elif verification == 'both':
         businesses = businesses.filter(gst_verified=True, kyc_status='completed')
     
     # Pagination for AJAX

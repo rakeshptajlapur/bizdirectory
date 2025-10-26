@@ -58,15 +58,25 @@
             <i class="bi bi-question-circle text-muted filter-tooltip" 
                data-bs-toggle="tooltip" 
                data-bs-placement="left"
-               title="Filter businesses by specific star ratings."></i>
+               title="Filter businesses by minimum star ratings."></i>
         </label>
         <select class="form-select form-select-sm desktop-filter-change" id="desktopRatingSelect" name="rating">
             <option value="">Any Rating</option>
-            {% for i in "54321"|make_list %}
-            <option value="{{ i }}" {% if current_filters.rating == i %}selected{% endif %}>
-                {% for j in "12345"|make_list %}★{% if forloop.counter > i|add:"0" %}☆{% endif %}{% endfor %} {{ i }} Star{{ i|pluralize }}
+            <option value="5" {% if current_filters.rating == '5' %}selected{% endif %}>
+                ★★★★★ 5 Stars Only
             </option>
-            {% endfor %}
+            <option value="4" {% if current_filters.rating == '4' %}selected{% endif %}>
+                ★★★★☆ 4 Stars Only
+            </option>
+            <option value="3" {% if current_filters.rating == '3' %}selected{% endif %}>
+                ★★★☆☆ 3 Stars Only
+            </option>
+            <option value="2" {% if current_filters.rating == '2' %}selected{% endif %}>
+                ★★☆☆☆ 2 Stars Only
+            </option>
+            <option value="1" {% if current_filters.rating == '1' %}selected{% endif %}>
+                ★☆☆☆☆ 1 Star Only
+            </option>
         </select>
     </div>
     
