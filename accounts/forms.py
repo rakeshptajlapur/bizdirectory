@@ -2,6 +2,7 @@
 from allauth.account.forms import SignupForm, ResetPasswordForm
 from django import forms
 from .models import Profile
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
 class AllauthSignupForm(SignupForm):
@@ -13,6 +14,16 @@ class AllauthSignupForm(SignupForm):
         super().__init__(*args, **kwargs)
         if 'username' in self.fields:
             del self.fields['username']  # Remove username field
+    
+    def clean_email(self):
+        """Custom email validation to show proper error message"""
+        email = self.cleaned_data.get('email')
+        if email and User.objects.filter(email=email).exists():
+            raise ValidationError(
+                "An account with this email already exists. "
+                "Please try logging in or use the password reset option if you forgot your password."
+            )
+        return email
     
     def save(self, request):
         # Generate username from email
