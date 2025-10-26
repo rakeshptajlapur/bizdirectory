@@ -891,19 +891,37 @@
         margin-right: 0.2rem !important;
     }
     
-    /* Rating stars - smaller */
-    .mobile-business-card .stars {
-        margin-right: 0.4rem !important;
+    /* Rating stars - smaller and TIGHTER */
+    .mobile-business-card .d-flex.align-items-center.mb-1 {
+        margin-bottom: 0.15rem !important; /* Reduced from default */
+        padding: 0 !important; /* Remove any padding */
+        line-height: 1 !important; /* Tight line height */
     }
-    
+
+    .mobile-business-card .stars {
+        margin-right: 0.3rem !important; /* Reduced margin */
+        margin-bottom: 0 !important; /* Remove bottom margin */
+        margin-top: 0 !important; /* Remove top margin */
+        padding: 0 !important; /* Remove padding */
+        line-height: 1 !important; /* Tight line height */
+    }
+
     .mobile-business-card .stars i {
         font-size: 0.7rem !important; /* Smaller stars */
-        margin-right: 0.1rem !important;
+        margin-right: 0.05rem !important; /* Reduced spacing between stars */
+        margin-top: 0 !important; /* Remove top margin */
+        margin-bottom: 0 !important; /* Remove bottom margin */
+        padding: 0 !important; /* Remove padding */
+        line-height: 1 !important; /* Tight line height */
+        vertical-align: baseline !important; /* Align properly */
     }
-    
+
     .mobile-business-card .text-muted.small {
         font-size: 0.65rem !important;
         color: #6c757d !important;
+        margin: 0 !important; /* Remove all margins */
+        padding: 0 !important; /* Remove all padding */
+        line-height: 1.2 !important; /* Tight line height */
     }
     
     /* Hide description on mobile for compactness */
@@ -1310,6 +1328,121 @@
     
     .desktop-business-card .card-title {
         font-size: 1.1rem;
+    }
+}
+
+/* =================================================================
+   MOBILE CONTAINER PADDING REDUCTION & FOOTER FIX
+   ================================================================= */
+@media (max-width: 767.98px) {
+    /* Reduce container padding significantly */
+    .container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+    /* Reduce row margins */
+    .row {
+        margin-left: -0.25rem !important;
+        margin-right: -0.25rem !important;
+    }
+    
+    /* Adjust column padding for mobile cards */
+    .col-12.col-lg-9 {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+    /* Mobile cards grid - tighter spacing */
+    .d-md-none .row.g-3 {
+        --bs-gutter-x: 0.5rem !important;
+        --bs-gutter-y: 0.75rem !important;
+        margin: 0 !important;
+    }
+    
+    .d-md-none .col-6 {
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+    }
+    
+    /* Force left alignment in mobile card footer */
+    .mobile-business-card .card-footer {
+        text-align: left !important;
+        padding: 0.4rem 0.5rem !important;
+        background: #f8f9fa !important;
+        border-top: 1px solid #e9ecef !important;
+    }
+    
+    .mobile-business-card .card-footer .d-flex {
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        width: 100% !important;
+    }
+    
+    .mobile-business-card .card-footer small {
+        text-align: left !important;
+        align-self: flex-start !important;
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        font-size: 0.65rem !important;
+        color: #6c757d !important;
+        font-weight: 500 !important;
+        line-height: 1.2 !important;
+    }
+    
+    .mobile-business-card .card-footer i {
+        font-size: 0.6rem !important;
+        margin-right: 0.25rem !important;
+        width: 10px !important;
+        text-align: left !important;
+        flex-shrink: 0 !important;
+    }
+    
+    /* Results header - reduce spacing */
+    .results-header {
+        margin-bottom: 0.75rem !important;
+        padding-left: 0.25rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Active filters - reduce spacing */
+    .active-filters {
+        margin-bottom: 0.75rem !important;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+    }
+}
+
+/* Very small screens - even more compact */
+@media (max-width: 575.98px) {
+    .container {
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+    }
+    
+    .d-md-none .row.g-3 {
+        --bs-gutter-x: 0.25rem !important;
+        --bs-gutter-y: 0.5rem !important;
+    }
+    
+    .d-md-none .col-6 {
+        padding-left: 0.125rem !important;
+        padding-right: 0.125rem !important;
+    }
+}
+
+/* Ultra small screens - maximum compactness */
+@media (max-width: 375px) {
+    .container {
+        padding-left: 0.125rem !important;
+        padding-right: 0.125rem !important;
+    }
+    
+    .d-md-none .col-6 {
+        padding-left: 0.0625rem !important;
+        padding-right: 0.0625rem !important;
     }
 }
 </style>
