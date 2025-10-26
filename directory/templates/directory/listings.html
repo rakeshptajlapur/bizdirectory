@@ -144,13 +144,45 @@
 {% block extra_css %}
 <style>
 /* =================================================================
-   1. HERO SECTION STYLES
+   1. HERO SECTION STYLES - MOBILE OPTIMIZED
    ================================================================= */
 .listings-hero {
     min-height: 75px !important;
     padding: 1rem 0 !important;
     position: relative;
     overflow: hidden;
+}
+
+/* Mobile hero adjustments */
+@media (max-width: 767.98px) {
+    .listings-hero {
+        min-height: 50px !important; /* Reduced height for mobile */
+        padding: 0.75rem 0 !important;
+    }
+    
+    .search-title {
+        font-size: 1.4rem !important; /* Smaller heading for mobile */
+        margin-bottom: 0.75rem !important;
+    }
+    
+    /* Hide search button on mobile - full width search */
+    .search-btn {
+        display: none !important;
+    }
+    
+    .search-row {
+        flex-direction: column !important;
+        gap: 0 !important;
+    }
+    
+    .search-input-wrapper {
+        width: 100% !important;
+    }
+    
+    .search-input {
+        width: 100% !important;
+        border-radius: 12px !important; /* Full rounded corners */
+    }
 }
 
 .search-container {
@@ -263,8 +295,24 @@
 }
 
 /* =================================================================
-   2. FILTER COMPONENTS
+   2. FILTER COMPONENTS - DESKTOP/MOBILE VISIBILITY
    ================================================================= */
+/* Hide desktop filters on mobile */
+@media (max-width: 767.98px) {
+    .desktop-filters {
+        display: none !important;
+    }
+}
+
+/* Hide mobile filter elements on desktop */
+@media (min-width: 768px) {
+    .mobile-filter-btn,
+    .mobile-filter-overlay,
+    .mobile-filter-container {
+        display: none !important;
+    }
+}
+
 /* Mobile Filter Components */
 .mobile-filter-overlay {
     position: fixed;
@@ -306,13 +354,20 @@
 
 .mobile-filter-btn {
     position: fixed;
-    bottom: 20px;
+    bottom: 90px; /* Moved up to avoid overlap with sticky CTA */
     left: 20px;
     z-index: 1030;
     border-radius: 50px;
     padding: 12px 20px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     font-weight: 500;
+}
+
+/* Mobile only - adjust filter button when sticky CTA is present */
+@media (max-width: 767.98px) {
+    .mobile-filter-btn {
+        bottom: 90px !important; /* Clear space above sticky CTA */
+    }
 }
 
 /* Desktop Filter Components */
@@ -348,7 +403,46 @@
 }
 
 /* =================================================================
-   3. CATEGORY SELECTOR (TAG-BASED)
+   3. LAYOUT ADJUSTMENTS FOR MOBILE
+   ================================================================= */
+@media (max-width: 767.98px) {
+    /* Full width listings on mobile */
+    .col-12.col-lg-9 {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    /* Adjust main content layout */
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+/* =================================================================
+   4. STICKY CTA ADJUSTMENTS (OPTIONAL - Remove if you want to hide it)
+   ================================================================= */
+/* If you want to remove sticky CTA completely on listings page, uncomment this: */
+/*
+.listings-page .sticky-cta-bottom {
+    display: none !important;
+}
+*/
+
+/* If you want to keep sticky CTA but ensure filter button is visible, use this: */
+@media (max-width: 767.98px) {
+    .sticky-cta-bottom {
+        z-index: 1020; /* Lower than filter button */
+    }
+    
+    .mobile-filter-btn {
+        z-index: 1030; /* Higher than sticky CTA */
+    }
+}
+
+/* Rest of your existing CSS... */
+/* =================================================================
+   CATEGORY SELECTOR (TAG-BASED) & AUTO-SUGGESTION STYLING
    ================================================================= */
 .selected-categories-container {
     min-height: 32px;
@@ -502,11 +596,7 @@
     animation: tagSlideIn 0.3s ease;
 }
 
-/* =================================================================
-   4. AUTO-SUGGESTION STYLING - FIXED VERSION
-   ================================================================= */
-
-/* Force override jQuery UI autocomplete */
+/* AUTO-SUGGESTION STYLING */
 .ui-autocomplete {
     border-radius: 0 0 12px 12px !important;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
@@ -524,13 +614,11 @@
     list-style: none !important;
 }
 
-/* Hide horizontal scrollbar completely */
 .ui-autocomplete {
     overflow-x: hidden !important;
     white-space: nowrap !important;
 }
 
-/* Menu items */
 .ui-autocomplete .ui-menu-item {
     margin: 0 !important;
     padding: 0 !important;
@@ -540,7 +628,6 @@
     box-sizing: border-box !important;
 }
 
-/* Menu item wrapper - this is the actual clickable area */
 .ui-autocomplete .ui-menu-item-wrapper {
     padding: 0.875rem 1.25rem !important;
     cursor: pointer !important;
@@ -562,7 +649,6 @@
     box-sizing: border-box !important;
 }
 
-/* Hover state */
 .ui-autocomplete .ui-menu-item-wrapper:hover,
 .ui-autocomplete .ui-state-active,
 .ui-autocomplete .ui-state-focus {
@@ -574,13 +660,11 @@
     outline: none !important;
 }
 
-/* Last item */
 .ui-autocomplete .ui-menu-item:last-child .ui-menu-item-wrapper {
     border-bottom: none !important;
     border-radius: 0 0 12px 12px !important;
 }
 
-/* Custom vertical scrollbar */
 .ui-autocomplete::-webkit-scrollbar {
     width: 6px !important;
 }
@@ -599,24 +683,20 @@
     background: #ced4da !important;
 }
 
-/* Hide horizontal scrollbar completely */
 .ui-autocomplete::-webkit-scrollbar:horizontal {
     display: none !important;
 }
 
-/* For Firefox */
 .ui-autocomplete {
     scrollbar-width: thin !important;
     scrollbar-color: #dee2e6 #f8f9fa !important;
 }
 
-/* Text highlighting in suggestions */
 .ui-autocomplete .ui-menu-item-wrapper strong {
     color: #0d6efd !important;
     font-weight: 600 !important;
 }
 
-/* Icon styling */
 .ui-autocomplete .ui-menu-item-wrapper i {
     color: #6c757d !important;
     margin-right: 0.75rem !important;
@@ -632,7 +712,6 @@
     color: #0d6efd !important;
 }
 
-/* Mobile adjustments */
 @media (max-width: 576px) {
     .ui-autocomplete .ui-menu-item-wrapper {
         padding: 0.75rem 1rem !important;
@@ -651,7 +730,6 @@
     }
 }
 
-/* Additional specificity overrides */
 .search-autocomplete.ui-autocomplete {
     border-radius: 0 0 12px 12px !important;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
@@ -668,11 +746,7 @@
     border-left: 3px solid #0d6efd !important;
 }
 
-/* =================================================================
-   5. LOCATION SUGGESTIONS STYLING - SIMPLIFIED
-   ================================================================= */
-
-/* Simple location suggestions without conflicts */
+/* LOCATION SUGGESTIONS STYLING */
 #desktopLocationSuggestions,
 #mobileLocationSuggestions {
     position: absolute;
