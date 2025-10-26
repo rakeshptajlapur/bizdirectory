@@ -113,34 +113,38 @@ def business_detail(request, pk):
     return render(request, 'directory/business_detail.html', context)
 
 def search_suggestions(request):
-    """Auto-suggestions for search box"""
+    """AJAX endpoint for search suggestions"""
     term = request.GET.get('term', '')
+    suggestion_type = request.GET.get('type', 'search')
     
-    if not term or len(term) < 2:
-        return JsonResponse([], safe=False)
+    if suggestion_type == 'categories':
+        # Return all categories with business count
+        from django.db.models import Count
+        categories = Category.objects.annotate(
+            business_count=Count('business', filter=Q(business__is_active=True))
+        ).filter(business_count__gt=0).order_by('name')
+        
+        suggestions = [
+            {
+                'id': category.id,
+                'name': category.name,
+                'business_count': category.business_count
+            }
+            for category in categories
+        ]
+    else:
+        # Existing search suggestions logic
+        businesses = Business.objects.filter(
+            Q(name__icontains=term) | Q(description__icontains=term),
+            is_active=True
+        )[:10]
+        
+        suggestions = [
+            {'label': business.name, 'value': business.name}
+            for business in businesses
+        ]
     
-    # Get business name suggestions
-    business_suggestions = list(Business.objects.filter(
-        Q(name__icontains=term) & Q(is_active=True)
-    ).values_list('name', flat=True)[:5])
-    
-    # Get service suggestions
-    service_suggestions = list(Service.objects.filter(
-        name__icontains=term
-    ).values_list('name', flat=True)[:5])
-    
-    # Get category suggestions
-    category_suggestions = list(Category.objects.filter(
-        name__icontains=term
-    ).values_list('name', flat=True)[:5])
-    
-    # Combine all suggestions
-    all_suggestions = business_suggestions + service_suggestions + category_suggestions
-    
-    # Remove duplicates and limit to 10
-    unique_suggestions = list(dict.fromkeys(all_suggestions))[:10]
-    
-    return JsonResponse(unique_suggestions, safe=False)
+    return JsonResponse(suggestions, safe=False)
 
 def location_suggestions(request):
     """Enhanced location suggestions for location search"""
@@ -249,9 +253,19 @@ def listings(request):
     ).order_by('-created_at')
     
     # Apply filters
-    category_id = request.GET.get('category')
-    if category_id:
-        businesses = businesses.filter(category_id=category_id)
+    category_ids = request.GET.get('category')
+    if category_ids:
+        try:
+            # Handle multiple categories separated by commas
+            if ',' in category_ids:
+                category_list = [int(cat_id.strip()) for cat_id in category_ids.split(',') if cat_id.strip()]
+                businesses = businesses.filter(category_id__in=category_list)
+            else:
+                # Single category
+                businesses = businesses.filter(category_id=int(category_ids))
+        except (ValueError, TypeError):
+            # Invalid category ID, ignore the filter
+            pass
     
     # UPDATED: Rating filter for exact rating match
     rating = request.GET.get('rating')

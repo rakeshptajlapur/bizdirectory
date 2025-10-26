@@ -560,6 +560,7 @@
     align-items: center;
     justify-content: space-between;
     transition: all 0.2s ease;
+    background: white; /* Ensure white background */
 }
 
 .category-suggestion-item:hover {
@@ -569,29 +570,18 @@
     padding-left: calc(1rem - 3px);
 }
 
-.category-suggestion-item:last-child {
-    border-bottom: none;
-    border-radius: 0 0 8px 8px;
+/* Fix highlighting text - no red underlines */
+.category-suggestion-item strong {
+    color: #0d6efd !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    background: transparent !important;
+    border: none !important;
 }
 
-.category-suggestion-item.selected {
-    background: #e7f1ff;
-    color: #0d6efd;
-    cursor: default;
-}
-
-.category-suggestion-item.selected::after {
-    content: "✓";
-    color: #0d6efd;
-    font-weight: bold;
-}
-
-.category-suggestion-item .category-count {
-    font-size: 0.8rem;
-    color: #6c757d;
-    background: #f8f9fa;
-    padding: 0.2rem 0.5rem;
-    border-radius: 12px;
+/* Remove any unwanted text decorations */
+.category-suggestion-item * {
+    text-decoration: none !important;
 }
 
 /* Category tag animations */
@@ -1867,9 +1857,10 @@ function fallbackLocationSearch(query, suggestionsId) {
     });
 }
 
+// Fix highlighting function - remove problematic styling
 function highlightMatch(text, query) {
-    const regex = new RegExp(`(${query})`, 'gi');
-    return text.replace(regex, '<strong>$1</strong>');
+    // Return text as-is for clean display
+    return text;
 }
 
 // Handle location suggestion clicks
@@ -1918,11 +1909,243 @@ $(document).on('click', function(e) {
 });
 
 // ===================================================================
+// CATEGORY FILTER WITH AUTO-SUGGESTIONS
+// ===================================================================
+let availableCategories = [];
+
+// Fetch categories on page load
+function loadCategories() {
+    $.ajax({
+        url: "{% url 'directory:search_suggestions' %}",
+        data: { type: 'categories' },
+        success: function(data) {
+            availableCategories = data;
+            console.log('✅ Categories loaded:', availableCategories.length);
+        },
+        error: function() {
+            console.log('❌ Failed to load categories');
+        }
+    });
+}
+
+// Initialize category search for both desktop and mobile
+function initCategorySearch() {
+    // Desktop category search
+    $('#desktopCategorySearch').on('input', function() {
+        handleCategorySearch($(this), '#desktopCategorySuggestions', 'desktop');
+    });
+    
+    // Mobile category search
+    $('#mobileCategorySearch').on('input', function() {
+        handleCategorySearch($(this), '#mobileCategorySuggestions', 'mobile');
+    });
+    
+    // Initialize with current selections
+    initializeSelectedCategories();
+}
+
+function handleCategorySearch($input, suggestionsId, type) {
+    const query = $input.val().trim().toLowerCase();
+    
+    if (query.length < 1) {
+        $(suggestionsId).hide();
+        return;
+    }
+    
+    // Filter available categories
+    const matchedCategories = availableCategories.filter(category => 
+        category.name.toLowerCase().includes(query)
+    ).slice(0, 8); // Limit to 8 suggestions
+    
+    showCategorySuggestions(matchedCategories, query, suggestionsId, type);
+}
+
+function showCategorySuggestions(categories, query, suggestionsId, type) {
+    if (categories.length === 0) {
+        $(suggestionsId).hide();
+        return;
+    }
+    
+    // Get already selected categories for this filter type
+    const selectedIds = getSelectedCategoryIds(type);
+    
+    let html = '';
+    categories.forEach(function(category) {
+        const isSelected = selectedIds.includes(category.id.toString());
+        const highlighted = highlightMatch(category.name, query);
+        
+        html += `<div class="category-suggestion-item ${isSelected ? 'selected' : ''}" 
+                      data-category-id="${category.id}" 
+                      data-category-name="${category.name}" 
+                      data-type="${type}">
+            ${highlighted}
+            <span class="category-count">${category.business_count || 0}</span>
+        </div>`;
+    });
+    
+    $(suggestionsId).html(html).show();
+}
+
+function getSelectedCategoryIds(type) {
+    const input = type === 'desktop' ? '#desktopCategoryInput' : '#mobileCategoryInput';
+    const value = $(input).val();
+    return value ? value.split(',') : [];
+}
+
+function addCategorySelection(categoryId, categoryName, type) {
+    const selectedIds = getSelectedCategoryIds(type);
+    
+    // Don't add if already selected
+    if (selectedIds.includes(categoryId.toString())) {
+        return;
+    }
+    
+    // Add to selected list
+    selectedIds.push(categoryId.toString());
+    
+    // Update hidden input
+    const input = type === 'desktop' ? '#desktopCategoryInput' : '#mobileCategoryInput';
+    $(input).val(selectedIds.join(','));
+    
+    // Update visual display
+    updateCategoryDisplay(type);
+    
+    // Clear search input
+    const searchInput = type === 'desktop' ? '#desktopCategorySearch' : '#mobileCategorySearch';
+    $(searchInput).val('');
+    
+    // Hide suggestions
+    const suggestions = type === 'desktop' ? '#desktopCategorySuggestions' : '#mobileCategorySuggestions';
+    $(suggestions).hide();
+}
+
+function removeCategorySelection(categoryId, type) {
+    const selectedIds = getSelectedCategoryIds(type);
+    const index = selectedIds.indexOf(categoryId.toString());
+    
+    if (index > -1) {
+        selectedIds.splice(index, 1);
+        
+        // Update hidden input
+        const input = type === 'desktop' ? '#desktopCategoryInput' : '#mobileCategoryInput';
+        $(input).val(selectedIds.join(','));
+        
+        // Update visual display
+        updateCategoryDisplay(type);
+    }
+}
+
+function updateCategoryDisplay(type) {
+    const selectedIds = getSelectedCategoryIds(type);
+    const container = type === 'desktop' ? '#desktopSelectedCategories' : '#mobileSelectedCategories';
+    
+    if (selectedIds.length === 0) {
+        $(container).html('').addClass('empty');
+        return;
+    }
+    
+    $(container).removeClass('empty');
+    
+    let html = '';
+    selectedIds.forEach(function(categoryId) {
+        const category = availableCategories.find(cat => cat.id.toString() === categoryId);
+        if (category) {
+            html += `<span class="category-tag new">
+                ${category.name}
+                <button type="button" class="remove-tag" 
+                        data-category-id="${categoryId}" 
+                        data-type="${type}">×</button>
+            </span>`;
+        }
+    });
+    
+    $(container).html(html);
+    
+    // Remove animation class after animation completes
+    setTimeout(() => {
+        $(container).find('.category-tag.new').removeClass('new');
+    }, 300);
+}
+
+function initializeSelectedCategories() {
+    // Get current category IDs from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+    
+    if (categoryParam) {
+        // Set the hidden inputs with current values
+        $('#desktopCategoryInput').val(categoryParam);
+        $('#mobileCategoryInput').val(categoryParam);
+    }
+    
+    // Initialize desktop categories
+    updateCategoryDisplay('desktop');
+    
+    // Initialize mobile categories
+    updateCategoryDisplay('mobile');
+}
+
+// Handle category suggestion clicks
+$(document).on('click', '.category-suggestion-item:not(.selected)', function(e) {
+    e.preventDefault();
+    const categoryId = $(this).data('category-id');
+    const categoryName = $(this).data('category-name');
+    const type = $(this).data('type');
+    
+    addCategorySelection(categoryId, categoryName, type);
+});
+
+// Handle form submission for both desktop and mobile filters
+$('#desktop-filter-form, #mobile-filter-form').on('submit', function(e) {
+    const form = $(this);
+    
+    // Get category input value
+    const categoryInput = form.find('input[name="category"]');
+    const categoryValue = categoryInput.val();
+    
+    // If no categories selected, remove the category parameter
+    if (!categoryValue || categoryValue.trim() === '') {
+        categoryInput.remove();
+    }
+    
+    // Let the form submit normally
+    return true;
+});
+
+
+
+
+
+
+// Handle category tag removal
+$(document).on('click', '.remove-tag', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const categoryId = $(this).data('category-id');
+    const type = $(this).data('type');
+    
+    removeCategorySelection(categoryId, type);
+});
+
+// Hide category suggestions on outside click
+$(document).on('click', function(e) {
+    if (!$(e.target).closest('.position-relative').length) {
+        $('.category-suggestions').hide();
+    }
+});
+
+// ===================================================================
 // INITIALIZE EVERYTHING
 // ===================================================================
 $(document).ready(function() {
     console.log('🚀 Listings page initialized');
     console.log(`📊 Initial state: Page ${currentPage}/${totalPages}, Has more: ${hasMorePages}`);
+    
+    // Load categories first, then initialize everything else
+    loadCategories().then(() => {
+        initCategorySearch();
+        initializeSelectedCategories(); // This should run after categories are loaded
+    });
     
     initFilterLocationSearch();
     
@@ -1933,7 +2156,20 @@ $(document).ready(function() {
     }
 });
 
-
+// Update loadCategories to return a promise
+function loadCategories() {
+    return $.ajax({
+        url: "{% url 'directory:search_suggestions' %}",
+        data: { type: 'categories' },
+        success: function(data) {
+            availableCategories = data;
+            console.log('✅ Categories loaded:', availableCategories.length);
+        },
+        error: function() {
+            console.log('❌ Failed to load categories');
+        }
+    });
+}
 </script>
 
 <!-- Load Google Maps API -->

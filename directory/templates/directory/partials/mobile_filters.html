@@ -30,18 +30,9 @@
         </div>
     </div>
     
-    <!-- Categories -->
+    <!-- Category Filter with Auto-suggestions -->
     <div class="mb-3">
-        <label class="form-label fw-bold d-flex align-items-center justify-content-between">
-            <span><i class="bi bi-grid-3x3-gap me-1"></i>Categories</span>
-            <i class="bi bi-question-circle text-muted filter-tooltip" 
-               data-bs-toggle="tooltip" 
-               data-bs-placement="left"
-               title="Search categories and click to add. Maximum 3 selections allowed."></i>
-        </label>
-        
-        <div class="selected-categories-container mb-2" id="mobileSelectedCategories"></div>
-        
+        <label for="mobileCategorySearch" class="form-label">Category</label>
         <div class="position-relative">
             <input type="text" 
                    class="form-control form-control-sm category-search-input" 
@@ -51,7 +42,13 @@
             <div class="category-suggestions" id="mobileCategorySuggestions"></div>
         </div>
         
-        <div id="mobileHiddenCategories"></div>
+        <!-- Selected Categories Display -->
+        <div class="selected-categories-container mt-2" id="mobileSelectedCategories">
+            <!-- Selected category tags will appear here -->
+        </div>
+        
+        <!-- Hidden input to store selected category IDs -->
+        <input type="hidden" name="category" id="mobileCategoryInput" value="{{ current_filters.category|default:'' }}">
     </div>
     
     <!-- Ratings Dropdown -->
