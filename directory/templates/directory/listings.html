@@ -377,6 +377,203 @@
         transition: all 0.3s ease;
     }
     
+
+/* TAG-BASED CATEGORY SELECTOR STYLING */
+.selected-categories-container {
+    min-height: 36px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.selected-categories-container.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.selected-categories-container.empty::before {
+    content: "No categories selected";
+}
+
+.category-tag {
+    background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
+}
+
+.category-tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
+
+.category-tag .remove-tag {
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.category-tag .remove-tag:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.category-search-input {
+    font-size: 0.9rem;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+}
+
+.category-search-input:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.category-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.category-suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f8f9fa;
+    font-size: 0.9rem;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+}
+
+.category-suggestion-item:hover {
+    background: #f8f9fa;
+    color: #0d6efd;
+    border-left: 3px solid #0d6efd;
+    padding-left: calc(1rem - 3px);
+}
+
+.category-suggestion-item:last-child {
+    border-bottom: none;
+    border-radius: 0 0 8px 8px;
+}
+
+.category-suggestion-item.selected {
+    background: #e7f1ff;
+    color: #0d6efd;
+    cursor: default;
+}
+
+.category-suggestion-item.selected::after {
+    content: "✓";
+    color: #0d6efd;
+    font-weight: bold;
+}
+
+.category-suggestion-item.max-reached {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.category-suggestion-item .category-count {
+    font-size: 0.8rem;
+    color: #6c757d;
+    background: #f8f9fa;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .category-tag {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+    
+    .category-tag .remove-tag {
+        width: 16px;
+        height: 16px;
+        font-size: 0.6rem;
+    }
+    
+    .category-search-input {
+        font-size: 0.85rem;
+    }
+    
+    .category-suggestion-item {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Animation for adding/removing tags */
+@keyframes tagSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.category-tag.new {
+    animation: tagSlideIn 0.3s ease;
+}
+
+/* Space efficiency indicator */
+.space-saved-indicator {
+    font-size: 0.75rem;
+    color: #28a745;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    margin-top: 0.5rem;
+    display: inline-block;
+}
+
+
+
+
     /* Enhanced Mobile Filter Styling */
 .mobile-filter-container .search-suggestions {
     position: absolute;
@@ -632,34 +829,31 @@
                 <div class="form-text small">Type to get location suggestions</div>
             </div>
             
-            <!-- 2. CATEGORIES AS CHECKBOXES (MULTI-SELECT) -->
+            <!-- 2. CATEGORIES AS TAG-BASED SELECTOR -->
             <div class="mb-4">
                 <label class="form-label fw-bold">
                     <i class="bi bi-grid-3x3-gap me-1"></i>Categories
                 </label>
-                <div class="input-group input-group-sm mb-2">
-                    <input type="text" class="form-control" id="mobileCategorySearch" placeholder="Search categories...">
-                    <button class="btn btn-outline-secondary" type="button">
-                        <i class="bi bi-search"></i>
-                    </button>
+                
+                <!-- Selected categories as tags -->
+                <div class="selected-categories-container mb-2" id="mobileSelectedCategories">
+                    <!-- Tags will be added here dynamically -->
                 </div>
                 
-                <div class="overflow-auto border rounded p-2" style="max-height: 120px; background: #f8f9fa;">
-                    {% for category in categories|slice:":15" %}
-                    <div class="form-check category-item">
-                        <input class="form-check-input mobile-filter-change" 
-                               type="checkbox" 
-                               name="categories" 
-                               id="mobile-category-{{ category.id }}" 
-                               value="{{ category.id }}"
-                               {% if category.id|stringformat:"s" in current_filters.categories %}checked{% endif %}>
-                        <label class="form-check-label small" for="mobile-category-{{ category.id }}">
-                            {{ category.name }}
-                        </label>
-                    </div>
-                    {% endfor %}
+                <!-- Category search input -->
+                <div class="position-relative">
+                    <input type="text" 
+                           class="form-control category-search-input" 
+                           id="mobileCategorySearch" 
+                           placeholder="Search and select categories (max 3)..."
+                           autocomplete="off">
+                    <div class="category-suggestions" id="mobileCategorySuggestions"></div>
                 </div>
-                <div class="form-text small">Select multiple categories</div>
+                
+                <!-- Hidden inputs for form submission -->
+                <div id="mobileHiddenCategories"></div>
+                
+                <div class="form-text small">Search categories and click to add. Max 3 selections.</div>
             </div>
             
             <!-- 3. INDIVIDUAL STAR RATINGS -->
@@ -756,7 +950,7 @@
                         <div class="form-text small">Type to get location suggestions</div>
                     </div>
                     
-                    <!-- 2. CATEGORIES AS CHECKBOXES (MULTI-SELECT) -->
+                      <!-- 2. CATEGORIES AS TAG-BASED SELECTOR -->
                     <div class="mb-4">
                         <label class="form-label fw-bold d-flex justify-content-between align-items-center">
                             <span><i class="bi bi-grid-3x3-gap me-1"></i>Categories</span>
@@ -765,34 +959,25 @@
                             </a>
                         </label>
                         
-                        <!-- Category search -->
-                        <div class="input-group input-group-sm mb-2">
-                            <input type="text" class="form-control" id="desktopCategorySearch" placeholder="Search categories...">
-                            <button class="btn btn-outline-secondary" type="button">
-                                <i class="bi bi-search"></i>
-                            </button>
+                        <!-- Selected categories as tags -->
+                        <div class="selected-categories-container mb-2" id="desktopSelectedCategories">
+                            <!-- Tags will be added here dynamically -->
                         </div>
                         
-                        <!-- Categories list with checkboxes -->
-                        <div class="overflow-auto border rounded p-2" style="max-height: 200px; background: #f8f9fa;">
-                            <div class="mb-2">
-                                <strong class="small text-muted">Select Multiple Categories</strong>
-                            </div>
-                            {% for category in categories %}
-                            <div class="form-check category-item">
-                                <input class="form-check-input desktop-filter-change" 
-                                       type="checkbox" 
-                                       name="categories" 
-                                       id="desktop-category-{{ category.id }}" 
-                                       value="{{ category.id }}"
-                                       {% if category.id|stringformat:"s" in current_filters.categories %}checked{% endif %}>
-                                <label class="form-check-label small" for="desktop-category-{{ category.id }}">
-                                    {{ category.name }}
-                                </label>
-                            </div>
-                            {% endfor %}
+                        <!-- Category search input -->
+                        <div class="position-relative">
+                            <input type="text" 
+                                   class="form-control category-search-input" 
+                                   id="desktopCategorySearch" 
+                                   placeholder="Search and select categories (max 3)..."
+                                   autocomplete="off">
+                            <div class="category-suggestions" id="desktopCategorySuggestions"></div>
                         </div>
-                        <div class="form-text small">Select multiple categories</div>
+                        
+                        <!-- Hidden inputs for form submission -->
+                        <div id="desktopHiddenCategories"></div>
+                        
+                        <div class="form-text small">Search categories and click to add. Max 3 selections.</div>
                     </div>
                     
                     <!-- 3. INDIVIDUAL STAR RATINGS -->
@@ -1093,6 +1278,210 @@
 
 {% block extra_js %}
 <script>
+
+        // TAG-BASED CATEGORY FUNCTIONALITY
+        const categories = [
+            {% for category in categories %}
+            {
+                id: {{ category.id }},
+                name: "{{ category.name|escapejs }}",
+                count: {{ category.business_count|default:0 }}
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+        
+        let selectedCategoriesMobile = [];
+        let selectedCategoriesDesktop = [];
+        const MAX_CATEGORIES = 3;
+        
+        // Initialize tag-based category selectors
+        initTagCategorySelector('mobile');
+        initTagCategorySelector('desktop');
+        
+        function initTagCategorySelector(type) {
+            const searchInput = document.getElementById(`${type}CategorySearch`);
+            const suggestionsContainer = document.getElementById(`${type}CategorySuggestions`);
+            const selectedContainer = document.getElementById(`${type}SelectedCategories`);
+            const hiddenContainer = document.getElementById(`${type}HiddenCategories`);
+            
+            // Load existing selections from URL params
+            loadExistingSelections(type);
+            
+            // Search input handler
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                
+                if (query.length < 1) {
+                    suggestionsContainer.style.display = 'none';
+                    return;
+                }
+                
+                const filteredCategories = categories.filter(cat => 
+                    cat.name.toLowerCase().includes(query) &&
+                    !isSelected(cat.id, type)
+                );
+                
+                renderCategorySuggestions(filteredCategories, type, query);
+                suggestionsContainer.style.display = filteredCategories.length > 0 ? 'block' : 'none';
+            });
+            
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest(`#${type}CategorySearch`) && !e.target.closest(`#${type}CategorySuggestions`)) {
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+            
+            // Clear search input when losing focus
+            searchInput.addEventListener('blur', function() {
+                setTimeout(() => {
+                    this.value = '';
+                }, 200);
+            });
+        }
+        
+        function loadExistingSelections(type) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryParam = urlParams.get('categories');
+            
+            if (categoryParam) {
+                const selectedIds = categoryParam.split(',');
+                selectedIds.forEach(id => {
+                    const category = categories.find(cat => cat.id == id);
+                    if (category) {
+                        addCategoryTag(category, type);
+                    }
+                });
+            }
+            
+            updateSelectedContainer(type);
+        }
+        
+        function renderCategorySuggestions(filteredCategories, type, query) {
+            const suggestionsContainer = document.getElementById(`${type}CategorySuggestions`);
+            const selectedCategories = type === 'mobile' ? selectedCategoriesMobile : selectedCategoriesDesktop;
+            
+            suggestionsContainer.innerHTML = '';
+            
+            filteredCategories.slice(0, 8).forEach(category => {
+                const div = document.createElement('div');
+                div.className = 'category-suggestion-item';
+                
+                if (selectedCategories.length >= MAX_CATEGORIES) {
+                    div.classList.add('max-reached');
+                }
+                
+                // Highlight search term
+                const regex = new RegExp(`(${query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+                const highlightedName = category.name.replace(regex, '<strong class="text-primary">$1</strong>');
+                
+                div.innerHTML = `
+                    <span>${highlightedName}</span>
+                    <span class="category-count">${category.count}</span>
+                `;
+                
+                if (selectedCategories.length < MAX_CATEGORIES) {
+                    div.addEventListener('click', function() {
+                        addCategoryTag(category, type);
+                        document.getElementById(`${type}CategorySearch`).value = '';
+                        suggestionsContainer.style.display = 'none';
+                    });
+                }
+                
+                suggestionsContainer.appendChild(div);
+            });
+        }
+        
+        function addCategoryTag(category, type) {
+            const selectedCategories = type === 'mobile' ? selectedCategoriesMobile : selectedCategoriesDesktop;
+            
+            if (selectedCategories.length >= MAX_CATEGORIES) {
+                showMaxLimitMessage(type);
+                return;
+            }
+            
+            if (isSelected(category.id, type)) return;
+            
+            selectedCategories.push(category);
+            updateSelectedContainer(type);
+            updateHiddenInputs(type);
+        }
+        
+        function removeCategoryTag(categoryId, type) {
+            const selectedCategories = type === 'mobile' ? selectedCategoriesMobile : selectedCategoriesDesktop;
+            const index = selectedCategories.findIndex(cat => cat.id == categoryId);
+            
+            if (index > -1) {
+                selectedCategories.splice(index, 1);
+                updateSelectedContainer(type);
+                updateHiddenInputs(type);
+            }
+        }
+        
+        function updateSelectedContainer(type) {
+            const container = document.getElementById(`${type}SelectedCategories`);
+            const selectedCategories = type === 'mobile' ? selectedCategoriesMobile : selectedCategoriesDesktop;
+            
+            if (selectedCategories.length === 0) {
+                container.className = 'selected-categories-container empty';
+                container.innerHTML = '';
+                return;
+            }
+            
+            container.className = 'selected-categories-container';
+            container.innerHTML = selectedCategories.map(category => `
+                <div class="category-tag new" data-category-id="${category.id}">
+                    <span>${category.name}</span>
+                    <button type="button" class="remove-tag" onclick="removeCategoryTag(${category.id}, '${type}')">
+                        ×
+                    </button>
+                </div>
+            `).join('');
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                container.querySelectorAll('.category-tag.new').forEach(tag => {
+                    tag.classList.remove('new');
+                });
+            }, 300);
+        }
+        
+        function updateHiddenInputs(type) {
+            const container = document.getElementById(`${type}HiddenCategories`);
+            const selectedCategories = type === 'mobile' ? selectedCategoriesMobile : selectedCategoriesDesktop;
+            
+            container.innerHTML = selectedCategories.map(category => 
+                `<input type="hidden" name="categories" value="${category.id}">`
+            ).join('');
+        }
+        
+        function isSelected(categoryId, type) {
+            const selectedCategories = type === 'mobile' ? selectedCategoriesMobile : selectedCategoriesDesktop;
+            return selectedCategories.some(cat => cat.id == categoryId);
+        }
+        
+        function showMaxLimitMessage(type) {
+            const searchInput = document.getElementById(`${type}CategorySearch`);
+            const originalPlaceholder = searchInput.placeholder;
+            
+            searchInput.placeholder = `Maximum ${MAX_CATEGORIES} categories allowed`;
+            searchInput.style.borderColor = '#dc3545';
+            
+            setTimeout(() => {
+                searchInput.placeholder = originalPlaceholder;
+                searchInput.style.borderColor = '#dee2e6';
+            }, 2000);
+        }
+        
+        // Global function for remove buttons
+        window.removeCategoryTag = removeCategoryTag;
+
+
+
+
+
+
+
     $(document).ready(function() {
         // Mobile filter functionality
         $('#mobileFilterBtn').on('click', function() {
