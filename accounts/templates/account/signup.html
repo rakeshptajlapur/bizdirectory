@@ -1,5 +1,6 @@
 {% extends 'directory/base.html' %}
 {% load static %}
+{% load socialaccount %}
 
 {% block title %}Sign Up | BizDirectory{% endblock %}
 
@@ -129,52 +130,65 @@
         transform: translateY(0);
     }
     
-    /* Mobile Responsive Improvements */
-    @media (max-width: 767.98px) {
-        .card-body {
-            padding: 2rem 1.5rem !important; /* Reduce padding on mobile */
+    /* Official Google Button Styling */
+    .btn-google {
+        background: white !important;
+        color: #3c4043 !important;
+        border: 1px solid #dadce0 !important;
+        border-radius: 8px !important;
+        padding: 0.75rem 1.5rem !important;
+        font-weight: 500 !important;
+        font-size: 0.95rem !important;
+        font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        transition: all 0.2s ease !important;
+        text-decoration: none !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 48px !important;
+        box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15) !important;
+    }
+
+    .btn-google:hover {
+        background: #f8f9fa !important;
+        color: #3c4043 !important;
+        text-decoration: none !important;
+        border-color: #dadce0 !important;
+        box-shadow: 0 2px 6px 0 rgba(60, 64, 67, 0.4), 0 8px 16px 4px rgba(60, 64, 67, 0.2) !important;
+    }
+
+    .btn-google:focus,
+    .btn-google:active {
+        background: #f1f3f4 !important;
+        color: #3c4043 !important;
+        text-decoration: none !important;
+        box-shadow: 0 0 0 0.25rem rgba(66, 133, 244, 0.25) !important;
+        border-color: #4285f4 !important;
+    }
+
+    /* Mobile Responsive Google Button */
+    @media (max-width: 575.98px) {
+        .btn-google {
+            padding: 0.7rem 1.25rem !important;
+            font-size: 0.9rem !important;
+            min-height: 44px !important;
         }
         
-        .signup-section .form-control {
-            padding: 0.75rem 0.875rem; /* Slightly smaller padding */
-            font-size: 1rem; /* Keep readable font size */
-        }
-        
-        .signup-section .input-group-text {
-            padding: 0.75rem 0.875rem;
-        }
-        
-        .signup-section .btn-outline-secondary {
-            padding: 0.75rem 0.875rem;
-        }
-        
-        .signup-section .btn-primary {
-            padding: 0.875rem 1.25rem;
-            font-size: 1rem;
-        }
-        
-        /* Reduce margins between form elements */
-        .mb-3 {
-            margin-bottom: 1rem !important;
-        }
-        
-        .mb-4 {
-            margin-bottom: 1.25rem !important;
-        }
-        
-        /* Better spacing for alerts */
-        .alert {
-            margin-bottom: 1rem;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-        }
-        
-        /* Smaller form text on mobile */
-        .form-text {
-            font-size: 0.8rem;
+        .btn-google svg {
+            width: 16px !important;
+            height: 16px !important;
         }
     }
-    
+
+    /* Ensure no text decoration ever */
+    .btn-google,
+    .btn-google:hover,
+    .btn-google:focus,
+    .btn-google:active,
+    .btn-google:visited {
+        text-decoration: none !important;
+    }
+
     /* Extra small screens */
     @media (max-width: 575.98px) {
         .card-body {
@@ -225,11 +239,23 @@
         text-decoration: underline;
     }
     
+    /* Better styling for the "use email instead" helper text */
+    .text-muted small {
+        opacity: 0.7;
+    }
+    
     /* Enhanced error display */
     .signup-section .alert-danger {
         border-left: 4px solid #dc3545;
         background-color: rgba(220, 53, 69, 0.1);
         border-radius: 8px;
+    }
+
+    /* Style the helper alert */
+    .alert-light {
+        background-color: #fff8e1 !important;
+        border-color: #ffc107 !important;
+        color: #8a6914 !important;
     }
 </style>
 {% endblock %}
@@ -259,90 +285,124 @@
                             </div>
                         {% endif %}
                         
-                        <form method="post">
-                            {% csrf_token %}
+                        <!-- Google login/signup button with authentic styling -->
+                        <div class="text-center mb-4">
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-google w-100 mb-3">
+                                <!-- Official Google Logo SVG -->
+                                <svg width="18" height="18" viewBox="0 0 48 48" class="me-3">
+                                    <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                                    <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                                    <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                                    <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+                                </svg>
+                                Continue with Google
+                            </a>
                             
-                            <!-- Name Field - No Label, Just Placeholder -->
-                            <div class="mb-3">
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                                    <input type="text" name="name" class="form-control" id="id_name" 
-                                           value="{{ form.name.value|default:'' }}" 
-                                           placeholder="Enter your full name"
-                                           required>
-                                </div>
+                            <div class="text-center">
+                                <small class="text-muted fw-semibold">OR</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Make email form collapsible -->
+                        <div class="text-center mb-3">
+                            <button class="btn btn-link text-decoration-none p-0" type="button" data-bs-toggle="collapse" data-bs-target="#emailSignupForm">
+                                <small class="text-primary fw-semibold">Use email instead</small>
+                            </button>
+                        </div>
+                        
+                        <!-- Change 'show' to empty to start collapsed -->
+                        <div class="collapse" id="emailSignupForm">
+                            <!-- Helper text at the top of the form -->
+                            <div class="alert alert-light border border-warning mb-3" style="font-size: 0.8rem;">
+                                <i class="bi bi-info-circle text-warning me-2"></i>
+                                <strong>Not recommended:</strong> Only use email signup if you're having trouble with Google authentication.
                             </div>
                             
-                            <!-- Email Field - No Label, Just Placeholder -->
-                            <div class="mb-3">
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                    <input type="email" name="email" class="form-control" id="id_email" 
-                                           value="{{ form.email.value|default:'' }}" 
-                                           placeholder="Enter your email address"
-                                           required>
-                                </div>
-                                {% if form.email.errors %}
-                                    <div class="alert alert-warning mt-2" role="alert">
-                                        <i class="bi bi-exclamation-triangle me-2"></i>
-                                        <strong>Email Issue:</strong>
-                                        {% for error in form.email.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                        <div class="mt-2">
-                                            <a href="{% url 'account_login' %}" class="btn btn-sm btn-outline-primary me-2">
-                                                <i class="bi bi-box-arrow-in-right me-1"></i>Login Instead
-                                            </a>
-                                            <a href="{% url 'account_reset_password' %}" class="btn btn-sm btn-outline-secondary">
-                                                <i class="bi bi-key me-1"></i>Reset Password
-                                            </a>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            
-                            <!-- Password Fields - No Labels, Just Placeholders -->
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
+                            <form method="post">
+                                {% csrf_token %}
+                                
+                                <!-- Name Field - No Label, Just Placeholder -->
+                                <div class="mb-3">
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                        <input type="password" name="password1" class="form-control" id="id_password1" 
-                                               placeholder="Create password"
+                                        <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                        <input type="text" name="name" class="form-control" id="id_name" 
+                                               value="{{ form.name.value|default:'' }}" 
+                                               placeholder="Enter your full name"
                                                required>
-                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
                                     </div>
-                                    <small class="form-text text-muted">At least 8 characters with uppercase, lowercase & numbers</small>
                                 </div>
                                 
-                                <div class="col-md-6 mb-3">
+                                <!-- Email Field - No Label, Just Placeholder -->
+                                <div class="mb-3">
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                                        <input type="password" name="password2" class="form-control" id="id_password2" 
-                                               placeholder="Confirm password"
+                                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                        <input type="email" name="email" class="form-control" id="id_email" 
+                                               value="{{ form.email.value|default:'' }}" 
+                                               placeholder="Enter your email address"
                                                required>
-                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
                                     </div>
-                                    <small class="form-text text-muted">Re-enter your password to confirm</small>
+                                    {% if form.email.errors %}
+                                        <div class="alert alert-warning mt-2" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            <strong>Email Issue:</strong>
+                                            {% for error in form.email.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                            <div class="mt-2">
+                                                <a href="{% url 'account_login' %}" class="btn btn-sm btn-outline-primary me-2">
+                                                    <i class="bi bi-box-arrow-in-right me-1"></i>Login Instead
+                                                </a>
+                                                <a href="{% url 'account_reset_password' %}" class="btn btn-sm btn-outline-secondary">
+                                                    <i class="bi bi-key me-1"></i>Reset Password
+                                                </a>
+                                            </div>
+                                        </div>
+                                    {% endif %}
                                 </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="termsCheck" required>
-                                    <label class="form-check-label" for="termsCheck">
-                                        I agree to the <a href="{% url 'directory:terms' %}" class="text-decoration-none" target="_blank">Terms of Service</a> and <a href="{% url 'directory:privacy' %}" class="text-decoration-none" target="_blank">Privacy Policy</a>
-                                    </label>
+                                
+                                <!-- Password Fields - No Labels, Just Placeholders -->
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                            <input type="password" name="password1" class="form-control" id="id_password1" 
+                                                   placeholder="Create password"
+                                                   required>
+                                            <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
+                                        <small class="form-text text-muted">At least 8 characters with uppercase, lowercase & numbers</small>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                            <input type="password" name="password2" class="form-control" id="id_password2" 
+                                                   placeholder="Confirm password"
+                                                   required>
+                                            <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
+                                        <small class="form-text text-muted">Re-enter your password to confirm</small>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Create Account</button>
-                            </div>
-                        </form>
+                                
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                                        <label class="form-check-label" for="termsCheck">
+                                            I agree to the <a href="{% url 'directory:terms' %}" class="text-decoration-none" target="_blank">Terms of Service</a> and <a href="{% url 'directory:privacy' %}" class="text-decoration-none" target="_blank">Privacy Policy</a>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Create Account</button>
+                                </div>
+                            </form>
+                        </div>
                         
                         <div class="text-center mt-4">
                             <p>Already have an account? <a href="{% url 'account_login' %}">Log In</a></p>

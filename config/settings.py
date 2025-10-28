@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     'directory',
     'affiliate',
     'widget_tweaks',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -309,5 +310,34 @@ CELERY_TASK_TIME_LIMIT = 600
 
 # Google Maps Configuration
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', '')
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.getenv('GOOGLE_OAUTH_CLIENT_ID'),
+            'secret': os.getenv('GOOGLE_OAUTH_CLIENT_SECRET'),
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'VERIFIED_EMAIL': True,
+    }
+}
+
+
+# Google OAuth specific settings
+SOCIALACCOUNT_LOGIN_ON_GET = True  # Skip intermediate login page
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'  # Trust Google's verification
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+
+# Connect accounts with same email automatically
+SOCIALACCOUNT_ADAPTER = 'accounts.adapters.CustomSocialAccountAdapter'
 
 
