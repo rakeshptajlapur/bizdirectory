@@ -53,3 +53,18 @@ def upgrade_to_business(request):
 def password_change_redirect(request):
     """Redirect to allauth password change"""
     return redirect('account_change_password')
+
+@login_required
+def post_login_redirect(request):
+    """
+    Handle post-login redirect based on user verification status
+    """
+    user = request.user
+    
+    # Check if user is verified (either through email or social auth)
+    if user.is_active:
+        # User is verified, go to dashboard
+        return redirect('directory:dashboard_home')
+    else:
+        # User needs email verification
+        return redirect('account_email')

@@ -39,3 +39,9 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         Profile.objects.get_or_create(user=user, defaults={'user_type': 'regular'})
         
         return user
+    
+    def get_signup_redirect_url(self, request):
+        """
+        Redirect social login users directly to dashboard
+        """
+        return '/dashboard/'

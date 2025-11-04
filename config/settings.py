@@ -249,7 +249,7 @@ ACCOUNT_EMAIL_SUBJECT_PREFIX = 'BizDirectory - '
 
 # Login/signup redirect URLs
 LOGIN_REDIRECT_URL = '/dashboard/'
-ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/confirm-email/'
+ACCOUNT_SIGNUP_REDIRECT_URL = '/dashboard/'
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/accounts/login/'
 ACCOUNT_LOGOUT_ON_GET = False
 
