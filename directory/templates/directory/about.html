@@ -1,480 +1,467 @@
 {% extends 'directory/base.html' %}
 {% load static %}
 
-{% block title %}About Us | BizDirectory{% endblock %}
+{% block title %}About Us | FindNearBiz{% endblock %}
 
 {% block extra_css %}
-<!-- Add Font Awesome CDN -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <style>
-    .hero-about {
+    /* Simple, clean about page styling */
+    .about-hero {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 4rem 0;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .hero-about::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
-        opacity: 0.3;
-    }
-    
-    .hero-about .container {
-        position: relative;
-        z-index: 2;
-    }
-    
-    .section-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        color: #212529;
-        margin-bottom: 1rem;
-    }
-    
-    .section-subtitle {
-        color: #6c757d;
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
-    }
-    
-    /* Update feature card styles for better spacing */
-    .feature-card {
-        background: white;
-        border-radius: 16px;
-        padding: 2.5rem 1.5rem;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-        border: none;
-        transition: all 0.3s ease;
-        height: 100%;
-        margin-bottom: 1.5rem;
-    }
-    
-    .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-    }
-    
-    .feature-icon {
-        width: 70px;
-        height: 70px;
-        background: linear-gradient(45deg, #0d6efd, #0dcaf0);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.8rem;
-        color: white;
-        margin-bottom: 1.5rem;
-    }
-    
-    .stats-section {
-        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-        padding: 4rem 0;
-    }
-    
-    .stat-item {
+        padding: 3rem 0 2.5rem;
         text-align: center;
-        padding: 1.5rem;
     }
     
-    .stat-number {
-        font-size: 2.5rem;
-        font-weight: 800;
-        background: linear-gradient(45deg, #0d6efd, #0dcaf0);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-family: 'Poppins', sans-serif;
+    .about-section {
+        padding: 2.5rem 0;
     }
     
-    .stat-label {
-        color: #6c757d;
-        font-weight: 500;
-        margin-top: 0.5rem;
+    .mission-vision-card {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.75rem;
+        height: 100%;
+        border-left: 4px solid #0d6efd;
     }
     
-    .mission-card {
-        background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
-        color: white;
-        border-radius: 20px;
-        padding: 3rem;
-        position: relative;
-        overflow: hidden;
+    .mission-vision-card h3 {
+        color: #0d6efd;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
     }
     
-    .mission-card::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 100%;
-        height: 200%;
-        background: rgba(255, 255, 255, 0.1);
-        transform: rotate(45deg);
-    }
-    
-    .mission-card .content {
-        position: relative;
-        z-index: 2;
-    }
-    
-    .list-check {
+    .check-list {
         list-style: none;
         padding: 0;
     }
     
-    .list-check li {
-        position: relative;
-        padding-left: 2rem;
-        margin-bottom: 0.75rem;
-        color: #495057;
+    .check-list li {
+        padding: 0.5rem 0;
+        display: flex;
+        align-items: start;
+        font-size: 0.95rem;
     }
     
-    .list-check li::before {
-        content: '\f26a';
-        font-family: 'Bootstrap Icons';
-        position: absolute;
-        left: 0;
-        top: 0;
+    .check-list li i {
         color: #28a745;
-        font-weight: bold;
+        margin-right: 0.75rem;
+        margin-top: 0.25rem;
+        flex-shrink: 0;
+        font-size: 0.9rem;
     }
     
-    .team-section {
-        background: #f8f9fa;
-        padding: 4rem 0;
+    /* Stats section */
+    .text-center h3 {
+        font-size: 2rem;
+        font-weight: 700;
     }
     
-    .cta-section {
-        background: linear-gradient(135deg, #212529 0%, #495057 100%);
-        color: white;
-        padding: 4rem 0;
-        text-align: center;
+    /* What we offer section */
+    .d-flex.align-items-start .bg-primary {
+        width: 48px;
+        height: 48px;
     }
     
-    .btn-glow {
-        background: linear-gradient(45deg, #28a745, #20c997);
-        border: none;
-        border-radius: 50px;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
-        color: white;
-        text-decoration: none;
-        display: inline-block;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    .d-flex.align-items-start h5 {
+        font-size: 1.1rem;
     }
     
-    .btn-glow:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
-        color: white;
+    /* Mobile responsive - COMPREHENSIVE OPTIMIZATION */
+    @media (max-width: 767.98px) {
+        /* Reduce all container padding */
+        .container {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+        
+        /* Hero section - compact */
+        .about-hero {
+            padding: 2rem 0 1.5rem;
+        }
+        
+        .about-hero h1 {
+            font-size: 1.5rem !important; /* Reduced from 2rem */
+            margin-bottom: 0.75rem !important;
+            line-height: 1.3;
+        }
+        
+        .about-hero .lead {
+            font-size: 0.9rem !important; /* Reduced */
+            margin-bottom: 0 !important;
+            line-height: 1.5;
+        }
+        
+        /* Section padding */
+        .about-section {
+            padding: 1.5rem 0 !important;
+        }
+        
+        /* Company description */
+        .lead.text-center {
+            font-size: 0.9rem !important;
+            padding: 0 0.5rem;
+            line-height: 1.6;
+        }
+        
+        /* Mission/Vision cards - compact */
+        .mission-vision-card {
+            padding: 1rem !important;
+            margin-bottom: 1rem !important;
+            border-radius: 8px;
+        }
+        
+        .mission-vision-card h3 {
+            font-size: 1rem !important; /* Reduced */
+            margin-bottom: 0.75rem !important;
+        }
+        
+        .mission-vision-card h3 i {
+            font-size: 0.9rem !important;
+        }
+        
+        /* Check list items - compact */
+        .check-list li {
+            padding: 0.4rem 0 !important;
+            font-size: 0.8rem !important; /* Reduced */
+            line-height: 1.4;
+        }
+        
+        .check-list li i {
+            font-size: 0.75rem !important;
+            margin-right: 0.5rem !important;
+            margin-top: 0.15rem !important;
+        }
+        
+        /* Stats section - compact */
+        .row.text-center {
+            margin-bottom: 2rem !important;
+        }
+        
+        .row.text-center h3 {
+            font-size: 1.3rem !important; /* Reduced */
+            margin-bottom: 0.25rem !important;
+        }
+        
+        .row.text-center p {
+            font-size: 0.75rem !important; /* Reduced */
+            margin-bottom: 0.75rem !important;
+        }
+        
+        .row.text-center .col-md-3 {
+            margin-bottom: 1rem !important;
+        }
+        
+        /* What We Offer section - compact */
+        .row.justify-content-center h2 {
+            font-size: 1.3rem !important; /* Reduced */
+            margin-bottom: 1rem !important;
+        }
+        
+        .d-flex.align-items-start {
+            margin-bottom: 0.75rem !important;
+        }
+        
+        .d-flex.align-items-start .rounded {
+            width: 36px !important; /* Reduced */
+            height: 36px !important;
+            padding: 0.5rem !important;
+            margin-right: 0.75rem !important;
+        }
+        
+        .d-flex.align-items-start .rounded i {
+            font-size: 1rem !important;
+        }
+        
+        .d-flex.align-items-start h5 {
+            font-size: 0.9rem !important; /* Reduced */
+            margin-bottom: 0.25rem !important;
+        }
+        
+        .d-flex.align-items-start p {
+            font-size: 0.8rem !important; /* Reduced */
+            margin-bottom: 0 !important;
+        }
+        
+        /* CTA section - compact */
+        .bg-primary.bg-opacity-10 {
+            padding: 1.25rem !important;
+            border-radius: 8px !important;
+        }
+        
+        .bg-primary.bg-opacity-10 h3 {
+            font-size: 1.2rem !important; /* Reduced */
+            margin-bottom: 0.75rem !important;
+        }
+        
+        .bg-primary.bg-opacity-10 .lead {
+            font-size: 0.85rem !important; /* Reduced */
+            margin-bottom: 1rem !important;
+        }
+        
+        /* Buttons - compact */
+        .btn-lg {
+            padding: 0.65rem 1rem !important; /* Reduced */
+            font-size: 0.85rem !important; /* Reduced */
+            border-radius: 6px !important;
+        }
+        
+        .btn-lg i {
+            font-size: 0.8rem !important;
+            margin-right: 0.35rem !important;
+        }
+        
+        /* Button spacing */
+        .d-flex.flex-column.flex-sm-row {
+            gap: 0.75rem !important;
+        }
+        
+        /* Row and column spacing */
+        .row.g-4 {
+            --bs-gutter-y: 1rem !important;
+        }
+        
+        .row.justify-content-center {
+            margin-bottom: 2rem !important;
+        }
+        
+        /* Section margins */
+        .mb-5 {
+            margin-bottom: 2rem !important;
+        }
+        
+        .mb-4 {
+            margin-bottom: 1.5rem !important;
+        }
     }
     
-    /* Mobile responsiveness */
-    @media (max-width: 768px) {
-        .hero-about {
-            padding: 2.5rem 0;
+    /* Extra small screens - even more compact */
+    @media (max-width: 575.98px) {
+        .container {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
         }
         
-        .hero-about h1 {
-            font-size: 2rem;
+        .about-hero h1 {
+            font-size: 1.3rem !important;
         }
         
-        .feature-card {
-            padding: 2rem 1.25rem;
-            margin-bottom: 1rem;
+        .about-hero .lead {
+            font-size: 0.85rem !important;
         }
         
-        .mission-card {
-            padding: 2rem;
+        .mission-vision-card {
+            padding: 0.875rem !important;
         }
         
-        .stat-number {
-            font-size: 2rem;
+        .mission-vision-card h3 {
+            font-size: 0.95rem !important;
         }
         
-        .stats-section {
-            padding: 2.5rem 0;
+        .check-list li {
+            font-size: 0.75rem !important;
         }
         
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+        .row.text-center h3 {
+            font-size: 1.1rem !important;
         }
         
-        .feature-card h4 {
-            font-size: 1.1rem;
-            margin-bottom: 0.75rem;
+        .btn-lg {
+            padding: 0.6rem 0.875rem !important;
+            font-size: 0.8rem !important;
         }
         
-        .feature-card p {
-            font-size: 0.9rem;
+        .d-flex.align-items-start h5 {
+            font-size: 0.85rem !important;
+        }
+        
+        .d-flex.align-items-start p {
+            font-size: 0.75rem !important;
+        }
+    }
+    
+    /* Landscape phones */
+    @media (max-width: 767.98px) and (orientation: landscape) {
+        .about-hero {
+            padding: 1.5rem 0 1rem;
+        }
+        
+        .mission-vision-card {
+            padding: 0.875rem !important;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-about">
+<!-- Simple Hero Section -->
+<section class="about-hero">
     <div class="container">
-        <div class="row justify-content-center text-center">
-            <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-4">About FindNearBiz</h1>
-                <p class="lead mb-4">Empowering local businesses and connecting communities across North Karnataka</p>
-                <div class="d-flex justify-content-center align-items-center">
-                    <i class="bi bi-building fs-2 me-3"></i>
-                    <span class="h5 mb-0">Kirti Directory - Your Local Business Partner</span>
-                </div>
-            </div>
-        </div>
+        <h1 class="display-4 fw-bold mb-3">About Us</h1>
+        <p class="lead mb-0">Your trusted local business directory connecting customers with verified businesses across Karnataka</p>
     </div>
 </section>
 
-<!-- Mission & Vision Section -->
-<section class="py-5">
+<!-- Main Content -->
+<section class="about-section">
     <div class="container">
-        <div class="row g-4 align-items-center">
+        <!-- Company Description -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10">
+                <p class="lead text-center text-muted">
+                    FindNearBiz.com (operated by Kirti Directory) is a digital platform dedicated to empowering local businesses 
+                    and making it easy for customers to discover trusted services in their area. We bridge the gap between 
+                    offline businesses and online customers through our simple, user-friendly directory.
+                </p>
+            </div>
+        </div>
+
+        <!-- Mission & Vision Cards -->
+        <div class="row g-4 mb-5">
+            <!-- Mission Card -->
             <div class="col-lg-6">
-                <div class="mission-card">
-                    <div class="content">
-                        <h2 class="h3 fw-bold mb-3">
-                            <i class="bi bi-eye me-2"></i>Our Vision
-                        </h2>
-                        <p class="mb-0 lead">
-                            To become the most reliable and comprehensive digital platform for local business discovery in North Karnataka, enabling businesses to expand their reach and customers to easily connect with trusted services.
-                        </p>
-                    </div>
+                <div class="mission-vision-card">
+                    <h3>
+                        <i class="bi bi-target me-2"></i>Our Mission
+                    </h3>
+                    <ul class="check-list">
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Bridge the gap between customers and businesses through a simple, user-friendly online directory</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Support MSMEs and local entrepreneurs by giving them affordable digital visibility</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Help businesses showcase their products, services, and contact details effectively</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Build trust through verified business listings and authentic customer reviews</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
+
+            <!-- Vision Card -->
             <div class="col-lg-6">
-                <h2 class="section-title">
-                    <i class="bi bi-target me-2 text-primary"></i>Our Mission
-                </h2>
-                <p class="section-subtitle">Bridging the gap between businesses and customers through innovation</p>
-                <ul class="list-check">
-                    <li>Bridge the gap between customers and businesses through a simple, user-friendly online directory</li>
-                    <li>Support MSMEs and local entrepreneurs by giving them affordable visibility in the digital world</li>
-                    <li>Foster growth by providing tools and features that help businesses showcase their products, services, and contact details</li>
-                </ul>
+                <div class="mission-vision-card" style="border-left-color: #6f42c1;">
+                    <h3 style="color: #6f42c1;">
+                        <i class="bi bi-eye me-2"></i>Our Vision
+                    </h3>
+                    <ul class="check-list">
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Become the most reliable digital platform for local business discovery in North Karnataka</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Enable businesses to expand their reach and connect with more customers</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Make it easy for customers to find trusted, verified local services</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Expand coverage across Karnataka and beyond</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- Stats Section -->
-<section class="stats-section">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-3 col-6">
-                <div class="stat-item">
-                    <div class="stat-number">1000+</div>
-                    <div class="stat-label">Registered Businesses</div>
-                </div>
+        <!-- Quick Stats -->
+        <div class="row text-center mb-5">
+            <div class="col-md-3 col-6 mb-3">
+                <h3 class="fw-bold text-primary mb-1">1000+</h3>
+                <p class="text-muted mb-0">Registered Businesses</p>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="stat-item">
-                    <div class="stat-number">15K+</div>
-                    <div class="stat-label">Monthly Visitors</div>
-                </div>
+            <div class="col-md-3 col-6 mb-3">
+                <h3 class="fw-bold text-primary mb-1">15K+</h3>
+                <p class="text-muted mb-0">Monthly Visitors</p>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="stat-item">
-                    <div class="stat-number">50+</div>
-                    <div class="stat-label">Business Categories</div>
-                </div>
+            <div class="col-md-3 col-6 mb-3">
+                <h3 class="fw-bold text-primary mb-1">50+</h3>
+                <p class="text-muted mb-0">Categories</p>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="stat-item">
-                    <div class="stat-number">3</div>
-                    <div class="stat-label">Cities Covered</div>
-                </div>
+            <div class="col-md-3 col-6 mb-3">
+                <h3 class="fw-bold text-primary mb-1">3</h3>
+                <p class="text-muted mb-0">Cities Covered</p>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- What We Offer Section -->
-<section class="py-5">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title">What We Offer</h2>
-            <p class="section-subtitle">Comprehensive solutions for local business growth</p>
-        </div>
-        
-        <div class="row g-4">
-            <div class="col-lg-6 col-md-6">
-                <div class="feature-card text-center">
-                    <div class="feature-icon mx-auto">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h4 class="fw-bold mb-3">Verified Business Listings</h4>
-                    <p class="text-muted">Ensuring trust and credibility through our comprehensive verification process</p>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6">
-                <div class="feature-card text-center">
-                    <div class="feature-icon mx-auto">
-                        <i class="fas fa-rupee-sign"></i>
-                    </div>
-                    <h4 class="fw-bold mb-3">Affordable Packages</h4>
-                    <p class="text-muted">Flexible pricing packages that help businesses stand out without breaking the bank</p>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6">
-                <div class="feature-card text-center">
-                    <div class="feature-icon mx-auto">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <h4 class="fw-bold mb-3">Local Focus</h4>
-                    <p class="text-muted">Tailored for Bidar, Gulbarga, and nearby districts with expansion plans across Karnataka</p>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6">
-                <div class="feature-card text-center">
-                    <div class="feature-icon mx-auto">
-                        <i class="fas fa-bullhorn"></i>
-                    </div>
-                    <h4 class="fw-bold mb-3">Marketing Support</h4>
-                    <p class="text-muted">Helping businesses grow with online visibility, promotions, and customer engagement</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Why Partner With Us Section -->
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6 mb-4 mb-lg-0">
-                <h2 class="section-title">Why Partner With Us?</h2>
-                <p class="section-subtitle">Building sustainable growth for businesses and communities</p>
-                
-                <div class="row g-3">
-                    <div class="col-12">
+        <!-- What We Offer -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10">
+                <h2 class="text-center fw-bold mb-4">What We Offer</h2>
+                <div class="row g-4">
+                    <div class="col-md-6">
                         <div class="d-flex align-items-start">
-                            <div class="bg-primary rounded-circle p-2 me-3 mt-1" style="min-width: 40px; height: 40px;">
-                                <i class="bi bi-graph-up text-white"></i>
+                            <div class="bg-primary bg-opacity-10 rounded p-3 me-3">
+                                <i class="bi bi-shield-check text-primary fs-4"></i>
                             </div>
                             <div>
-                                <h5 class="fw-bold mb-1">Scalable Business Model</h5>
-                                <p class="text-muted mb-0">Monetization through paid listings, promotions, and strategic partnerships</p>
+                                <h5 class="fw-bold mb-2">Verified Business Listings</h5>
+                                <p class="text-muted mb-0">Trust through KYC and GST verification</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12">
+                    <div class="col-md-6">
                         <div class="d-flex align-items-start">
-                            <div class="bg-success rounded-circle p-2 me-3 mt-1" style="min-width: 40px; height: 40px;">
-                                <i class="bi bi-trophy text-white"></i>
+                            <div class="bg-success bg-opacity-10 rounded p-3 me-3">
+                                <i class="bi bi-currency-rupee text-success fs-4"></i>
                             </div>
                             <div>
-                                <h5 class="fw-bold mb-1">Untapped Market Potential</h5>
-                                <p class="text-muted mb-0">Large number of local businesses are still offline and need digital presence</p>
+                                <h5 class="fw-bold mb-2">Affordable Packages</h5>
+                                <p class="text-muted mb-0">Free and premium plans for all business sizes</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12">
+                    <div class="col-md-6">
                         <div class="d-flex align-items-start">
-                            <div class="bg-info rounded-circle p-2 me-3 mt-1" style="min-width: 40px; height: 40px;">
-                                <i class="bi bi-handshake text-white"></i>
+                            <div class="bg-warning bg-opacity-10 rounded p-3 me-3">
+                                <i class="bi bi-geo-alt text-warning fs-4"></i>
                             </div>
                             <div>
-                                <h5 class="fw-bold mb-1">Trust & Credibility</h5>
-                                <p class="text-muted mb-0">As a registered sole proprietorship (Kirti Directory), we follow transparent business practices</p>
+                                <h5 class="fw-bold mb-2">Local Focus</h5>
+                                <p class="text-muted mb-0">Tailored for Bidar, Gulbarga, and nearby districts</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12">
+                    <div class="col-md-6">
                         <div class="d-flex align-items-start">
-                            <div class="bg-warning rounded-circle p-2 me-3 mt-1" style="min-width: 40px; height: 40px;">
-                                <i class="bi bi-people text-white"></i>
+                            <div class="bg-info bg-opacity-10 rounded p-3 me-3">
+                                <i class="bi bi-megaphone text-info fs-4"></i>
                             </div>
                             <div>
-                                <h5 class="fw-bold mb-1">Community Growth</h5>
-                                <p class="text-muted mb-0">Supporting both entrepreneurs and customers builds long-term loyalty and sustainability</p>
+                                <h5 class="fw-bold mb-2">Marketing Support</h5>
+                                <p class="text-muted mb-0">Tools to help businesses grow online</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="text-center">
-                    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=600&q=80" 
-                         alt="Business Growth" class="img-fluid rounded-3 shadow">
-                </div>
-            </div>
         </div>
-    </div>
-</section>
 
-<!-- Our Commitment Section -->
-<section class="py-5">
-    <div class="container">
+        <!-- CTA Section -->
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
-                <h2 class="section-title">Our Commitment</h2>
-                <p class="lead text-muted mb-4">
-                    At FindNearBiz, we are committed to building a sustainable ecosystem where businesses thrive and customers benefit from quick, reliable access to services. We believe in mutual growth — when businesses grow, communities prosper.
-                </p>
-                <div class="row g-4 mt-4">
-                    <div class="col-md-4">
-                        <div class="text-center">
-                            <i class="bi bi-award text-primary fs-1 mb-3"></i>
-                            <h5 class="fw-bold">Quality Assurance</h5>
-                            <p class="text-muted small">Verified listings and authentic reviews</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="text-center">
-                            <i class="bi bi-headset text-success fs-1 mb-3"></i>
-                            <h5 class="fw-bold">24/7 Support</h5>
-                            <p class="text-muted small">Dedicated customer service team</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="text-center">
-                            <i class="bi bi-rocket text-warning fs-1 mb-3"></i>
-                            <h5 class="fw-bold">Continuous Innovation</h5>
-                            <p class="text-muted small">Regular updates and new features</p>
-                        </div>
+                <div class="bg-primary bg-opacity-10 rounded-3 p-5">
+                    <h3 class="fw-bold mb-3">Ready to Grow Your Business?</h3>
+                    <p class="lead text-muted mb-4">Join thousands of businesses already growing with FindNearBiz</p>
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                        <a href="{% url 'directory:add_listings_info' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-plus-circle me-2"></i>List Your Business
+                        </a>
+                        <a href="{% url 'directory:listings' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-search me-2"></i>Browse Businesses
+                        </a>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- CTA Section -->
-<section class="cta-section">
-    <div class="container">
-        <div class="row justify-content-center text-center">
-            <div class="col-lg-8">
-                <h2 class="display-5 fw-bold mb-4">Ready to Grow Your Business?</h2>
-                <p class="lead mb-4">Join thousands of businesses already growing with FindNearBiz</p>
-                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                    <a href="{% url 'directory:add_listings_info' %}" class="btn-glow">
-                        <i class="bi bi-plus-circle me-2"></i>List Your Business
-                    </a>
-                    <a href="{% url 'directory:listings' %}" class="btn btn-outline-light btn-lg">
-                        <i class="bi bi-search me-2"></i>Explore Businesses
-                    </a>
-                </div>
-                <p class="mt-4 text-white-50">
-                    <i class="bi bi-shield-check me-2"></i>
-                    Trusted by 1000+ businesses • No setup fees • Cancel anytime
-                </p>
             </div>
         </div>
     </div>
