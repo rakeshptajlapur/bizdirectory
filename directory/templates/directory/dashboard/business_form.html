@@ -553,6 +553,8 @@
 {% block extra_js %}
 {{ block.super }}
 <script>
+
+
 // ✅ BETTER FIX: Pass document status from Django template
 const businessDocumentStatus = {
     hasRegistrationDoc: {% if business.registration_document %}true{% else %}false{% endif %},
@@ -562,6 +564,74 @@ const businessDocumentStatus = {
 };
 
 console.log('📄 Document status:', businessDocumentStatus);
+
+
+
+// ✅ ADD ONLY THIS SERVICE MANAGEMENT CODE
+document.addEventListener('DOMContentLoaded', function() {
+    const addServiceBtn = document.getElementById('add-service-btn');
+    
+    if (addServiceBtn) {
+        addServiceBtn.addEventListener('click', function() {
+            const container = document.getElementById('services-container');
+            
+            const serviceHTML = `
+                <div class="row g-3 mb-3 service-row">
+                    <div class="col-md-5">
+                        <label class="form-label">
+                            Service Name
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Service name: 2-100 characters, letters and numbers allowed"></i>
+                        </label>
+                        <input type="text" class="form-control service-name" name="service_name" maxlength="100">
+                        <div class="form-text">2-100 characters, letters and numbers</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Short Description (Optional)
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Brief description of the service: up to 200 characters"></i>
+                        </label>
+                        <input type="text" class="form-control service-description" name="service_description" maxlength="200">
+                        <div class="form-text">Up to 200 characters</div>
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="button" class="btn btn-outline-danger remove-service-btn">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', serviceHTML);
+            addRemoveHandlers();
+        });
+    }
+    
+    // Add remove functionality
+    function addRemoveHandlers() {
+        document.querySelectorAll('.remove-service-btn').forEach(function(btn) {
+            btn.replaceWith(btn.cloneNode(true)); // Remove old listeners
+        });
+        
+        document.querySelectorAll('.remove-service-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const container = document.getElementById('services-container');
+                if (container.querySelectorAll('.service-row').length > 1) {
+                    this.closest('.service-row').remove();
+                } else {
+                    alert('You must have at least one service.');
+                }
+            });
+        });
+    }
+    
+    // Initialize remove handlers for existing services
+    addRemoveHandlers();
+});
+
+
+
 
 let map;
 let marker;
