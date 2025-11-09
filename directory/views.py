@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse  # Add this line
 from django.db.models import Q, Avg, Count
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.contrib import messages
@@ -69,7 +69,21 @@ def home(request):
 
 def business_detail(request, pk):
     """View for displaying a single business listing"""
-    business = get_object_or_404(Business, pk=pk)
+
+        # ✅ UPDATED: Handle inactive businesses based on user permissions
+    if request.user.is_staff:
+        # Admin can see all businesses
+        business = get_object_or_404(Business, pk=pk)
+    elif request.user.is_authenticated:
+        # Authenticated users: Get business first, then check permissions
+        business = get_object_or_404(Business, pk=pk)
+        # If business is inactive and user doesn't own it → 404
+        if not business.is_active and business.owner != request.user:
+            raise Http404("Business not found")
+    else:
+        # Anonymous users: Get business regardless of status (login gate will handle it)
+        business = get_object_or_404(Business, pk=pk)
+        
     
     # Get today's weekday (0=Monday, 6=Sunday)
     today_weekday = timezone.now().weekday()
@@ -861,7 +875,7 @@ def business_form(request, business_id=None):
                 business.kyc_status = 'not_submitted'
                 status_message = 'Business listing saved as draft successfully!'
             else:  # submit
-                business.is_active = True
+                business.is_active = False # No auto approval
                 business.kyc_status = 'pending'
                 status_message = 'Business listing submitted for approval successfully!'
             

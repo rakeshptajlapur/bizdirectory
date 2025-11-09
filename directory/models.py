@@ -89,7 +89,7 @@ class Business(models.Model):
     # Meta Info
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False) #setting default listing status fals
     # Whether the listing has been approved by an admin
     is_approved = models.BooleanField(default=False)
 

@@ -1483,6 +1483,34 @@
 </div>
 {% endif %}
 
+<!-- Add this preview banner for both owners and admins -->
+{% if user.is_authenticated and not business.is_active %}
+    {% if business.owner == user %}
+        <div class="alert alert-warning alert-dismissible fade show m-3" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <div>
+                    <strong>Preview Mode:</strong> This listing is pending admin approval. 
+                    Only you can see this page. It will be public once approved.
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% elif user.is_staff %}
+        <div class="alert alert-info alert-dismissible fade show m-3" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                <div>
+                    <strong>Admin Preview:</strong> This listing is inactive and pending approval. 
+                    Check the "is_active" checkbox in Django admin to make it live.
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endif %}
+{% endif %}
+
+
 <!-- Main Content (will be blurred for anonymous users) -->
 <div class="main-content {% if not user.is_authenticated %}content-blurred{% endif %}">
     <!-- Business Header Card - Mobile Optimized -->
