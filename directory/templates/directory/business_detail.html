@@ -1442,6 +1442,73 @@
 .ratio iframe {
     border-radius: 8px;
 }
+
+/* ✅ MOBILE COUPON SECTION FIXES */
+@media (max-width: 767px) {
+    /* Hide email field on mobile */
+    .email-input-container {
+        display: none !important;
+    }
+    
+    /* Make Get Deal button full width on mobile */
+    .btn-coupon {
+        width: 100% !important;
+        border-radius: 12px !important;
+        font-size: 1rem !important;
+        padding: 1rem !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Adjust coupon input group for mobile */
+    .coupon-input-group {
+        flex-direction: column !important;
+        border-radius: 12px !important;
+    }
+    
+    /* Better spacing for mobile coupon help text */
+    .coupon-help-text {
+        margin-top: 1rem !important;
+        font-size: 0.9rem !important;
+        text-align: center !important;
+    }
+    
+    /* Coupon success message styling */
+    .coupon-success-inline {
+        background: rgba(40, 167, 69, 0.1) !important;
+        border: 2px solid #28a745 !important;
+        border-radius: 12px !important;
+        padding: 1rem !important;
+        margin-top: 1rem !important;
+        text-align: center !important;
+    }
+    
+    .coupon-code-display {
+        font-size: 1.2rem !important;
+        font-weight: bold !important;
+        color: #28a745 !important;
+        background: white !important;
+        padding: 0.5rem 1rem !important;
+        border-radius: 8px !important;
+        display: inline-block !important;
+        margin-top: 0.5rem !important;
+        letter-spacing: 1px !important;
+    }
+}
+
+/* Only apply on mobile where header is sticky */
+@media (max-width: 767px) {
+    .alert {
+        margin-top: 80px !important; /* Adjust for mobile header height */
+    }
+}
+
+/* Reset margin for alerts inside content (not top-level alerts) */
+.card .alert,
+.tab-pane .alert,
+.main-content .container .alert:not(.messages .alert) {
+    margin-top: 1rem !important; /* Normal margin for content alerts */
+}
+
 </style>
 {% endblock %}
 
@@ -1483,7 +1550,9 @@
                 </div>
             </div>
             
-            <div class="benefit-item">
+            <
+            
+            div class="benefit-item">
                 <div class="benefit-icon">
                     <i class="bi bi-star"></i>
                 </div>
@@ -1684,7 +1753,7 @@
 <h3 class="mb-2">Special Deal: {{ business.coupon_discount }}% Off First Service</h3>
                                 <p class="mb-0">Get your exclusive deal code delivered to your registered email address.</p>
                             </div>
-                            <div class="col-lg-6">
+                                                        <div class="col-lg-6">
                                 <form method="post" action="{% url 'directory:request_coupon' business.pk %}">
                                     {% csrf_token %}
                                     <div class="coupon-form-container">
@@ -1701,8 +1770,25 @@
                                                 <i class="bi bi-gift me-2"></i>Get Deal
                                             </button>
                                         </div>
-                                        <div class="coupon-help-text">
-                                            <i class="bi bi-info-circle me-1"></i>Coupon will be sent to your registered email
+                                        
+                                        <!-- ✅ Mobile explanatory text -->
+                                        <div class="coupon-help-text d-md-block">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            <span class="d-none d-md-inline">Coupon will be sent to your registered email</span>
+                                            <span class="d-md-none">Clicking 'Get Deal' will instantly send your discount coupon to {{ user.email }}</span>
+                                        </div>
+                                        
+                                        <!-- ✅ Success message area (initially hidden) -->
+                                        <div id="coupon-success-message" class="coupon-success-inline" style="display: none;">
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-check-circle-fill text-success me-2 fs-4"></i>
+                                                <div>
+                                                    <h5 class="mb-1 text-success">🎉 Coupon Issued!</h5>
+                                                    <p class="mb-2">Your discount code:</p>
+                                                    <span id="coupon-code-display" class="coupon-code-display">CODE123</span>
+                                                    <p class="mb-0 mt-2 small text-muted">Also sent to {{ user.email }}</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -2414,6 +2500,95 @@ function scrollToContactForm() {
             closeLoginGate();
         }
     });
+    
+    // ✅ COUPON SUCCESS HANDLING - SHOW IN SECTION INSTEAD OF TOP ALERT
+function showCouponSuccess(couponCode) {
+    // Hide the form
+    const form = document.querySelector('.coupon-form-container form');
+    if (form) {
+        form.style.display = 'none';
+    }
+    
+    // Update coupon code display
+    const codeDisplay = document.getElementById('coupon-code-display');
+    if (codeDisplay) {
+        codeDisplay.textContent = couponCode;
+    }
+    
+    // Show success message
+    const successMessage = document.getElementById('coupon-success-message');
+    if (successMessage) {
+        successMessage.style.display = 'block';
+        
+        // Smooth scroll to success message (mobile friendly)
+        successMessage.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+        
+        // Add animation effect
+        successMessage.style.animation = 'fadeInScale 0.5s ease-out';
+    }
+}
+
+// Handle coupon form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const couponForm = document.querySelector('form[action*="request_coupon"]');
+    if (couponForm) {
+        couponForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            const submitBtn = this.querySelector('.btn-coupon');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Generating...';
+            submitBtn.disabled = true;
+            
+            // Submit form via AJAX
+            fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success in section instead of top alert
+                    showCouponSuccess(data.coupon_code);
+                } else {
+                    // Show error message
+                    alert('Error: ' + (data.message || 'Failed to generate coupon'));
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Something went wrong. Please try again.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+    }
+});
+
+// Add CSS animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+`;
+document.head.appendChild(style);
 </script>
 
 <!-- Add fadeOut animation -->
