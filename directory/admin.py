@@ -35,7 +35,7 @@ class BusinessAdmin(admin.ModelAdmin):
             'fields': ('address', 'pincode', 'city')
         }),
         ('Contact Information', {
-            'fields': ('phone', 'email', 'website')
+            'fields': ('phone', 'email', 'website', 'youtube_url')
         }),
         ('Business Details', {
             'fields': ('registration_number', 'registration_document')

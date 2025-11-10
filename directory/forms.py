@@ -12,7 +12,7 @@ class BusinessForm(forms.ModelForm):
         fields = [
             'name', 'category', 'description', 
             'phone', 'email', 'website',
-            'registration_number', 'gst_number'
+            'registration_number', 'gst_number', 'youtube_url'
         ]
         widgets = {
             'description': forms.Textarea(attrs={
@@ -39,6 +39,10 @@ class BusinessForm(forms.ModelForm):
             'website': forms.URLInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'https://www.example.com'
+            }),
+            'youtube_url': forms.URLInput(attrs={
+                'class': 'form-control', 
+                'placeholder': 'https://youtube.com/watch?v=abc123'
             }),
             'registration_number': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -120,3 +124,28 @@ class BusinessForm(forms.ModelForm):
             raise ValidationError('File must have .jpg, .jpeg, .png, or .pdf extension.')
         
         return file
+    
+    def clean_youtube_url(self):
+        """Validate YouTube URL format"""
+        youtube_url = self.cleaned_data.get('youtube_url')
+        
+        if youtube_url:
+            # Valid YouTube URL patterns
+            valid_patterns = [
+                'youtube.com/watch?v=',
+                'youtu.be/',
+                'youtube.com/embed/',
+                'youtube.com/v/',
+                'youtube.com/watch?feature=player_embedded&v='
+            ]
+            
+            if not any(pattern in youtube_url.lower() for pattern in valid_patterns):
+                raise forms.ValidationError(
+                    "Please enter a valid YouTube URL (e.g., https://youtube.com/watch?v=abc123 or https://youtu.be/abc123)"
+                )
+            
+            # Check if URL is accessible (optional)
+            if not youtube_url.startswith(('http://', 'https://')):
+                youtube_url = 'https://' + youtube_url
+        
+        return youtube_url

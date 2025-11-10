@@ -1,5 +1,7 @@
 # directory/templatetags/directory_filters.py
 from django import template
+from directory.utils import extract_youtube_video_id  
+
 
 register = template.Library()
 
@@ -39,3 +41,8 @@ def plan_allows(subscription, feature_name):
         
     # Premium plan has all features
     return True
+
+@register.filter
+def extract_youtube_id(url):
+    """Extract YouTube video ID from URL"""
+    return extract_youtube_video_id(url)

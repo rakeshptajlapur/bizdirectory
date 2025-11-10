@@ -60,6 +60,13 @@ class Business(models.Model):
     phone = models.CharField(max_length=15)
     email = models.EmailField()
     website = models.URLField(blank=True)
+
+    # Youtube url field
+    youtube_url = models.URLField(
+        blank=True, 
+        null=True, 
+        help_text="YouTube video URL for business introduction (e.g., https://youtube.com/watch?v=abc123)"
+    )
     
     # Business Details (Non-public)
     registration_number = models.CharField(max_length=50)

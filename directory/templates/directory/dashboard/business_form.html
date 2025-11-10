@@ -226,6 +226,28 @@
                         {% endif %}
                         <div class="form-text">Complete URL including http:// or https:// (e.g., https://example.com)</div>
                     </div>
+
+                    <div class="col-md-12">
+                        <label for="{{ form.youtube_url.id_for_label }}" class="form-label">
+                            YouTube Video (Optional)
+                            <i class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" 
+                               title="Add a YouTube intro video for your business. Supports youtube.com and youtu.be links"></i>
+                            <span class="badge bg-warning text-dark ms-2">Premium Feature</span>
+                        </label>
+                        {{ form.youtube_url }}
+                        {% if form.youtube_url.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.youtube_url.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            <i class="bi bi-youtube text-danger me-1"></i>
+                            Paste your YouTube video URL (e.g., https://youtube.com/watch?v=abc123)
+                            <br><small class="text-warning">This feature is available for premium listings only</small>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
         </div>
