@@ -28,7 +28,7 @@ class AffiliateProfile(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     
     # Application details
-    promotion_strategy = models.TextField(help_text="How will you promote BizDirectory?")
+    promotion_strategy = models.TextField(help_text="How will you promote FindNearBiz.com?")
     
     # KYC Documents - FORCE Cloudinary storage
     aadhar_card = models.FileField(

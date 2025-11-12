@@ -17,18 +17,18 @@ def send_verification_email(user_id, verification_url):
         
         print(f"DEBUG: Sending verification email to {user.email} with URL {verification_url}")
         
-        subject = "Verify your email address - BizDirectory"
+        subject = "Verify your email address - FindNearBiz.com"
         message = f"""
 Hello {user.first_name or user.username},
 
-Thank you for registering with BizDirectory! Please verify your email address by clicking the link below:
+Thank you for registering with FindNearBiz.com! Please verify your email address by clicking the link below:
 
 {verification_url}
 
 This link will expire in 24 hours.
 
 Best regards,
-BizDirectory Team
+FindNearBiz.com Team
         """
         
         result = send_mail(
@@ -170,7 +170,7 @@ def send_profile_updated_email(user_id):
         user = User.objects.get(id=user_id)
         context = {
             'user': user,
-            'site_name': 'BizDirectory'
+            'site_name': 'FindNearBiz.com'
         }
         subject = "Your profile has been updated"
         html_message = render_to_string('emails/profile_updated.html', context)
