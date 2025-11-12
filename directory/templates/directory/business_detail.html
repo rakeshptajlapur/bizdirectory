@@ -1509,6 +1509,85 @@
     margin-top: 1rem !important; /* Normal margin for content alerts */
 }
 
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .login-gate-modal {
+        padding: 1.5rem 1rem;
+        max-height: 85vh; /* Increase max height */
+        margin: 0.5rem;
+        width: calc(100% - 1rem);
+    }
+    
+    .login-gate-icon {
+        width: 50px; /* Smaller icon */
+        height: 50px;
+        font-size: 1.3rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .login-gate-modal h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* ✅ HIDE BENEFITS ON MOBILE */
+    .login-gate-modal .text-start.mb-3 {
+        display: none !important;
+    }
+    
+    /* ✅ MAKE "ALREADY HAVE ACCOUNT" A SIMPLE LINK */
+    .login-gate-modal .btn-outline-primary {
+        background: none !important;
+        border: none !important;
+        color: #0d6efd !important;
+        text-decoration: underline !important;
+        padding: 0.5rem 0 !important;
+        font-size: 0.9rem !important;
+        font-weight: normal !important;
+        box-shadow: none !important;
+    }
+    
+    .login-gate-modal .btn-outline-primary:hover {
+        background: none !important;
+        border: none !important;
+        transform: none !important;
+        text-decoration: underline !important;
+        color: #0b5ed7 !important;
+    }
+    
+    /* ✅ REDUCE SPACING */
+    .login-gate-modal .d-grid.gap-2.mb-3 {
+        gap: 0.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .login-gate-modal .small.text-muted.mb-0 {
+        font-size: 0.75rem !important;
+        margin-top: 0.5rem !important;
+    }
+}
+
+/* Extra small screens - even more compact */
+@media (max-width: 480px) {
+    .login-gate-modal {
+        padding: 1rem 0.75rem;
+        margin: 0.25rem;
+    }
+    
+    .login-gate-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .login-gate-modal h2 {
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+    }
+}
+
 </style>
 {% endblock %}
 
@@ -1527,7 +1606,6 @@
         </div>
         
         <h2 class="fw-bold mb-3">Unlock Full Business Details</h2>
-        <p class="text-muted mb-3">Join thousands of users discovering trusted local businesses.</p>
         
         <div class="text-start mb-3">
             <div class="benefit-item">
@@ -1550,9 +1628,7 @@
                 </div>
             </div>
             
-            <
-            
-            div class="benefit-item">
+            <div class="benefit-item">
                 <div class="benefit-icon">
                     <i class="bi bi-star"></i>
                 </div>
@@ -1572,12 +1648,7 @@
             </a>
         </div>
         
-        <!-- Add a "Browse More Businesses" button -->
-        <div class="d-grid gap-2 mb-3">
-            <a href="{% url 'directory:listings' %}?category={{ business.category.id }}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-arrow-left me-2"></i>Browse More {{ business.category.name }} Businesses
-            </a>
-        </div>
+
         
         <p class="small text-muted mb-0">
             <i class="bi bi-shield-lock me-1"></i>
