@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Coupon Settings Updated</title>
+</head>
+<body>
+    <p>Hello {{ owner_name }},</p>
+    
+    <p>Your coupon settings for <strong>{{ business.name }}</strong> have been updated:</p>
+    
+    <ul>
+        {% if changes.enabled %}
+            <li><strong>Coupon Status:</strong> {% if changes.enabled %}Enabled{% else %}Disabled{% endif %}</li>
+        {% endif %}
+        {% if changes.discount %}
+            <li><strong>Discount Percentage:</strong> {{ changes.discount.new }}% 
+                {% if changes.discount.old %}(previously {{ changes.discount.old }}%){% endif %}
+            </li>
+        {% endif %}
+    </ul>
+    
+    <p>These changes are now live on your business listing.</p>
+    
+    <p>Best regards,<br/>
+    FindNearBiz Team</p>
+</body>
+</html>

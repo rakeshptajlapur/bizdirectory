@@ -10,6 +10,10 @@ from .signals import (
     send_review_visible_email,
     send_business_live_email,
     send_business_deactivated_email,
+    # ✅ ADD NEW COUPON MANAGEMENT TASKS
+    send_coupon_settings_updated_email,
+    send_coupon_enabled_email,
+    send_coupon_disabled_email,
 )
 
 # Import welcome email task from accounts to ensure Celery registers it

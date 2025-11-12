@@ -1495,11 +1495,52 @@ def update_business_coupon_settings(request):
         
         try:
             business = get_object_or_404(Business, id=business_id, owner=request.user)
-            business.coupon_discount = int(discount)
-            business.coupon_enabled = enabled
+            
+            # ✅ TRACK CHANGES FOR EMAIL NOTIFICATION
+            changes = {}
+            
+            # Check if discount changed
+            try:
+                new_discount = int(discount)
+                if new_discount != business.coupon_discount:
+                    changes['discount'] = {
+                        'old': business.coupon_discount,
+                        'new': new_discount
+                    }
+                    business.coupon_discount = new_discount
+            except ValueError:
+                messages.error(request, "Invalid discount percentage")
+                return redirect('directory:dashboard_coupons')
+            
+            # Check if enabled status changed
+            if enabled != business.coupon_enabled:
+                changes['enabled'] = enabled
+                business.coupon_enabled = enabled
+            
+            # Save changes
             business.save()
             
-            messages.success(request, f"Coupon settings updated for {business.name}")
+            # ✅ SEND EMAIL NOTIFICATIONS IF CHANGES MADE
+            if changes:
+                # Import the new email task
+                from .signals import send_coupon_settings_updated_email
+                
+                # Send detailed notification about all changes
+                send_coupon_settings_updated_email.delay(business.id, changes)
+                
+                # Create success message
+                change_messages = []
+                if 'enabled' in changes:
+                    status = "enabled" if changes['enabled'] else "disabled"
+                    change_messages.append(f"coupons {status}")
+                if 'discount' in changes:
+                    change_messages.append(f"discount updated to {changes['discount']['new']}%")
+                
+                success_msg = f"✅ {business.name}: {', '.join(change_messages)}"
+                messages.success(request, success_msg)
+            else:
+                messages.info(request, "No changes made to coupon settings")
+            
         except Exception as e:
             messages.error(request, "Error updating coupon settings")
     

@@ -175,3 +175,104 @@ def business_status_notifications(sender, instance, created, **kwargs):
             send_business_live_email.delay(instance.id)
         else:
             send_business_deactivated_email.delay(instance.id)
+
+# ✅ ADD NEW COUPON MANAGEMENT EMAIL NOTIFICATIONS
+
+@shared_task
+def send_coupon_settings_updated_email(business_id, changes):
+    """Send email notification when coupon settings are updated"""
+    try:
+        business = Business.objects.get(id=business_id)
+        context = {
+            'business': business,
+            'changes': changes,
+            'owner_name': business.owner.get_full_name() or business.owner.username
+        }
+        
+        # Create subject based on changes
+        if 'enabled' in changes and 'discount' in changes:
+            subject = f"Coupon settings updated for {business.name}"
+        elif 'enabled' in changes:
+            action = "enabled" if changes['enabled'] else "disabled"
+            subject = f"Coupons {action} for {business.name}"
+        elif 'discount' in changes:
+            subject = f"Coupon discount updated for {business.name}"
+        else:
+            subject = f"Coupon settings changed for {business.name}"
+        
+        html_message = render_to_string('emails/coupon_settings_updated.html', context)
+        text_message = strip_tags(html_message)
+        
+        # Send to business owner's account email
+        send_mail(
+            subject, 
+            text_message, 
+            settings.DEFAULT_FROM_EMAIL, 
+            [business.owner.email], 
+            html_message=html_message
+        )
+        
+    except Exception as e:
+        logger.error(f"Error sending coupon settings email: {str(e)}")
+        raise
+    finally:
+        from django.db import connection
+        connection.close()
+
+@shared_task 
+def send_coupon_enabled_email(business_id):
+    """Send email when coupons are enabled"""
+    try:
+        business = Business.objects.get(id=business_id)
+        context = {
+            'business': business,
+            'owner_name': business.owner.get_full_name() or business.owner.username
+        }
+        
+        subject = f"Coupon deals activated for {business.name}"
+        html_message = render_to_string('emails/coupon_enabled.html', context)
+        text_message = strip_tags(html_message)
+        
+        send_mail(
+            subject, 
+            text_message, 
+            settings.DEFAULT_FROM_EMAIL, 
+            [business.owner.email], 
+            html_message=html_message
+        )
+        
+    except Exception as e:
+        logger.error(f"Error sending coupon enabled email: {str(e)}")
+        raise
+    finally:
+        from django.db import connection
+        connection.close()
+
+@shared_task
+def send_coupon_disabled_email(business_id):
+    """Send email when coupons are disabled"""
+    try:
+        business = Business.objects.get(id=business_id)
+        context = {
+            'business': business,
+            'owner_name': business.owner.get_full_name() or business.owner.username
+        }
+        
+        subject = f"Coupon deals deactivated for {business.name}"
+        html_message = render_to_string('emails/coupon_disabled.html', context)
+        text_message = strip_tags(html_message)
+        
+        send_mail(
+            subject, 
+            text_message, 
+            settings.DEFAULT_FROM_EMAIL, 
+            [business.owner.email], 
+            html_message=html_message
+        )
+        
+    except Exception as e:
+        logger.error(f"Error sending coupon disabled email: {str(e)}")
+        raise
+    finally:
+        from django.db import connection
+        connection.close()

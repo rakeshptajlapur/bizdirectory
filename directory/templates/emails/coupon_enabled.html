@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Coupons Activated</title>
+</head>
+<body>
+    <p>Hello {{ owner_name }},</p>
+    
+    <p>Great news! Coupon deals have been <strong>activated</strong> for your business:</p>
+    
+    <div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #28a745; margin: 20px 0;">
+        <h3 style="margin: 0 0 10px 0; color: #28a745;">{{ business.name }}</h3>
+        <p style="margin: 0;"><strong>Discount Offer:</strong> {{ business.coupon_discount }}% off first service</p>
+        <p style="margin: 5px 0 0 0;"><strong>Status:</strong> <span style="color: #28a745;">Active</span></p>
+    </div>
+    
+    <p>Customers can now request discount coupons from your business listing page. You'll receive notifications when coupons are requested.</p>
+    
+    <p>Best regards,<br/>
+    FindNearBiz Team</p>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Coupons Deactivated</title>
+</head>
+<body>
+    <p>Hello {{ owner_name }},</p>
+    
+    <p>Coupon deals have been <strong>deactivated</strong> for your business:</p>
+    
+    <div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #dc3545; margin: 20px 0;">
+        <h3 style="margin: 0 0 10px 0; color: #dc3545;">{{ business.name }}</h3>
+        <p style="margin: 0;"><strong>Status:</strong> <span style="color: #dc3545;">Disabled</span></p>
+    </div>
+    
+    <p>Customers will no longer see coupon options for this business listing. You can re-enable coupons anytime from your dashboard.</p>
+    
+    <p>Best regards,<br/>
+    FindNearBiz Team</p>
+</body>
+</html>
