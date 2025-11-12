@@ -57,7 +57,8 @@ def send_enquiry_owner_email(enquiry_id):
         subject = f"New enquiry for {enquiry.business.name}"
         html_message = render_to_string('emails/enquiry_notify_owner.html', context)
         text_message = strip_tags(html_message)
-        recipients = [enquiry.business.owner.email, settings.DEFAULT_FROM_EMAIL]
+        # Also send to account email as backup
+        recipients = [enquiry.business.email, enquiry.business.owner.email, settings.DEFAULT_FROM_EMAIL]
         send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, recipients, html_message=html_message)
     finally:
         from django.db import connection
