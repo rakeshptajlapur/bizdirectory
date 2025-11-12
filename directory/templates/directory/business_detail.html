@@ -1783,8 +1783,8 @@
                                 </a>
                                 {% endif %}
                                 
-                                <a href="{% if user.is_authenticated %}#contact-form{% else %}#{% endif %}" 
-                                   class="btn btn-primary btn-sm {% if not user.is_authenticated %}disabled{% endif %}">
+                                <a href="javascript:void(0)" onclick="{% if user.is_authenticated %}openEnquiryTab(){% else %}return false;{% endif %}"
+                                class="btn btn-primary btn-sm {% if not user.is_authenticated %}disabled{% endif %}">
                                     <i class="bi bi-envelope-fill me-1"></i>Send Enquiry
                                 </a>
                             </div>
@@ -2419,7 +2419,7 @@
         </a>
         {% endif %}
         
-        <a href="#contact-form" class="btn btn-primary flex-fill" onclick="scrollToContactForm()">
+        <a href="javascript:void(0)" class="btn btn-primary flex-fill" onclick="openEnquiryTab()">
             <i class="bi bi-envelope-fill me-1"></i>
             <span class="d-none d-sm-inline">Enquiry</span>
             <span class="d-sm-none">Email</span>
@@ -2550,7 +2550,41 @@ function scrollToContactForm() {
             }
         });
     }
-    
+        
+    //  Open Enquiry Tab and Scroll to Form
+    function openEnquiryTab() {
+        // Activate the Enquiry tab
+        const enquiryTab = document.getElementById('enquiry-tab');
+        const enquiryTabContent = document.getElementById('enquiry');
+        
+        if (enquiryTab && enquiryTabContent) {
+            // Use Bootstrap's tab API to show the enquiry tab
+            const enquiryTabInstance = new bootstrap.Tab(enquiryTab);
+            enquiryTabInstance.show();
+            
+            // Wait for tab animation to complete, then scroll to form
+            setTimeout(() => {
+                const enquiryForm = document.querySelector('#enquiry form');
+                if (enquiryForm) {
+                    enquiryForm.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    
+                    // Focus on the message textarea for better UX
+                    const messageTextarea = enquiryForm.querySelector('textarea[name="message"]');
+                    if (messageTextarea) {
+                        setTimeout(() => {
+                            messageTextarea.focus();
+                        }, 500);
+                    }
+                }
+            }, 300);
+        }
+    }
+
+
+
     // Function to close the login gate and redirect
     function closeLoginGate() {
         const loginGate = document.getElementById('loginGate');
