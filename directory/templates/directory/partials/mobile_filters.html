@@ -32,7 +32,12 @@
     
     <!-- Category Filter with Auto-suggestions -->
     <div class="mb-3">
-        <label for="mobileCategorySearch" class="form-label">Category</label>
+        <label for="mobileCategorySearch" class="form-label">
+            <span>Category</span>
+            <a href="{% url 'directory:categories' %}" class="small text-primary ms-2" style="text-decoration: none;">
+                View All
+            </a>
+        </label>
         <div class="position-relative">
             <input type="text" 
                    class="form-control form-control-sm category-search-input" 
