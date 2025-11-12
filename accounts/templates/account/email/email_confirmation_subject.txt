@@ -1,4 +1,4 @@
 {% load i18n %}
 {% autoescape off %}
-{% blocktrans %}Verify your email address for BizDirectory{% endblocktrans %}
+{% blocktrans %}Verify your email address for FindNearBiz.com{% endblocktrans %}
 {% endautoescape %}

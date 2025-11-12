@@ -1,7 +1,7 @@
 {% extends 'directory/base.html' %}
 {% load static %}
 
-{% block title %}Add Your Business Listing | BizDirectory{% endblock %}
+{% block title %}Add Your Business Listing | FindNearBiz.com{% endblock %}
 
 {% block hero %}
 <div class="hero-section" style="min-height: 500px;">
@@ -17,7 +17,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <h1 class="display-4 text-white fw-bold mb-3">List Your Business & Get Discovered</h1>
-                <p class="lead text-white mb-4">Join 5000+ verified businesses growing their customer base on BizDirectory</p>
+                <p class="lead text-white mb-4">Join 5000+ verified businesses growing their customer base on FindNearBiz.com</p>
                 {% if user.is_authenticated %}
                     {% if user.profile.is_business_owner %}
                         <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
@@ -265,7 +265,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <h2 class="display-6 fw-bold mb-4">Why Choose BizDirectory?</h2>
+                <h2 class="display-6 fw-bold mb-4">Why Choose FindNearBiz.com?</h2>
                 
                 <div class="d-flex align-items-start mb-4">
                     <div class="bg-primary rounded-circle p-2 me-3 mt-1" style="width: 40px; height: 40px;">
@@ -361,7 +361,7 @@
                                 </h2>
                                 <div id="term4" class="accordion-collapse collapse" data-bs-parent="#termsAccordion">
                                     <div class="accordion-body">
-                                        You retain ownership of your content. BizDirectory has the right to display it on the platform.
+                                        You retain ownership of your content. FindNearBiz.com has the right to display it on the platform.
                                     </div>
                                 </div>
                             </div>
@@ -379,7 +379,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <h2 class="display-5 fw-bold mb-4">Ready to Grow Your Business?</h2>
-                <p class="lead mb-4">Join thousands of successful businesses on BizDirectory today</p>
+                <p class="lead mb-4">Join thousands of successful businesses on FindNearBiz.com today</p>
                 
                 {% if user.is_authenticated %}
                     {% if user.profile.is_business_owner %}
